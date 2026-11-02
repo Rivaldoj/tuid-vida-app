@@ -12,7 +12,7 @@
         "CredentialsProvider": {
           "CognitoIdentity": {
             "Default": {
-              "PoolId": "us-east-1:REEMPLAZAR_IDENTITY_POOL_ID",
+              "PoolId": "us-east-1:52cafb3c-bed0-4c8c-8df0-d5b1cc45aa30",
               "Region": "us-east-1"
             }
           }
