@@ -1,0 +1,5 @@
+# Copiar como vida.properties (NO se sube a git) y completar.
+# URL base del backend Vida v2 (opcional; por defecto produccion)
+baseUrl=https://api.autenticartuid.com/vida/v2
+# Token de la marca blanca (header Authorization). Secreto: no compartir ni commitear.
+token=

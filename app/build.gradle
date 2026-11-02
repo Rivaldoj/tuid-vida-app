@@ -30,6 +30,15 @@ android {
     namespace 'com.autenticar.tuid'
 
     // Firma: se lee de keystore.properties (no versionado). Sin ese archivo, el release sale sin firmar.
+    // Backend Vida v2: URL y token de la marca blanca desde vida.properties (no versionado)
+    def vidaPropsFile = rootProject.file('vida.properties')
+    def vidaProps = new Properties()
+    if (vidaPropsFile.exists()) vidaPropsFile.withInputStream { vidaProps.load(it) }
+    defaultConfig {
+        buildConfigField 'String', 'VIDA_BASE_URL', '"' + vidaProps.getProperty('baseUrl', 'https://api.autenticartuid.com/vida/v2') + '"'
+        buildConfigField 'String', 'VIDA_TOKEN', '""'
+    }
+
     def keystorePropsFile = rootProject.file('keystore.properties')
     def keystoreProps = new Properties()
     if (keystorePropsFile.exists()) {
@@ -46,6 +55,8 @@ android {
 
     buildTypes {
         debug {
+            // El token solo se incluye en builds de debug por ahora
+            buildConfigField 'String', 'VIDA_TOKEN', '"' + vidaProps.getProperty('token', '') + '"'
             // Misma firma que release: permite instalar el debug encima del release sin perder datos
             if (keystorePropsFile.exists()) {
                 signingConfig signingConfigs.release

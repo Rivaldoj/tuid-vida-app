@@ -21,5 +21,15 @@
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name="com.autenticar.tuid.v2.aws.LivenessTestActivity"
+            android:label="Liveness Test"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
