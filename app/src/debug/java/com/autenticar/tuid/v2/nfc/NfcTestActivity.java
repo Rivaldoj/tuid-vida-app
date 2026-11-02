@@ -128,7 +128,8 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             mostrar("Faltan datos: cargá número de documento, nacimiento y vencimiento (AAMMDD), o el CAN.", null);
             return;
         }
-        mostrar("Leyendo… no muevas el documento.", null);
+        mostrar("Leyendo… no muevas el documento.\nClave usada: "
+                + (can.isEmpty() ? "MRZ (doc " + doc + ", nac " + birth + ", venc " + expiry + ")" : "CAN"), null);
         io.execute(new Runnable() {
             @Override
             public void run() {

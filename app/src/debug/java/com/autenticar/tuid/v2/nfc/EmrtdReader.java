@@ -76,6 +76,12 @@ public class EmrtdReader {
     private String etapa;
     private String detallePace;
 
+    private static String resumenError(Throwable e) {
+        String m = e.getMessage();
+        if (m != null && m.length() > 120) m = m.substring(0, 120);
+        return e.getClass().getSimpleName() + (m != null ? " (" + m + ")" : "");
+    }
+
     private Result readInterno(IsoDep isoDep, String can, String docNumber, String birthYyMmDd, String expiryYyMmDd)
             throws Exception {
         isoDep.setTimeout(10000);
@@ -92,25 +98,36 @@ public class EmrtdReader {
 
         boolean paceOk = false;
         etapa = "PACE (CardAccess)";
+        StringBuilder diag = new StringBuilder();
         try {
             InputStream in = service.getInputStream(PassportService.EF_CARD_ACCESS, PassportService.DEFAULT_MAX_BLOCKSIZE);
             CardAccessFile cardAccess = new CardAccessFile(in);
+            int nPace = 0;
             for (SecurityInfo info : cardAccess.getSecurityInfos()) {
-                if (info instanceof PACEInfo) {
-                    PACEInfo paceInfo = (PACEInfo) info;
+                if (!(info instanceof PACEInfo)) {
+                    diag.append("[").append(info.getClass().getSimpleName()).append("] ");
+                    continue;
+                }
+                nPace++;
+                PACEInfo paceInfo = (PACEInfo) info;
+                diag.append("[PACE param=").append(paceInfo.getParameterId()).append("] ");
+                // Se prueba cada variante anunciada por el chip; si una falla se sigue con la siguiente
+                try {
                     PACEKeySpec key = hayCan ? PACEKeySpec.createCANKey(can.trim()) : PACEKeySpec.createMRZKey(bacKey);
                     service.doPACE(key, paceInfo.getObjectIdentifier(),
                             PACEInfo.toParameterSpec(paceInfo.getParameterId()), paceInfo.getParameterId());
                     paceOk = true;
                     r.protocolo = hayCan ? "PACE-CAN" : "PACE-MRZ";
                     break;
+                } catch (Exception e) {
+                    diag.append("fallo: ").append(resumenError(e)).append(" ");
                 }
             }
-            if (!paceOk) detallePace = "el chip no anuncia PACE";
+            if (nPace == 0) diag.append("el chip no anuncia PACE");
         } catch (Exception e) {
-            paceOk = false; // el chip no ofrece PACE: se prueba BAC
-            detallePace = e.getClass().getSimpleName() + ": " + e.getMessage();
+            diag.append("no se pudo leer EF.CardAccess: ").append(resumenError(e));
         }
+        detallePace = (hayCan ? "clave=CAN. " : "clave=MRZ. ") + diag;
 
         etapa = "seleccionar aplicacion";
         service.sendSelectApplet(paceOk);
