@@ -84,8 +84,19 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             etDoc.setText(data.getStringExtra(MrzScanActivity.EXTRA_DOC));
             etBirth.setText(data.getStringExtra(MrzScanActivity.EXTRA_BIRTH));
             etExpiry.setText(data.getStringExtra(MrzScanActivity.EXTRA_EXPIRY));
+            limpiarResultado();
             tvOut.setText("MRZ leída y validada. Ahora apoyá el documento contra la parte trasera del teléfono.");
         }
+    }
+
+    private Bitmap fotoActual;
+
+    /** Borra el resultado, la foto y los datos de la lectura anterior (nunca mostrar datos de otro documento). */
+    private void limpiarResultado() {
+        ivFoto.setImageBitmap(null);
+        if (fotoActual != null && !fotoActual.isRecycled()) fotoActual.recycle();
+        fotoActual = null;
+        tvOut.setText("");
     }
 
     private EditText campo(LinearLayout parent, String hint, int type) {
@@ -100,6 +111,8 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
     @Override
     protected void onResume() {
         super.onResume();
+        // al volver a la pantalla no debe quedar nada de la lectura anterior
+        if (ivFoto != null && tvOut != null && fotoActual != null) limpiarResultado();
         if (nfc != null) {
             nfc.enableReaderMode(this, this,
                     NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
@@ -128,6 +141,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             mostrar("Faltan datos: cargá número de documento, nacimiento y vencimiento (AAMMDD), o el CAN.", null);
             return;
         }
+        runOnUiThread(new Runnable() { @Override public void run() { limpiarResultado(); } });
         mostrar("Leyendo… no muevas el documento.\nClave usada: "
                 + (can.isEmpty() ? "MRZ (doc " + doc + ", nac " + birth + ", venc " + expiry + ")" : "CAN"), null);
         io.execute(new Runnable() {
@@ -216,6 +230,8 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (fotoActual != null && fotoActual != foto && !fotoActual.isRecycled()) fotoActual.recycle();
+                fotoActual = foto;
                 tvOut.setText(texto);
                 ivFoto.setImageBitmap(foto);
             }
