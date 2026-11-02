@@ -139,7 +139,8 @@ public final class PassiveAuth {
                 new ByteArrayInputStream(sodBruto, i, sodBruto.length - i));
         SignerInfo si = SignerInfo.getInstance(sd.getSignerInfos().getObjectAt(0));
         String digest = nombreDigest(si.getDigestAlgorithm().getAlgorithm().getId());
-        byte[] eContent = sod.getEContent();
+        // Contenido firmado EXACTAMENTE como viene en el SOD (no el que la libreria vuelve a codificar)
+        byte[] eContent = ((ASN1OctetString) sd.getEncapContentInfo().getContent()).getOctets();
         byte[] firmado;
         ASN1Set attrs = si.getAuthenticatedAttributes();
         if (attrs != null) {
