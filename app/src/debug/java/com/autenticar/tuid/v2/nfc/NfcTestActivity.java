@@ -148,7 +148,22 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             @Override
             public void run() {
                 try {
-                    EmrtdReader.Result r = new EmrtdReader(getApplicationContext()).read(iso, can, doc, birth, expiry);
+                    EmrtdReader.Result r = null;
+                    // Si se corta el contacto NFC (Tag lost) se vuelve a conectar y se reintenta, hasta 3 veces
+                    for (int intento = 1; intento <= 3; intento++) {
+                        try {
+                            if (intento > 1) {
+                                mostrar("Se cortó el contacto. Reintentando (" + intento + "/3)… no muevas el documento.", null);
+                                Thread.sleep(400);
+                                try { iso.close(); } catch (Exception ignored) { }
+                                iso.connect();
+                            }
+                            r = new EmrtdReader(getApplicationContext()).read(iso, can, doc, birth, expiry);
+                            break;
+                        } catch (EmrtdReader.EmrtdException ex) {
+                            if (intento == 3 || !esCorteDeContacto(ex)) throw ex;
+                        }
+                    }
                     StringBuilder s = new StringBuilder("LECTURA OK (" + r.protocolo + ")\n");
                     s.append("Tipo: ").append(r.tipoDocumento).append('\n');
                     s.append("País emisor: ").append(r.paisEmisor).append('\n');
@@ -195,6 +210,17 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                 }
             }
         });
+    }
+
+    /** true si el fallo fue una perdida de contacto con el chip (el documento se movio o se alejo). */
+    private static boolean esCorteDeContacto(Throwable e) {
+        for (Throwable c = e; c != null; c = c.getCause()) {
+            if (c instanceof android.nfc.TagLostException) return true;
+            String m = c.getMessage();
+            if (m != null && (m.contains("Tag was lost") || m.contains("Transceive failed")
+                    || m.contains("Could not tranceive"))) return true;
+        }
+        return false;
     }
 
     /** Etapa + cadena de causas + primeras lineas de la pila (sin datos personales). */
