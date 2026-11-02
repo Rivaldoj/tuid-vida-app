@@ -104,12 +104,6 @@ public class HomeActivity extends TuIdActivity {
         setContentView(R.layout.v2_home_activity);
         self = this;
 
-        // Android 13+: permiso en tiempo de ejecucion para mostrar notificaciones push
-        if (Build.VERSION.SDK_INT >= 33
-                && androidx.core.content.ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 9001);
-        }
-
         // borrar prueba webview
 //        Intent i = new Intent(this,WebActivity.class);
 //        i.putExtra("url", "https://tuid.ar");
@@ -457,11 +451,21 @@ public class HomeActivity extends TuIdActivity {
         if (resultCode != RESULT_OK) {
             return;
         } else if (requestCode == REQUEST_LIVE_PREVIEW) {
+            pedirPermisoNotificaciones();
             login();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    // Android 13+: se pide recien al terminar la fe de vida (no al abrir la app, para no
+    // superponer un dialogo del sistema sobre la pantalla principal)
+    private void pedirPermisoNotificaciones() {
+        if (Build.VERSION.SDK_INT >= 33
+                && androidx.core.content.ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 9001);
+        }
+    }
 
     private void login() {
         final LoginRequest request = new LoginRequest();
