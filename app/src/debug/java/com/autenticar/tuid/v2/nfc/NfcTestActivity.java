@@ -59,13 +59,13 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
         });
         root.addView(btnScan);
         android.widget.Button btnNueva = new android.widget.Button(this);
-        btnNueva.setText("Nueva lectura (borrar datos)");
+        btnNueva.setText("Nueva lectura (borra todo y escanea otra MRZ)");
         btnNueva.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                conExito = false;
-                limpiarResultado();
-                tvOut.setText("Esperando documento…");
+                // Borra TODO (resultado, foto y los datos de la clave) y abre la camara para el proximo documento
+                reiniciarTodo();
+                startActivityForResult(new android.content.Intent(NfcTestActivity.this, MrzScanActivity.class), REQ_MRZ);
             }
         });
         root.addView(btnNueva);
@@ -107,6 +107,17 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
 
     private Bitmap fotoActual;
 
+    /** Vacia resultado, foto y los campos usados como clave: nada queda del documento anterior. */
+    private void reiniciarTodo() {
+        conExito = false;
+        limpiarResultado();
+        etDoc.setText("");
+        etBirth.setText("");
+        etExpiry.setText("");
+        etCan.setText("");
+        tvOut.setText("Escaneá la MRZ del documento y luego apoyalo en la parte trasera del teléfono.");
+    }
+
     /** Borra el resultado, la foto y los datos de la lectura anterior (nunca mostrar datos de otro documento). */
     private void limpiarResultado() {
         ivFoto.setImageBitmap(null);
@@ -128,7 +139,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
     protected void onResume() {
         super.onResume();
         // al volver a la pantalla no debe quedar nada de la lectura anterior
-        if (ivFoto != null && tvOut != null && fotoActual != null) { conExito = false; limpiarResultado(); }
+        if (ivFoto != null && tvOut != null && fotoActual != null) { reiniciarTodo(); }
         if (nfc != null) {
             nfc.enableReaderMode(this, this,
                     NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
@@ -156,7 +167,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             return;
         }
         if (can.isEmpty() && (doc.isEmpty() || birth.length() != 6 || expiry.length() != 6)) {
-            mostrar("Faltan datos: cargá número de documento, nacimiento y vencimiento (AAMMDD), o el CAN.", null);
+            mostrar("Primero escaneá la MRZ del documento (botón de arriba): faltan el número de documento y las fechas.", null);
             return;
         }
         runOnUiThread(new Runnable() { @Override public void run() { limpiarResultado(); } });
