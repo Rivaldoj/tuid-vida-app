@@ -1,6 +1,5 @@
 package com.autenticar.tuid.utils;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -10,68 +9,50 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-//import android.support.annotation.NonNull;
-//import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class GPSLocation implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+/**
+ * Obtiene la ultima ubicacion conocida. Todas las llamadas a Play Services son asincronas:
+ * la version anterior (GoogleApiClient + FusedLocationApi) bloqueaba el hilo principal con un
+ * CountDownLatch y provocaba ANR ("la app no responde") con play-services-location 21.x.
+ */
+public class GPSLocation {
 
     private static final String TAG = "GPSLocation";
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
     private final int REQUEST_LOCATION = 200;
     private final int REQUEST_CHECK_SETTINGS = 300;
-    private LocationRequest mLocationRequest;
-    private PendingResult<LocationSettingsResult> result;
-    private LocationSettingsRequest.Builder builder;
-    private Activity activity;
-    private Context context;
-    private String latitud = "0";
-    private String longitud = "0";
-    private static String mAddress="";
-    private static String mCity="";
-    private static String mState="";
-    private static String mCountry="";
-    private static String mPostalCode="";
-
+    private final FusedLocationProviderClient fusedClient;
+    private final Activity activity;
+    private final Context context;
+    private volatile String latitud = "0";
+    private volatile String longitud = "0";
+    private static String mAddress = "";
+    private static String mCity = "";
+    private static String mState = "";
+    private static String mCountry = "";
+    private static String mPostalCode = "";
 
     public GPSLocation(Activity activity, Context context) {
         this.activity = activity;
         this.context = context;
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-        mGoogleApiClient.connect();
+        this.fusedClient = LocationServices.getFusedLocationProviderClient(context);
+        checkSettingsAndLoad();
     }
 
     public String getLatitud() {
@@ -103,149 +84,90 @@ public class GPSLocation implements
     }
 
     public void onStart() {
-        mGoogleApiClient.connect();
     }
 
     public void onStop() {
-        mGoogleApiClient.disconnect();
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        mLocationRequest = createLocationRequest();
-        builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-        result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(@NonNull LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                final LocationSettingsStates mState = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                        } else {
-                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                            if (mLastLocation != null) {
-                                latitud=String.valueOf(mLastLocation.getLatitude());
-                                longitud=String.valueOf(mLastLocation.getLongitude());
+    private boolean hasLocationPermission() {
+        return ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
 
-                                //System.out.println("1-LONGITUD: "+longitud+" LATITUD: "+latitud);
-                                getAddressFromLocation(mLastLocation, context, new GeoCoderHandler());
-
-
+    private void checkSettingsAndLoad() {
+        LocationSettingsRequest request = new LocationSettingsRequest.Builder()
+                .addLocationRequest(createLocationRequest()).build();
+        LocationServices.getSettingsClient(context).checkLocationSettings(request)
+                .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onSuccess(LocationSettingsResponse response) {
+                        loadLastLocation();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (e instanceof ResolvableApiException) {
+                            try {
+                                ((ResolvableApiException) e).startResolutionForResult(activity, REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException ex) {
+                                Log.i(TAG, "startResolutionForResult: " + ex);
                             }
+                        } else {
+                            Log.i(TAG, "checkLocationSettings: " + e);
                         }
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            status.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "LocationSettingsStatusCodes: "+e );
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        Log.i(TAG, "LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE" );
-                        break;
+                    }
+                });
+    }
+
+    private void loadLastLocation() {
+        if (!hasLocationPermission()) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+            return;
+        }
+        try {
+            fusedClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        latitud = String.valueOf(location.getLatitude());
+                        longitud = String.valueOf(location.getLongitude());
+                        getAddressFromLocation(location, context);
+                    }
                 }
-            }
-        });
+            });
+        } catch (SecurityException e) {
+            Log.e(TAG, "Sin permiso de ubicacion", e);
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                        } else {
-                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                            if (mLastLocation != null) {
-                                latitud=String.valueOf(mLastLocation.getLatitude());
-                                longitud=String.valueOf(mLastLocation.getLongitude());
-                                //System.out.println("2-LONGITUD: "+longitud+" LATITUD: "+latitud);
-                                getAddressFromLocation(mLastLocation, context, new GeoCoderHandler());
-                            }
-                        }
-                        break;
-
-                }
-                break;
+        if (requestCode == REQUEST_CHECK_SETTINGS && resultCode == Activity.RESULT_OK) {
+            loadLastLocation();
         }
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (mLastLocation != null) {
-            latitud=String.valueOf(mLastLocation.getLatitude());
-            longitud=String.valueOf(mLastLocation.getLongitude());
-            //System.out.println("3- LONGITUD: "+longitud+" LATITUD: "+latitud);
-            getAddressFromLocation(mLastLocation, context, new GeoCoderHandler());
-        }
-    }
-
-    private static void getAddressFromLocation(final Location location, final Context context, final Handler handler) {
+    private static void getAddressFromLocation(final Location location, final Context context) {
         Thread thread = new Thread() {
             @Override
             public void run() {
                 Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-                String result = null;
                 try {
-                    if(geocoder!=null) {
-                        List<Address> list = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                        if (list != null && list.size() > 0) {
-                            Address address = list.get(0);
-                            // sending back first address line and locality
-                            mAddress = address.getAddressLine(0);
-                            mCity = address.getLocality();
-                            mState = address.getAdminArea();
-                            mCountry = address.getCountryName();
-                            mPostalCode = address.getPostalCode();
-                            result = address.getAddressLine(0) + ", " + address.getLocality() + ", " + address.getCountryName();
-                            System.out.println("RESULTADO DE LOCALIZACION: " + result);
-                        }
+                    List<Address> list = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if (list != null && list.size() > 0) {
+                        Address address = list.get(0);
+                        mAddress = address.getAddressLine(0);
+                        mCity = address.getLocality();
+                        mState = address.getAdminArea();
+                        mCountry = address.getCountryName();
+                        mPostalCode = address.getPostalCode();
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Impossible to connect to Geocoder", e);
-                } finally {
-                    Message msg = Message.obtain();
-                    msg.setTarget(handler);
-                    if (result != null) {
-                        msg.what = 1;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("address", result);
-                        msg.setData(bundle);
-                    } else
-                        msg.what = 0;
-                    msg.sendToTarget();
                 }
             }
         };
         thread.start();
-    }
-
-    private class GeoCoderHandler extends Handler {
-        @Override
-        public void handleMessage(Message message) {
-            String result;
-            switch (message.what) {
-                case 1:
-                    Bundle bundle = message.getData();
-                    result = bundle.getString("address");
-                    break;
-                default:
-                    result = null;
-            }
-        }
     }
 
     public LocationRequest createLocationRequest() {
