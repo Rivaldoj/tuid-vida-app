@@ -14,7 +14,6 @@ import com.autenticar.tuid.AmplitudeManager.AmplitudeManager;
 import com.autenticar.tuid.BuildConfig;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
-import com.autenticar.tuid.facedetection.FaceDetectionProcessor;
 import com.autenticar.tuid.model.Answer;
 import com.autenticar.tuid.model.ChanceRequest;
 import com.autenticar.tuid.model.ChanceResponse;
@@ -38,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.autenticar.tuid.LivePreviewActivity.GESTURE_TO_DETECT;
+import static com.autenticar.tuid.v2.FeDeVidaActivity.GESTURE_TO_DETECT;
 import static com.autenticar.tuid.utils.HelperFunctions.setSound;
 import static com.autenticar.tuid.utils.HelperFunctions.sound;
 
@@ -61,7 +60,7 @@ public class PreGestureActivity extends TuIdActivity{
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(context, FeDeVidaActivity.class);
-                i.putExtra(GESTURE_TO_DETECT, FaceDetectionProcessor.DETECTAR_PESTANEO_CLOSED_EYES);
+                i.putExtra(GESTURE_TO_DETECT, FeDeVidaActivity.DETECTAR_PESTANEO_CLOSED_EYES);
                 startActivityForResult(i, PRE_GESTURE_ACTIVITY);
                 getFirebaseToken();
             }

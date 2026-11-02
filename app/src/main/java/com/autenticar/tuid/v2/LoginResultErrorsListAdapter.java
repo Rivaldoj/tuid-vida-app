@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.autenticar.tuid.MainListValidationAdapter;
 import com.autenticar.tuid.R;
 import com.autenticar.tuid.model.ReconfirmationRequest;
 import com.autenticar.tuid.model.ReconfirmationResponse;

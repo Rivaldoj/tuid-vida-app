@@ -20,7 +20,6 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.autenticar.tuid.MainActivity;
 import com.autenticar.tuid.R;
 import com.autenticar.tuid.v2.HomeActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -151,7 +150,7 @@ public class MyFirebaseMessagingService extends  FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody, String title) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, com.autenticar.tuid.v2.HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_IMMUTABLE);

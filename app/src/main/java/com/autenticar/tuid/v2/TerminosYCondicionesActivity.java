@@ -13,7 +13,6 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.autenticar.tuid.AmplitudeManager.AmplitudeManager;
-import com.autenticar.tuid.DNIDetector;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
 import com.autenticar.tuid.utils.HelperFunctions;

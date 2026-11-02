@@ -35,10 +35,8 @@ import android.widget.Toast;
 
 import com.autenticar.tuid.AmplitudeManager.AmplitudeManager;
 import com.autenticar.tuid.BuildConfig;
-import com.autenticar.tuid.MainActivity;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
-import com.autenticar.tuid.facedetection.FaceDetectionProcessor;
 import com.autenticar.tuid.services.TuidService;
 import com.autenticar.tuid.services.utils.ServiceGenerator;
 import com.autenticar.tuid.utils.CountriesUtil;
@@ -74,7 +72,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.autenticar.tuid.LivePreviewActivity.GESTURE_TO_DETECT;
+import static com.autenticar.tuid.v2.FeDeVidaActivity.GESTURE_TO_DETECT;
 
 public class RegistroManualActivity extends AppCompatActivity {
 
@@ -319,7 +317,7 @@ public class RegistroManualActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getBaseContext(), FeDeVidaActivity.class);
                 intent.putExtra("manual", true);
-                intent.putExtra(GESTURE_TO_DETECT, FaceDetectionProcessor.DETECTAR_PESTANEO_CLOSED_EYES);
+                intent.putExtra(GESTURE_TO_DETECT, FeDeVidaActivity.DETECTAR_PESTANEO_CLOSED_EYES);
                 startActivityForResult(intent,REQUEST_LIVE_PREVIEW);
             }
         });

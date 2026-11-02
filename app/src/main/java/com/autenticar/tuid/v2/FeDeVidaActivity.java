@@ -53,12 +53,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import static com.autenticar.tuid.facedetection.FaceDetectionProcessor.CANTIDAD_DETECCIONES_NECESARIAS;
+
 
 public class FeDeVidaActivity extends TuIdActivity  implements ActivityCompat.OnRequestPermissionsResultCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "FEDEVIDAACTIVITY";
     public static final String GESTURE_TO_DETECT = "GESTURE_TO_DETECT";
+    public static final int DETECTAR_PESTANEO_CLOSED_EYES = 7;
+    public static final int CANTIDAD_DETECCIONES_NECESARIAS = 3; // pestaneos necesarios
     private static final int PERMISSION_REQUESTS = 1;
 
     public static FeDeVidaActivity self;

@@ -6,10 +6,8 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.autenticar.tuid.LoginActivity;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
-import com.autenticar.tuid.RegistrarScanUserActivity;
 import com.autenticar.tuid.model.Answer;
 import com.autenticar.tuid.model.ChanceRequest;
 import com.autenticar.tuid.model.ChanceResponse;

@@ -33,7 +33,6 @@ import com.autenticar.tuid.BuildConfig;
 import com.autenticar.tuid.HistoryActivity;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
-import com.autenticar.tuid.facedetection.FaceDetectionProcessor;
 import com.autenticar.tuid.model.CUIL;
 import com.autenticar.tuid.model.LoginRequest;
 import com.autenticar.tuid.model.LoginResponse;
@@ -62,7 +61,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.autenticar.tuid.LivePreviewActivity.GESTURE_TO_DETECT;
+import static com.autenticar.tuid.v2.FeDeVidaActivity.GESTURE_TO_DETECT;
 import static com.autenticar.tuid.utils.HelperFunctions.CreateAlert;
 import static com.autenticar.tuid.utils.HelperFunctions.mProgressDialog;
 
@@ -438,7 +437,7 @@ public class HomeActivity extends TuIdActivity {
 
     protected void irAFeDeVida(String dni, String sexo) {
         Intent intent = new Intent(getBaseContext(), FeDeVidaActivity.class);
-        intent.putExtra(GESTURE_TO_DETECT, FaceDetectionProcessor.DETECTAR_PESTANEO_CLOSED_EYES);
+        intent.putExtra(GESTURE_TO_DETECT, FeDeVidaActivity.DETECTAR_PESTANEO_CLOSED_EYES);
         JSONObject data = new JSONObject();
         try{
             data.put("document", dni);

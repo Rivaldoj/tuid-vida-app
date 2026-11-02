@@ -30,7 +30,6 @@ import android.widget.TextView;
 
 import com.autenticar.tuid.AmplitudeManager.AmplitudeManager;
 import com.autenticar.tuid.HistoryActivity;
-import com.autenticar.tuid.LoginActivity;
 import com.autenticar.tuid.R;
 import com.autenticar.tuid.utils.HelperFunctions;
 import com.autenticar.tuid.v2.components.SoporteDialog;
