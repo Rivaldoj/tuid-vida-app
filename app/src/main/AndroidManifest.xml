@@ -146,6 +146,7 @@
         <activity android:name=".v2.FormActivity" android:screenOrientation="portrait" />
         <activity android:name=".v2.TareasPendientesActivity" android:screenOrientation="portrait"/>
         <activity android:name=".v2.WebActivity" />
+        <activity android:name=".v2.aws.LivenessActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
         <service android:name=".utils.MyFirebaseMessagingService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
