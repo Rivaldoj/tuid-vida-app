@@ -28,6 +28,10 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
     private TextView tvOut;
     private ImageView ivFoto;
     private static final int REQ_MRZ = 3001;
+    // leyendo: hay una lectura en curso. conExito: hay un resultado correcto en pantalla (se conserva
+    // hasta que el usuario pida una nueva lectura; mover o alejar el documento ya no lo borra).
+    private volatile boolean leyendo = false;
+    private volatile boolean conExito = false;
     private NfcAdapter nfc;
     private final ExecutorService io = Executors.newSingleThreadExecutor();
 
@@ -54,6 +58,17 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             }
         });
         root.addView(btnScan);
+        android.widget.Button btnNueva = new android.widget.Button(this);
+        btnNueva.setText("Nueva lectura (borrar datos)");
+        btnNueva.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+                conExito = false;
+                limpiarResultado();
+                tvOut.setText("Esperando documento…");
+            }
+        });
+        root.addView(btnNueva);
 
         etDoc = campo(root, "N° de documento (como figura en la MRZ)", InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
         etBirth = campo(root, "Fecha de nacimiento AAMMDD", InputType.TYPE_CLASS_NUMBER);
@@ -84,6 +99,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             etDoc.setText(data.getStringExtra(MrzScanActivity.EXTRA_DOC));
             etBirth.setText(data.getStringExtra(MrzScanActivity.EXTRA_BIRTH));
             etExpiry.setText(data.getStringExtra(MrzScanActivity.EXTRA_EXPIRY));
+            conExito = false;
             limpiarResultado();
             tvOut.setText("MRZ leída y validada. Ahora apoyá el documento contra la parte trasera del teléfono.");
         }
@@ -112,7 +128,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
     protected void onResume() {
         super.onResume();
         // al volver a la pantalla no debe quedar nada de la lectura anterior
-        if (ivFoto != null && tvOut != null && fotoActual != null) limpiarResultado();
+        if (ivFoto != null && tvOut != null && fotoActual != null) { conExito = false; limpiarResultado(); }
         if (nfc != null) {
             nfc.enableReaderMode(this, this,
                     NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
@@ -128,6 +144,8 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
 
     @Override
     public void onTagDiscovered(final Tag tag) {
+        // Ignorar si ya hay una lectura en curso o un resultado correcto en pantalla
+        if (leyendo || conExito) return;
         final String doc = etDoc.getText().toString().trim().toUpperCase();
         final String birth = etBirth.getText().toString().trim();
         final String expiry = etExpiry.getText().toString().trim();
@@ -144,6 +162,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
         runOnUiThread(new Runnable() { @Override public void run() { limpiarResultado(); } });
         mostrar("Leyendo… no muevas el documento.\nClave usada: "
                 + (can.isEmpty() ? "MRZ (doc " + doc + ", nac " + birth + ", venc " + expiry + ")" : "CAN"), null);
+        leyendo = true;
         io.execute(new Runnable() {
             @Override
             public void run() {
@@ -155,7 +174,8 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                             if (intento > 1) {
                                 mostrar("Se cortó el contacto. Reintentando (" + intento + "/3)… no muevas el documento.", null);
                                 Thread.sleep(400);
-                                try { iso.close(); } catch (Exception ignored) { }
+                                leyendo = false;
+                    try { iso.close(); } catch (Exception ignored) { }
                                 iso.connect();
                             }
                             r = new EmrtdReader(getApplicationContext()).read(iso, can, doc, birth, expiry);
@@ -202,6 +222,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                             s.append("Foto convertida a JPEG: ").append(jpg.size()).append(" bytes\n");
                         }
                     }
+                    conExito = true;
                     mostrar(s.toString(), bmp);
                 } catch (Exception e) {
                     mostrar(describirError(e), null);
