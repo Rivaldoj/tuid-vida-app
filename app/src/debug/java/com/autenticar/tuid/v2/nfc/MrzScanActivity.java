@@ -121,7 +121,7 @@ public class MrzScanActivity extends AppCompatActivity {
             return;
         }
         InputImage img = InputImage.fromMediaImage(proxy.getImage(), proxy.getImageInfo().getRotationDegrees());
-        recognizer.process(img).addOnSuccessListener(executor, new com.google.android.gms.tasks.OnSuccessListener<Text>() {
+        recognizer.process(img).addOnSuccessListener(ContextCompat.getMainExecutor(this), new com.google.android.gms.tasks.OnSuccessListener<Text>() {
             @Override
             public void onSuccess(Text text) {
                 List<String> lineas = new ArrayList<>();
@@ -148,7 +148,7 @@ public class MrzScanActivity extends AppCompatActivity {
                     });
                 }
             }
-        }).addOnCompleteListener(executor, new com.google.android.gms.tasks.OnCompleteListener<Text>() {
+        }).addOnCompleteListener(ContextCompat.getMainExecutor(this), new com.google.android.gms.tasks.OnCompleteListener<Text>() {
             @Override
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<Text> t) {
                 proxy.close();
@@ -159,8 +159,9 @@ public class MrzScanActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        terminado = true;
         if (provider != null) provider.unbindAll();
         executor.shutdown();
-        recognizer.close();
+        try { recognizer.close(); } catch (Exception ignored) { }
     }
 }
