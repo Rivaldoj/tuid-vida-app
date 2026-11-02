@@ -49,6 +49,11 @@ public class MrzScanActivity extends AppCompatActivity {
     private TextRecognizer recognizer;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private volatile boolean terminado = false;
+    // Consenso: la MRZ solo se acepta si dos cuadros consecutivos leen exactamente lo mismo.
+    // Un digito de control puede dar el mismo valor por casualidad (aprox. 1 de cada 10) con una letra mal leida.
+    private static final int LECTURAS_IGUALES = 2;
+    private String ultimaClave = null;
+    private int repeticiones = 0;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -125,6 +130,10 @@ public class MrzScanActivity extends AppCompatActivity {
                 }
                 final MrzParser.Result r = MrzParser.parse(lineas);
                 if (r != null && !terminado) {
+                    String clave = r.numeroDocumento + "|" + r.fechaNacimiento + "|" + r.fechaVencimiento;
+                    if (clave.equals(ultimaClave)) repeticiones++;
+                    else { ultimaClave = clave; repeticiones = 1; }
+                    if (repeticiones < LECTURAS_IGUALES) return;
                     terminado = true;
                     runOnUiThread(new Runnable() {
                         @Override
