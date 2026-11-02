@@ -28,6 +28,12 @@ import java.util.List;
  */
 public class EmrtdReader {
 
+    private final android.content.Context ctx;
+
+    public EmrtdReader(android.content.Context ctx) {
+        this.ctx = ctx;
+    }
+
     public static class EmrtdException extends Exception {
         public final String etapa;
         public final String detallePace;
@@ -54,6 +60,7 @@ public class EmrtdReader {
         public int fotoAncho;
         public int fotoAlto;
         public byte[] foto; // sin tratar (JPEG o JPEG 2000)
+        public PassiveAuth.Info autenticidad;
     }
 
     /**
@@ -140,7 +147,10 @@ public class EmrtdReader {
         // DG1: datos de la MRZ
         etapa = "leer DG1 (datos)";
         InputStream in1 = service.getInputStream(PassportService.EF_DG1, PassportService.DEFAULT_MAX_BLOCKSIZE);
-        MRZInfo mrz = new DG1File(in1).getMRZInfo();
+        DG1File dg1 = new DG1File(in1);
+        java.util.Map<Integer, byte[]> crudos = new java.util.HashMap<>();
+        crudos.put(1, dg1.getEncoded());
+        MRZInfo mrz = dg1.getMRZInfo();
         r.tipoDocumento = mrz.getDocumentCode();
         r.paisEmisor = mrz.getIssuingState();
         r.apellidos = mrz.getPrimaryIdentifier();
@@ -155,7 +165,9 @@ public class EmrtdReader {
         etapa = "leer DG2 (foto)";
         try {
             InputStream in2 = service.getInputStream(PassportService.EF_DG2, PassportService.DEFAULT_MAX_BLOCKSIZE);
-            List<FaceInfo> faces = new DG2File(in2).getFaceInfos();
+            DG2File dg2 = new DG2File(in2);
+            crudos.put(2, dg2.getEncoded());
+            List<FaceInfo> faces = dg2.getFaceInfos();
             if (!faces.isEmpty() && !faces.get(0).getFaceImageInfos().isEmpty()) {
                 FaceImageInfo img = faces.get(0).getFaceImageInfos().get(0);
                 r.fotoBytes = img.getImageLength();
@@ -169,6 +181,21 @@ public class EmrtdReader {
             }
         } catch (Exception e) {
             r.fotoMime = "no se pudo leer DG2: " + e.getClass().getSimpleName();
+        }
+        etapa = "autenticidad (SOD)";
+        try {
+            InputStream inSod = service.getInputStream(PassportService.EF_SOD, PassportService.DEFAULT_MAX_BLOCKSIZE);
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int n;
+            while ((n = inSod.read(buf)) > 0) bos.write(buf, 0, n);
+            byte[] sodBruto = bos.toByteArray();
+            org.jmrtd.lds.SODFile sod = new org.jmrtd.lds.SODFile(new java.io.ByteArrayInputStream(sodBruto));
+            r.autenticidad = PassiveAuth.verificar(ctx, sod, sodBruto, crudos);
+        } catch (Exception e) {
+            PassiveAuth.Info i = new PassiveAuth.Info();
+            i.detalle = "  no se pudo leer/verificar el SOD: " + e.getClass().getSimpleName() + "\n";
+            r.autenticidad = i;
         }
         service.close();
         return r;

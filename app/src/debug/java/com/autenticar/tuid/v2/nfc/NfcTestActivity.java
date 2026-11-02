@@ -134,7 +134,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
             @Override
             public void run() {
                 try {
-                    EmrtdReader.Result r = new EmrtdReader().read(iso, can, doc, birth, expiry);
+                    EmrtdReader.Result r = new EmrtdReader(getApplicationContext()).read(iso, can, doc, birth, expiry);
                     StringBuilder s = new StringBuilder("LECTURA OK (" + r.protocolo + ")\n");
                     s.append("Tipo: ").append(r.tipoDocumento).append('\n');
                     s.append("País emisor: ").append(r.paisEmisor).append('\n');
@@ -147,6 +147,14 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                     s.append("Vencimiento: ").append(r.fechaVencimiento).append('\n');
                     s.append("Foto: ").append(r.fotoMime).append(' ').append(r.fotoAncho).append('x')
                             .append(r.fotoAlto).append(", ").append(r.fotoBytes).append(" bytes\n");
+                    if (r.autenticidad != null) {
+                        PassiveAuth.Info a = r.autenticidad;
+                        s.append("\nAUTENTICIDAD DEL CHIP: ").append(a.autentico() ? "VERIFICADA" : "NO VERIFICADA").append('\n');
+                        s.append("  Datos sin alterar: ").append(a.hashesOk ? "si" : "NO").append('\n');
+                        s.append("  Firma del emisor: ").append(a.firmaOk ? "valida" : "NO valida").append('\n');
+                        s.append("  Cadena hasta el pais: ").append(a.cadenaOk ? "valida" : "NO verificada").append('\n');
+                        s.append(a.detalle).append('\n');
+                    }
                     Bitmap bmp = null;
                     if (r.foto != null) {
                         try {

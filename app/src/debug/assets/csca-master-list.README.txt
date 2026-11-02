@@ -1,0 +1,4 @@
+Certificados CSCA (autoridades certificantes de cada pais) para verificar la firma del chip (Passive Authentication).
+Origen: German Master List de la BSI (Alemania), https://www.bsi.bund.de/ , archivo DE_ML_2026-10-01-11-50-52.ml.
+Es informacion publica. SOLO PARA PRUEBAS: en produccion hay que actualizarla periodicamente y validar la firma de la Master List.
+Certificados incluidos: 437
