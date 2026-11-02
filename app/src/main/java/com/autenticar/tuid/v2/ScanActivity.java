@@ -4,16 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.YuvImage;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,12 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.autenticar.tuid.AmplitudeManager.AmplitudeManager;
-import com.autenticar.tuid.ITrackerProcess;
-import com.autenticar.tuid.OCRTrackerFactory;
 import com.autenticar.tuid.R;
-import com.autenticar.tuid.camera.CameraSourcePreview;
 import com.autenticar.tuid.camera.DocumentOverlay;
-import com.autenticar.tuid.camera.GraphicOverlay;
 import com.autenticar.tuid.services.TuidService;
 import com.autenticar.tuid.services.utils.ServiceGenerator;
 import com.autenticar.tuid.utils.HelperFunctions;
@@ -38,22 +28,22 @@ import com.autenticar.tuid.v2.services.CheckDocumentRequest;
 import com.autenticar.tuid.v2.services.CheckDocumentResponse;
 import com.autenticar.tuid.v2.utils.LoadingDialog;
 import com.autenticar.tuid.v2.utils.Scanner;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.MultiDetector;
-import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.text.TextBlock;
-import com.google.android.gms.vision.text.TextRecognizer;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -69,14 +59,13 @@ public class ScanActivity extends TuIdActivity {
 
     public static int scanAttemps = 0;
     private static final int RC_HANDLE_GMS = 9001;
-    private CameraSourcePreview mPreview;
-    private GraphicOverlay mGraphicOverlay;
+    private PreviewView mPreview;
     private DocumentOverlay documentOverlay;
     public pl.droidsonroids.gif.GifImageView mVideo = null;
     private boolean FLASH = false;
-    public CameraSource mCameraSource = null;
+    private ProcessCameraProvider cameraProvider;
     private Camera camera;
-    private Camera.Parameters parameters;
+    private final ExecutorService cameraExecutor = Executors.newSingleThreadExecutor();
     private TextView scan_guide_info;
 
     private ProgressBar progressBar;
@@ -97,6 +86,7 @@ public class ScanActivity extends TuIdActivity {
     }
 
     @Override
+    @androidx.camera.core.ExperimentalGetImage
     public void onResume(){
         super.onResume();
         startCameraSource();
@@ -105,12 +95,15 @@ public class ScanActivity extends TuIdActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        try {
-            mCameraSource.stop();
-            mCameraSource.release();
-        }
-        catch (Exception e){
+        stopCamera();
+        cameraExecutor.shutdown();
+    }
 
+    private void stopCamera() {
+        try {
+            if (cameraProvider != null) cameraProvider.unbindAll();
+        } catch (Exception e) {
+            Log.e("SCAN", "stopCamera", e);
         }
     }
 
@@ -132,66 +125,22 @@ public class ScanActivity extends TuIdActivity {
     }
 
     public void toggleFlash(){
-        if(FLASH){
-            FLASH = false;
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,}, 1000);
-            } else {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-                    camera = getCamera(mCameraSource);
-                    if (camera != null) {
-                        parameters = camera.getParameters();
-                    }
-                }
-
-                if (camera != null) {
-                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    camera.setParameters(parameters);
-                }
-            }
-        }
-        else{
-            FLASH = true;
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,}, 1000);
-            } else {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-                    camera = getCamera(mCameraSource);
-                    parameters = camera.getParameters();
-                }
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                camera.setParameters(parameters);
-            }
-        }
+        toggleFlash2();
     }
 
     public void toggleFlash2(){
         if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) return;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,}, 1000);
+        } else if (camera != null) {
+            FLASH = !FLASH;
+            camera.getCameraControl().enableTorch(FLASH);
         } else {
-
-            camera = getCamera(mCameraSource);
-            if (camera != null) {
-                parameters = camera.getParameters();
-                if (camera != null) {
-                    FLASH = !FLASH;
-                    parameters.setFlashMode(FLASH? Camera.Parameters.FLASH_MODE_TORCH: Camera.Parameters.FLASH_MODE_OFF);
-                    camera.setParameters(parameters);
-                }
-                else{
-                    Log.e("FLASH", "NO CAMERA");
-                }
-            }
+            Log.e("FLASH", "NO CAMERA");
         }
     }
     public void initCamera(){
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
-        RectF rf= new RectF();
-        rf.set(40, 200,40,200);
-        mPreview.SetSize(rf);
-
-        mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        mPreview = (PreviewView) findViewById(R.id.preview);
 
         mVideo = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.videoView);
         scan_guide_info = (TextView) findViewById(R.id.scan_guide_info);
@@ -200,62 +149,10 @@ public class ScanActivity extends TuIdActivity {
         progressBar = findViewById(R.id.progressbar);
         progressBar.setIndeterminate(true);
 
-        createCameraSource();
-
         playGuideSounds(new int[]{R.raw.enfocafrente, R.raw.iluminacion}, 0, null);
 
 
 
-    }
-
-    private void createCameraSource () {
-//        final Persona persona = ((MainApp) getApplication()).GetPersonaToRegister();
-//        persona.setProgressBar(progressBar);
-//        persona.setActivity(activity);
-//        persona.setScan_guide((TextView) findViewById(R.id.scan_guide));
-
-        ITrackerProcess<TextBlock> iTrackerOCR = new ITrackerProcess<TextBlock>(){
-
-            @Override
-            public void ValueReaded(Detector.Detections<TextBlock> detectionResults) {
-
-            }
-        };
-
-        TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
-        MyTextDetector mtd =  new MyTextDetector(textRecognizer);
-        OCRTrackerFactory ocrTrackerFactory = new OCRTrackerFactory(mGraphicOverlay, iTrackerOCR);
-        mtd.setProcessor(new MultiProcessor.Builder<>(ocrTrackerFactory).build());
-
-        MultiDetector multiDetector = new MultiDetector.Builder().add(mtd).build();
-
-        int finalWidth = 1280;
-        int finalHeight = 720;
-
-        try {
-            Camera c = Camera.open();
-
-            c.enableShutterSound(false);
-            List<Camera.Size> cameraSizes = c.getParameters().getSupportedPictureSizes();
-            for (Camera.Size s : cameraSizes) {
-                if (s.width > finalWidth && s.width < 130000000) {
-                    finalWidth = s.width;
-                    finalHeight = s.height;
-                }
-
-            }
-        }
-        catch (Exception e){
-
-        }
-
-        mCameraSource = new CameraSource.Builder(getApplicationContext(), multiDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-//                .setRequestedPreviewSize(1600, 1024)
-                .setRequestedPreviewSize(finalWidth, finalHeight)
-                .setRequestedFps(15.0f)
-                .setAutoFocusEnabled(true)
-                .build();
     }
 
     public void flipDNI (){
@@ -280,33 +177,6 @@ public class ScanActivity extends TuIdActivity {
     }
 
 
-    class MyTextDetector extends Detector<TextBlock> {
-        private Detector<TextBlock> mDelegate;
-
-        MyTextDetector(Detector<TextBlock> delegate) {
-            mDelegate = delegate;
-        }
-
-        public SparseArray<TextBlock> detect(final Frame frame) {
-            YuvImage yuvImage = new YuvImage(frame.getGrayscaleImageData().array(), ImageFormat.NV21, frame.getMetadata().getWidth(), frame.getMetadata().getHeight(), null);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            yuvImage.compressToJpeg(new Rect(0, 0, frame.getMetadata().getWidth(), frame.getMetadata().getHeight()), 100, byteArrayOutputStream);
-            byte[] jpegArray = byteArrayOutputStream.toByteArray();
-            tempBitmap = BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.length);
-
-            processImage();
-            return mDelegate.detect(frame);
-        }
-
-        public boolean isOperational() {
-            return mDelegate.isOperational();
-        }
-
-        public boolean setFocus(int id) {
-            return mDelegate.setFocus(id);
-        }
-    }
-
     public void informTimeout(boolean isFront){
         // TODO:
         // INFORMAR TIMEOUT
@@ -316,67 +186,85 @@ public class ScanActivity extends TuIdActivity {
 
     }
 
-    private static Camera getCamera (@NonNull CameraSource cameraSource){
-        Field[] declaredFields = CameraSource.class.getDeclaredFields();
-
-        for (Field field : declaredFields) {
-            if (field.getType() == Camera.class) {
-                field.setAccessible(true);
-                try {
-                    Camera camera = (Camera) field.get(cameraSource);
-                    if (camera != null) {
-                        return camera;
-                    }
-                    return null;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-        }
-        return null;
-    }
-
+    @androidx.camera.core.ExperimentalGetImage
     private void startCameraSource () {
-        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
-                getApplicationContext());
-//        if (code != ConnectionResult.SUCCESS) {
-//            Dialog dlg =
-//                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
-//            dlg.show();
-//        }
-        if (mCameraSource != null) {
-            try {
-                documentOverlay = findViewById(R.id.dniOverlay);
-                mPreview.setCamera(getCameraInstance());
-                mPreview.start(mCameraSource, mGraphicOverlay);
-                final Handler handler = new Handler();
-                documentOverlay.init(false, mPreview);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        documentOverlay.init(true, mPreview);
-                    }
-                }, 3000);
-
-            } catch (IOException e) {
-                Log.e("EX", "Unable to start camera source.", e);
-                mCameraSource.release();
-                mCameraSource = null;
+        documentOverlay = findViewById(R.id.dniOverlay);
+        documentOverlay.init(false, null);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                documentOverlay.init(true, null);
             }
+        }, 3000);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1000);
+            return;
+        }
+        final ListenableFuture<ProcessCameraProvider> future = ProcessCameraProvider.getInstance(this);
+        future.addListener(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    cameraProvider = future.get();
+                    bindCamera();
+                } catch (Exception e) {
+                    Log.e("EX", "Unable to start camera.", e);
+                }
+            }
+        }, ContextCompat.getMainExecutor(this));
+    }
+
+    @Override
+    @androidx.camera.core.ExperimentalGetImage
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1000 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startCameraSource();
         }
     }
 
-    public static Camera getCameraInstance () {
-        Camera c = null;
+    private void bindCamera() {
+        if (cameraProvider == null) return;
+        cameraProvider.unbindAll();
+        Preview previewUseCase = new Preview.Builder().build();
+        previewUseCase.setSurfaceProvider(mPreview.getSurfaceProvider());
+        // Resolucion alta: el OCR del DNI necesita detalle (antes se pedia el mayor tamano soportado)
+        androidx.camera.core.resolutionselector.ResolutionSelector selector =
+                new androidx.camera.core.resolutionselector.ResolutionSelector.Builder()
+                        .setAspectRatioStrategy(androidx.camera.core.resolutionselector.AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
+                        .setResolutionStrategy(new androidx.camera.core.resolutionselector.ResolutionStrategy(
+                                new android.util.Size(1920, 1080),
+                                androidx.camera.core.resolutionselector.ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER))
+                        .build();
+        ImageAnalysis analysis = new ImageAnalysis.Builder()
+                .setResolutionSelector(selector)
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build();
+        analysis.setAnalyzer(cameraExecutor, new ImageAnalysis.Analyzer() {
+            @Override
+            public void analyze(@NonNull ImageProxy image) {
+                try {
+                    // Si el Scanner esta ocupado o vencio, no vale la pena convertir el cuadro
+                    if (!Scanner.busy) {
+                        // Bitmap sin rotar (orientacion del sensor): el Scanner lo rota si es apaisado
+                        tempBitmap = image.toBitmap();
+                        processImage();
+                    }
+                } catch (Exception e) {
+                    Log.e("SCAN", "analyze", e);
+                } finally {
+                    image.close();
+                }
+            }
+        });
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            camera = cameraProvider.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA, previewUseCase, analysis);
+            if (FLASH) camera.getCameraControl().enableTorch(true);
         } catch (Exception e) {
-            // Camera is not available (in use or does not exist)
+            Log.e("EX", "bindToLifecycle fallo", e);
         }
-        return c; // returns null if camera is unavailable
     }
-
 
     Scanner s = new Scanner(this);
 
@@ -385,8 +273,7 @@ public class ScanActivity extends TuIdActivity {
     }
 
     public void stopScanning(Persona persona){
-        mCameraSource.stop();
-        mCameraSource.release();
+        stopCamera();
 
 
 //        Log.e("ASD", "DOMICLIO: " + Scanner.domicilio);
@@ -400,8 +287,7 @@ public class ScanActivity extends TuIdActivity {
 
     public void stopScanningTimeout(){
         try{
-            mCameraSource.stop();
-            mCameraSource.release();
+            stopCamera();
             try {
                 if(++error_scaninning_attemps==3){
                     error_scaninning_attemps = 0;
@@ -468,13 +354,7 @@ public class ScanActivity extends TuIdActivity {
                     catch (Exception e){
 
                     }
-                    try {
-                        mCameraSource.stop();
-                        mCameraSource.release();
-                    }
-                    catch (Exception e){
-
-                    }
+                    stopCamera();
                     HelperFunctions.ShowAlertWithContact(activity, response.body().Message, 1, response.body().resultCode);
                 }
             }

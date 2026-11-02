@@ -13,12 +13,10 @@
         android:layout_weight="1"
         android:layout_height="wrap_content">
 
-        <com.autenticar.tuid.v2.components.CameraSourcePreview
+        <androidx.camera.view.PreviewView
             android:id="@+id/preview"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="wrap_content"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <com.autenticar.tuid.v2.components.ScannerFrontView
             android:layout_width="match_parent"

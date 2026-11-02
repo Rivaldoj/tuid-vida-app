@@ -8,18 +8,10 @@
 
 
 
-    <com.autenticar.tuid.camera.CameraSourcePreview
+    <androidx.camera.view.PreviewView
         android:id="@+id/preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
-        <com.autenticar.tuid.camera.GraphicOverlay
-            android:id="@+id/faceOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </com.autenticar.tuid.camera.CameraSourcePreview>
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.autenticar.tuid.v2;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +9,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,15 +22,29 @@ import android.widget.Toast;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
 import com.autenticar.tuid.utils.HelperFunctions;
-import com.autenticar.tuid.v2.components.CameraSourcePreview;
 import com.autenticar.tuid.v2.components.FeDeVidaOscuraDialog;
-import com.autenticar.tuid.v2.utils.FaceDetector;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.face.Face;
+import com.autenticar.tuid.v2.utils.BitmapsHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
+
+import androidx.annotation.NonNull;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import com.google.android.material.navigation.NavigationView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +64,7 @@ public class FeDeVidaActivity extends TuIdActivity  implements ActivityCompat.On
     public static FeDeVidaActivity self;
     boolean sono_el_3 = false;
 
-    private CameraSource cameraSource = null;
-    private CameraSourcePreview preview;
+    private PreviewView preview;
     private ProgressBar progressBar;
     public static FrameLayout fireTopLayout;
     public TextView alertMessager;
@@ -198,145 +211,176 @@ public class FeDeVidaActivity extends TuIdActivity  implements ActivityCompat.On
         }
     }
 
+    // --- Camara: CameraX + ML Kit (reemplaza a Mobile Vision CameraSource) ---
+    private ProcessCameraProvider cameraProvider;
+    private final ExecutorService cameraExecutor = Executors.newSingleThreadExecutor();
+    private com.google.mlkit.vision.face.FaceDetector faceDetector;
+    private volatile boolean getImage = false;
+
+    // estado del conteo de pestaneos (antes vivia en el Detector.Processor anonimo)
+    private boolean errorDisplayed = false;
+    private boolean ojoEstanCerrados = false;
+    private int pestaneos = 0;
+
     private void createCameraSource() {
-        if (cameraSource == null) {
-            FaceDetector faceRecognizer = new FaceDetector.Builder(getApplicationContext()).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS).setLandmarkType(FaceDetector.ALL_LANDMARKS).setProminentFaceOnly(false).setMode(FaceDetector.ACCURATE_MODE).setMinFaceSize(0.7f).build();
-            Detector.Processor<Face> processor = new Detector.Processor<Face>() {
-                boolean errorDisplayed = false;
-                boolean ojoEstanCerrados = false;
-                int pestaneos = 0;
+        if (faceDetector == null) {
+            FaceDetectorOptions options = new FaceDetectorOptions.Builder()
+                    .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                    .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+                    .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+                    .setMinFaceSize(0.7f)
+                    .build();
+            faceDetector = FaceDetection.getClient(options);
+        }
+    }
 
+    private void onFaces(final List<Face> faces) {
+        synchronized (this) {
+            runOnUiThread(new Runnable() {
                 @Override
-                public void release() {
+                public void run() {
+                    if (stop) return;
+                    if (faces.size() == 1 && faceIsCentered(faces)) {
+                        oval.setVisibility(View.VISIBLE);
+                        Face face = faces.get(0);
+                        Float leftProb = face.getLeftEyeOpenProbability();
+                        Float rightProb = face.getRightEyeOpenProbability();
+                        if (leftProb == null || rightProb == null) return;
+                        float left_open_percentage = leftProb;
+                        float right_open_percentage = rightProb;
+                        if (errorDisplayed) {
+                            alertMessager.setText("Capturando movimientos");
+                            alertMessager.setBackgroundResource(R.color.colorPrimary);
+                            errorDisplayed = false;
+                        }
 
-                }
-
-                @Override
-                public void receiveDetections(Detector.Detections<Face> detections) {
-                    synchronized (this){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(stop) return;
-                                if(detections.getDetectedItems().size()==1  && faceIsCentered(detections)){
-                                    oval.setVisibility(View.VISIBLE);
-                                    Face face = detections.getDetectedItems().get(detections.getDetectedItems().keyAt(0)) ;
-                                    float left_open_percentage = face.getIsLeftEyeOpenProbability();
-                                    float right_open_percentage = face.getIsRightEyeOpenProbability();
-                                    if(errorDisplayed){
-                                        alertMessager.setText("Capturando movimientos");
-                                        alertMessager.setBackgroundResource(R.color.colorPrimary);
-                                        errorDisplayed=false;
-                                    }
-
-                                    if(ojoEstanCerrados){
-                                        if( left_open_percentage > 0.8 && right_open_percentage > 0.8){
-                                            if(pestaneos<3){
-                                                setProgresoEnPestaneos(++pestaneos);
-                                                ojoEstanCerrados = false;
-                                            }
-                                            else{
-                                                if(resultBitmap==null) faceRecognizer.getImage = true;
-                                                else
-                                                 {
-                                                     if(sono_el_3) {
-                                                         gestureDetected();
-                                                         ojoEstanCerrados = false;
-                                                     }
-                                                 }
-                                                return;
-                                            }
-
-                                            return;
-                                        }
-                                    }
-                                    else{
-                                        if(pestaneos==3){
-                                            ojoEstanCerrados=true;
-                                            return;
-                                        }
-                                        if( left_open_percentage < 0.2 && right_open_percentage < 0.2){
-                                            ojoEstanCerrados = true;
-                                            return;
-                                        }
-                                    }
-                                }
-                                else{
-                                    oval.setVisibility(View.INVISIBLE);
-                                    setProgresoEnPestaneos(pestaneos=0);
-                                    if(!errorDisplayed) {
-                                        errorDisplayed = true;
-                                        String error = "Alerta: NO se detectan rostros....";
-                                         if(detections.getDetectedItems().size()==1) error = "Alerta: Posicione su cara en el centro del circulo.";
-                                         if(detections.getDetectedItems().size()>1) error = "Alerta: Se detectan más de dos rostros.";
-                                        alertMessager.setText(error);
-                                        alertMessager.setBackgroundResource(R.color.colorAccentDark);
+                        if (ojoEstanCerrados) {
+                            if (left_open_percentage > 0.8 && right_open_percentage > 0.8) {
+                                if (pestaneos < 3) {
+                                    setProgresoEnPestaneos(++pestaneos);
+                                    ojoEstanCerrados = false;
+                                } else {
+                                    if (resultBitmap == null) getImage = true;
+                                    else if (sono_el_3) {
+                                        gestureDetected();
+                                        ojoEstanCerrados = false;
                                     }
                                 }
                             }
-                        });
+                        } else {
+                            if (pestaneos == 3) {
+                                ojoEstanCerrados = true;
+                                return;
+                            }
+                            if (left_open_percentage < 0.2 && right_open_percentage < 0.2) {
+                                ojoEstanCerrados = true;
+                            }
+                        }
+                    } else {
+                        oval.setVisibility(View.INVISIBLE);
+                        setProgresoEnPestaneos(pestaneos = 0);
+                        if (!errorDisplayed) {
+                            errorDisplayed = true;
+                            String error = "Alerta: NO se detectan rostros....";
+                            if (faces.size() == 1) error = "Alerta: Posicione su cara en el centro del circulo.";
+                            if (faces.size() > 1) error = "Alerta: Se detectan más de dos rostros.";
+                            alertMessager.setText(error);
+                            alertMessager.setBackgroundResource(R.color.colorAccentDark);
+                        }
                     }
                 }
-            };
-            faceRecognizer.setProcessor(processor);
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            int height = displayMetrics.heightPixels;
-            int width = displayMetrics.widthPixels;
-            Log.e("ASD", width +" :" + height);
-
-            cameraSource = new CameraSource.Builder(getApplicationContext(),faceRecognizer)
-                    .setFacing(cameraIsFront?CameraSource.CAMERA_FACING_FRONT:CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(width,height)
-//                .setRequestedPreviewSize(1600, 1024)
-//                    .setRequestedPreviewSize(finalWidth, finalHeight)
-//                    .setRequestedFps(15.0f)
-
-                    .setAutoFocusEnabled(true)
-                    .build();
-
+            });
         }
     }
 
-    boolean metadata_calculated = false;
-    RectF oval_rectangle;
-    boolean faceIsCentered(Detector.Detections<Face> detections){
-        if(true) return true; // desactivo la validacion
-        if(!metadata_calculated) {
-            float offset_percentage = 10f;
-            int width = detections.getFrameMetadata().getWidth();
-            int height = detections.getFrameMetadata().getHeight();
-            oval_rectangle = new RectF(width/offset_percentage,height/offset_percentage, width-(width/offset_percentage),height-(height/offset_percentage));
-            metadata_calculated = true;
-        }
-        Face face = detections.getDetectedItems().get(detections.getDetectedItems().keyAt(0));
-        RectF face_rect = new RectF(face.getPosition().x, face.getPosition().y, face.getPosition().x+face.getWidth(),face.getPosition().y+face.getHeight());
-        return oval_rectangle.left < face_rect.left && oval_rectangle.right > face_rect.right && oval_rectangle.top<face_rect.top && oval_rectangle.bottom > face_rect.bottom;
+    boolean faceIsCentered(List<Face> faces) {
+        return true; // validacion desactivada (igual que en la version anterior)
     }
 
-    private void startCameraSource() {
-        if (cameraSource != null) {
+    @androidx.camera.core.ExperimentalGetImage
+    private void analyze(final ImageProxy imageProxy) {
+        if (imageProxy.getImage() == null || faceDetector == null) {
+            imageProxy.close();
+            return;
+        }
+        final int rotation = imageProxy.getImageInfo().getRotationDegrees();
+        if (getImage && resultBitmap == null) {
             try {
-                if(preview!=null) preview.start(cameraSource);
-            } catch (IOException e) {
-                cameraSource.release();
-                cameraSource = null;
+                Bitmap raw = imageProxy.toBitmap();
+                resultBitmap = BitmapsHelper.RotateBitmap(raw, rotation);
+            } catch (Exception e) {
+                Log.e(TAG, "No se pudo capturar la imagen", e);
             }
+            getImage = false;
+        }
+        InputImage image = InputImage.fromMediaImage(imageProxy.getImage(), rotation);
+        faceDetector.process(image)
+                .addOnSuccessListener(cameraExecutor, new OnSuccessListener<List<Face>>() {
+                    @Override
+                    public void onSuccess(List<Face> faces) {
+                        onFaces(faces);
+                    }
+                })
+                .addOnCompleteListener(cameraExecutor, new OnCompleteListener<List<Face>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Face>> task) {
+                        imageProxy.close();
+                    }
+                });
+    }
+
+    @androidx.camera.core.ExperimentalGetImage
+    private void startCameraSource() {
+        if (faceDetector == null) createCameraSource();
+        if (preview == null) return;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) return;
+        final ListenableFuture<ProcessCameraProvider> future = ProcessCameraProvider.getInstance(this);
+        future.addListener(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    cameraProvider = future.get();
+                    bindCamera();
+                } catch (Exception e) {
+                    Log.e(TAG, "No se pudo iniciar la camara", e);
+                }
+            }
+        }, ContextCompat.getMainExecutor(this));
+    }
+
+    @androidx.camera.core.ExperimentalGetImage
+    private void bindCamera() {
+        if (cameraProvider == null) return;
+        cameraProvider.unbindAll();
+        Preview previewUseCase = new Preview.Builder().build();
+        previewUseCase.setSurfaceProvider(preview.getSurfaceProvider());
+        ImageAnalysis analysis = new ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build();
+        analysis.setAnalyzer(cameraExecutor, new ImageAnalysis.Analyzer() {
+            @Override
+            public void analyze(@NonNull ImageProxy image) {
+                FeDeVidaActivity.this.analyze(image);
+            }
+        });
+        CameraSelector selector = cameraIsFront ? CameraSelector.DEFAULT_FRONT_CAMERA : CameraSelector.DEFAULT_BACK_CAMERA;
+        try {
+            cameraProvider.bindToLifecycle(this, selector, previewUseCase, analysis);
+        } catch (Exception e) {
+            Log.e(TAG, "bindToLifecycle fallo", e);
         }
     }
 
     boolean cameraIsFront = true;
-    void rotateCamera(){
+
+    @androidx.camera.core.ExperimentalGetImage
+    void rotateCamera() {
         cameraIsFront = !cameraIsFront;
-        if(cameraSource!=null){
-            cameraSource.release();
-            cameraSource = null;
-        }
-        createCameraSource();
-        startCameraSource();
+        bindCamera();
     }
 
     @Override
+    @androidx.camera.core.ExperimentalGetImage
     public void onResume() {
         super.onResume();
         startCameraSource();
@@ -345,15 +389,15 @@ public class FeDeVidaActivity extends TuIdActivity  implements ActivityCompat.On
     @Override
     protected void onPause() {
         super.onPause();
-        preview.stop();
+        if (cameraProvider != null) cameraProvider.unbindAll();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (cameraSource != null) {
-            cameraSource.release();
-        }
+        if (cameraProvider != null) cameraProvider.unbindAll();
+        cameraExecutor.shutdown();
+        if (faceDetector != null) faceDetector.close();
     }
 
     private String[] getRequiredPermissions() {
