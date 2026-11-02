@@ -135,6 +135,7 @@ dependencies {
     // Lectura NFC de documentos electronicos (OACI 9303: pasaporte / nuevo DNI). Solo debug por ahora.
     debugImplementation 'org.jmrtd:jmrtd:0.8.9'
     debugImplementation 'net.sf.scuba:scuba-sc-android:0.0.27'
+    debugImplementation 'dev.keiji.jp2:jp2-android:1.0.5'
 
     //GLIDE
     implementation 'com.github.bumptech.glide:glide:4.16.0'

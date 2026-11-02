@@ -148,8 +148,21 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                             .append(r.fotoAlto).append(", ").append(r.fotoBytes).append(" bytes\n");
                     Bitmap bmp = null;
                     if (r.foto != null) {
-                        bmp = BitmapFactory.decodeByteArray(r.foto, 0, r.foto.length);
-                        if (bmp == null) s.append("(la foto es JPEG 2000: falta el decodificador para mostrarla)\n");
+                        try {
+                            if (com.gemalto.jp2.JP2Decoder.isJPEG2000(r.foto)) {
+                                bmp = new com.gemalto.jp2.JP2Decoder(r.foto).decode();
+                            } else {
+                                bmp = BitmapFactory.decodeByteArray(r.foto, 0, r.foto.length);
+                            }
+                        } catch (Throwable e) {
+                            s.append("(no se pudo decodificar la foto: ").append(e.getClass().getSimpleName()).append(")\n");
+                        }
+                        if (bmp != null) {
+                            // Lo que se enviaria al backend (idDocument.photo): JPEG normal
+                            java.io.ByteArrayOutputStream jpg = new java.io.ByteArrayOutputStream();
+                            bmp.compress(Bitmap.CompressFormat.JPEG, 85, jpg);
+                            s.append("Foto convertida a JPEG: ").append(jpg.size()).append(" bytes\n");
+                        }
                     }
                     mostrar(s.toString(), bmp);
                 } catch (Exception e) {
