@@ -95,6 +95,11 @@ public class MainApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        if (BuildConfig.DEBUG) {
+            // Diagnostico: registra en logcat el trabajo pesado (disco/red) hecho en el hilo principal
+            android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder()
+                    .detectAll().penaltyLog().build());
+        }
 
         //sobre escribo los fonts
         FontsOverride.setDefaultFont(this, "DEFAULT", "fonts/MuseoSans-500.otf");

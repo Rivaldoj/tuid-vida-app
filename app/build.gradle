@@ -36,6 +36,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Misma firma que release: permite instalar el debug encima del release sin perder datos
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
         release {
             if (keystorePropsFile.exists()) {
                 signingConfig signingConfigs.release
