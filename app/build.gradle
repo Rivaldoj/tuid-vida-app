@@ -19,8 +19,27 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace 'com.autenticar.tuid'
+
+    // Firma: se lee de keystore.properties (no versionado). Sin ese archivo, el release sale sin firmar.
+    def keystorePropsFile = rootProject.file('keystore.properties')
+    def keystoreProps = new Properties()
+    if (keystorePropsFile.exists()) {
+        keystorePropsFile.withInputStream { keystoreProps.load(it) }
+        signingConfigs {
+            release {
+                storeFile file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
 //            minifyEnabled true
 //            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -72,7 +91,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    implementation 'com.google.firebase:firebase-ml-vision:'
+    implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
     implementation 'com.google.firebase:firebase-ml-vision-object-detection-model:19.0.1'
 
     //GLIDE
