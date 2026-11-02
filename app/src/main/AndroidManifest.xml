@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.autenticar.tuid">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:xlargeScreens="true"
+        android:smallScreens="true" />
+
+    <application
+        android:name=".MainApp"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/my_backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="face, barcode" />
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+        See README(https://goo.gl/l4GJaQ) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logovidanoti" />
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimaryDark" />
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="com.google.android.gms.vision"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_map_key_developer" />
+
+<!--        <receiver-->
+<!--            android:name=".resaiver.SMSListener"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"-->
+<!--            android:permission="android.permission.BROADCAST_SMS">-->
+<!--            <intent-filter android:priority="2147483647">-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+
+<!--                <action android:name="android.provider.Telephony.SMS_RECEIVED" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
+        <activity
+            android:name=".SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RegistrarUserActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_activity_registrar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RegistrarScanUserActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_activity_registrar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AutentificationCode"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Autentificación"
+            android:screenOrientation="portrait"
+            android:exported="true">
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.VIEW"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme.NoActionBar" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="autenticartuid.page.link"
+                    android:scheme="https" />
+                <data
+                    android:host="autenticartuid.page.link"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <!--
+<activity
+            android:name=".utils.camera.CameraPreview"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_activity_registrar"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        -->
+        <activity android:name=".utils.cropimage.CropImage" /> <!-- <activity android:name=".OcrCaptureActivity" /> -->
+        <activity
+            android:name=".LivePreviewActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/label_fe_vida"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/history" />
+        <activity
+            android:name=".HistoryNotificationActivity"
+            android:label="@string/notification"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MultiTrackerActivity"
+            android:label="@string/layout_escaner"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <activity android:name=".DNIDetector" android:label="@string/layout_escaner"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".v2.HomeActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".v2.TerminosYCondicionesActivity"  android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".v2.ScanActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".v2.ScanResultActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.PreGestureActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.FeDeVidaActivity"  android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.ValidarTelefonoMail" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.ChanceActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.EntidadesAdheridasActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.CuandoCobroActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.CertificadoActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.ResultLoginActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".v2.RegistroManualActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+
+                <data
+                    android:host="com.autenticar.tuid"
+                    android:path="/registroManual"
+                    android:scheme="https"></data>
+
+                <data
+                    android:host="api.autenticartuid.com"
+                    android:path="/manual"
+                    android:scheme="https"></data>
+
+            </intent-filter>
+        </activity>
+        <activity android:name=".v2.FormActivity" android:screenOrientation="portrait" />
+        <activity android:name=".v2.TareasPendientesActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".v2.WebActivity" />
+
+        <service android:name=".utils.FirebaseInstanceIdServer" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".utils.MyFirebaseMessagingService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+
+    </application>
+
+</manifest>

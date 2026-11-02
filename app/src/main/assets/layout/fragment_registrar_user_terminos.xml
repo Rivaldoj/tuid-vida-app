@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorblanco"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/relative_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/style_rect"
+        android:gravity="center"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/paso_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/explicacion_registro_scan_paso1"
+            android:textAlignment="center"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/img_muestra_frente"
+            android:layout_width="fill_parent"
+            android:layout_height="130dp"
+            android:layout_below="@id/paso_1"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/frente_dni" />
+
+        <ImageView
+            android:id="@+id/imagen_muestra_dorso"
+            android:layout_width="fill_parent"
+            android:layout_height="130dp"
+            android:layout_below="@id/img_muestra_frente"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/dorso_dni" />
+
+        <LinearLayout
+            android:id="@+id/layout_terminos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imagen_muestra_dorso"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp">
+
+            <CheckBox
+                android:id="@+id/checkbox_terminos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/checkbox_terminos_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/layout_terminos"
+                android:layout_marginLeft="3dp"
+                android:layout_marginBottom="@dimen/padding"
+                android:text="@string/label_terminos_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_politicas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_terminos"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="true"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:textAlignment="center">
+
+            <CheckBox
+                android:id="@+id/checkbox_politicas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/checkbox_politicas_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="@dimen/padding"
+                android:text="@string/label_politicas_text" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center|bottom"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/btnIniciarScan"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/round_primary_button"
+            android:text="@string/iniciar_scan"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</RelativeLayout>

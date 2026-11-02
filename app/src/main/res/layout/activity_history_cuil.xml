@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorblanco">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/list_cuil"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
+    <!--<include
+        layout="@layout/app_bar_main_"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+    <TextView
+        android:id="@+id/no_registro"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No posee ningún registro actualmente."
+        android:layout_marginBottom="5dp"
+        android:gravity="center|bottom"/>
+
+</RelativeLayout>

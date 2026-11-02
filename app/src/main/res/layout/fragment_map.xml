@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    android:gravity="right"
+    android:background="@color/colorTransTotal"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/style_rect"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="right|center"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/btn_return"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.9"
+                android:foregroundGravity="right"
+                app:srcCompat="@drawable/ico_return_primary" />
+            <TextView
+                android:id="@+id/text_title_info_empresarial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="0.2"
+                android:gravity="left|center"
+                android:textSize="18sp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/btn_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:layout_marginRight="5dp"
+                android:foregroundGravity="right"
+                app:srcCompat="@drawable/ico_cancel_primary" />
+        </LinearLayout>
+
+        <fragment xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/frag_map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.autenticar.tuid.HistoryActivity" />
+    </LinearLayout>
+</FrameLayout>
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_on"
+        android:icon="@drawable/on_sound_3"
+        app:showAsAction="withText|ifRoom"
+        android:title="@string/on" />
+    <item android:id="@+id/action_flash"
+        android:icon="@drawable/ic_off_flash"
+        app:showAsAction="withText|ifRoom"
+        android:title="@string/off" />
+    <!--<item android:id="@+id/action_debug"
+        android:icon="@drawable/ic_menu_help"
+        app:showAsAction="withText|ifRoom"
+        android:title="debug" />-->
+</menu>

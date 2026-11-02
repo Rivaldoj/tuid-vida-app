@@ -1,0 +1,8 @@
+<resources>
+    <string name="ESTE_ARCHIVO_NO_SIRVE" translatable="false">https://api.autenticartuid.com/</string>
+    <string name="urlConnectionprod" translatable="false">https://api.autenticartuid.com/</string>
+    <string name="urlConnectionqaa" translatable="false">http://tuidvida-qa.us-east-1.elasticbeanstalk.com/</string>
+    <string name="urlConnectionqa" translatable="false">http://localhost:3002/</string>
+    <string name="urlConnection1" translatable="false">https://34.121.154.109:3003/</string>
+    <string name="preference_file_key" translatable="false">tuid5747347keypref</string>
+</resources>

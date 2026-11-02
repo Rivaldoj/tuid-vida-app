@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:gravity="top|center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/text_cotent_infno_DNI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contact_dni_del_beneficiario"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:text="*"
+                        android:textColor="@color/colorAccentDarkSecund" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/text_content_info_CUIL_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black_2"
+                    android:hint="@string/contact_dni_del_beneficiario"
+                    android:inputType="number"
+                    android:padding="10dp" />
+
+                <RadioGroup
+                    android:id="@+id/rdb_genero"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rdb_masculino"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="Masculino"
+                        android:checked="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16dp" />
+
+                    <RadioButton
+                        android:id="@+id/rdb_femenino"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Femenino"
+                        android:layout_weight="0.5"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16dp" />
+                </RadioGroup>
+
+                <Button
+                    android:id="@+id/btn_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/round_primary_button"
+                    android:text="@string/contact_enviar"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

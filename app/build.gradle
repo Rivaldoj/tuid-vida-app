@@ -1,0 +1,90 @@
+apply plugin: 'com.android.application'
+
+android {
+    defaultConfig {
+        compileSdkVersion 35
+        applicationId "com.autenticar.tuid"
+        minSdkVersion 24
+        targetSdkVersion 35
+        versionCode 91
+        versionName "3.0.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace 'com.autenticar.tuid'
+    buildTypes {
+        release {
+//            minifyEnabled true
+//            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+    useLibrary 'org.apache.http.legacy'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+
+    // ML Kit dependencies
+    implementation 'com.google.firebase:firebase-messaging:19.0.0'
+
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'androidx.work:work-runtime:2.7.1'
+
+    //gif implementation
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    implementation 'com.google.firebase:firebase-ml-vision:'
+    implementation 'com.google.firebase:firebase-ml-vision-object-detection-model:19.0.1'
+
+    //GLIDE
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    //
+
+    //AMPLITUDE
+    implementation 'com.amplitude:android-sdk:2.34.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    //
+    implementation 'com.izettle:html2bitmap:1.9'
+}
+
+
+apply plugin: 'com.google.gms.google-services'

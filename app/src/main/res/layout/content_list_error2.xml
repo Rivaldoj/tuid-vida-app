@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="left|center"
+    android:layout_margin="1dp"
+    android:padding="3dp"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/colorAccentDark">
+
+    </LinearLayout>
+
+<!--    <ImageView-->
+<!--        android:id="@+id/img_error_list_icon"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="20dp"-->
+<!--        app:srcCompat="@drawable/ic_baseline_error_outline_24"-->
+<!--        app:tint="@color/colorPrimary" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/img_error_list"
+            android:drawableLeft="@drawable/ic_baseline_error_outline_24"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorblanco"
+            android:textColor="@color/colorPrimaryDark"
+            android:padding="10dp"
+            android:text="Validar" />
+
+
+        <TextView
+            android:id="@+id/img_error_list_desc"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:background="@color/colorblanco"
+            android:padding="10dp"
+            android:textStyle="italic"
+            android:text="comentario asdadsa" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

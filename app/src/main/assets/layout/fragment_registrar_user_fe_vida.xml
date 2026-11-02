@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorblanco"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:background="@drawable/style_rect"
+        android:layout_weight="0.1"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/img_prueba_vida_hm"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            app:srcCompat="@drawable/fe_vida_ico_h" />
+
+        <TextView
+            android:id="@+id/textGestoVida"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:text="@string/explicacion_registro_scan_paso2"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="@color/colorPrimary" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:padding="5dp"
+        android:layout_weight="0.8"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCaptureGestures"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_height="50dp"
+            android:background="@drawable/round_primary_button"
+            android:text="@string/capture_gestures"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

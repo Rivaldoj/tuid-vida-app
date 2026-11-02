@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_background"
+        android:orientation="vertical"
+        android:padding="7sp"
+        android:layout_margin="20sp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginRight="5sp"
+            android:layout_marginLeft="5sp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dialog_text_box_title"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:text="Titulo"/>
+
+            <ImageView
+                android:id="@+id/dialog_text_box_close_button"
+                android:layout_width="30sp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ico_cancel_primary"/>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:layout_margin="10sp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/dialog_text_box_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10sp"
+                    android:text="texto"/>
+
+            </LinearLayout>
+
+
+
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/dialog_text_box_reject_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5sp"
+                android:paddingRight="5sp"
+                android:layout_margin="5sp"
+                android:textSize="15sp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:background="@drawable/round_accent_button"
+                android:visibility="gone"
+                android:text="Cancelar"/>
+
+            <Button
+                android:id="@+id/dialog_text_box_accept_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5sp"
+                android:paddingRight="5sp"
+                android:layout_margin="5sp"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:background="@drawable/round_primary_button"
+                android:text="Aceptar"/>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,14 @@
+<resources>
+<!--    PROD-->
+    <string name="urlConnectionProd" translatable="false">https://api.autenticartuid.com/</string>
+<!--    QA-->
+<!--    <string name="urlConnectionQA" translatable="false">http://tuidvida-qa.us-east-1.elasticbeanstalk.com/</string>-->
+    <string name="urlConnectionQA" translatable="false">http://192.168.1.101:3003/</string>
+<!--    <string name="urlConnectionApiLocalhost" translatable="false">http://10.0.2.2:3002/</string>-->
+    <string name="urlConnectionQALocalhost3" translatable="false">http://192.168.1.101:3002/</string>
+<!--    DEV-->
+    <string name="urlConnection2" translatable="false">http://34.121.154.209:3003/</string>
+    <!--    <string name="urlConnection" translatable="false">http://35.188.7.124:3003/</string>-->
+<!--    <string name="urlConnection" translatable="false">https://test.autenticartuid.com/</string>-->
+    <string name="preference_file_key" translatable="false">tuid5747347keypref</string>
+</resources>

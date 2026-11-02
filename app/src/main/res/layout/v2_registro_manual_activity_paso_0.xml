@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="5dp"
+    android:background="@color/colorPrimary"
+    android:layout_height="match_parent">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="50dp"
+        >
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logovidanoti"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registración asistida"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginVertical="5dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="50dp"
+            android:layout_height="5dp"
+            android:background="@color/white"/>
+
+        <LinearLayout
+            android:layout_width="50dp"
+            android:layout_height="2dp"
+            android:background="@color/white"/>
+
+
+    </LinearLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="2"
+            android:padding="10dp"
+            >
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_rowWeight="1"
+                android:layout_columnSpan="2"
+                android:text="Lamentamos el contratiempo."/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_rowWeight="1"
+                android:layout_columnSpan="2"
+                android:text="Para ayudarle en la certificación le podemos ofrecer realizar una registración asistida."/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_rowWeight="1"
+                android:layout_columnSpan="2"
+                android:text="Esta dificultad normalmente se da porque la fotografia del DNI es muy oscura, de baja resolucion o el holograma que esta sobre la foto la vuelve ilegigle para el sistema e impide que se realice el escaneo"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_rowWeight="1"
+                android:textColor="@color/colorPrimary"
+                android:layout_columnSpan="2"
+                android:visibility="invisible"
+                android:gravity="center"
+                android:text="Para comenzar presione continuar"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_rowWeight="1"
+                android:textColor="@color/colorPrimary"
+                android:layout_columnSpan="2"
+                android:gravity="center"
+                android:text="Para comenzar presione continuar"/>
+
+
+
+
+
+            <Button
+                android:id="@+id/continuar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/round_primary_button"
+                android:text="Continuar"
+                android:layout_columnWeight="1"
+                android:textSize="17sp"
+                android:layout_margin="4dp"
+                android:textStyle="bold" />
+
+
+            <Button
+                android:id="@+id/ayuda"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/round_primary_button"
+                android:text="Ayuda"
+                android:visibility="gone"
+                android:drawableRight="@drawable/ic_baseline_live_help_24"
+                android:textSize="17sp"
+                android:layout_margin="4dp"
+                android:textStyle="bold" />
+
+            
+
+        </GridLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/help"
+        android:title=""
+        android:icon="@drawable/ic_baseline_live_help_24"
+        app:showAsAction="withText|ifRoom"/>
+    <item android:id="@+id/action_on"
+        android:icon="@drawable/on_sound_3"
+        app:showAsAction="withText|ifRoom"
+        android:title="" />
+</menu>

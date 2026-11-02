@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_background"
+        android:orientation="vertical"
+        android:padding="7sp"
+        android:layout_margin="20sp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginRight="5sp"
+            android:layout_marginLeft="5sp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:text=""/>
+
+            <ImageView
+                android:id="@+id/dialog_text_box_close_button"
+                android:layout_width="30sp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ico_cancel_primary"/>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:layout_margin="10sp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/banner_login"
+                    android:adjustViewBounds="true"/>
+
+                <TextView
+                    android:id="@+id/dialog_text_box_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:text="Titulo"/>
+
+                <TextView
+                    android:gravity="center"
+                    android:id="@+id/dialog_text_box_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="16sp"
+                    android:layout_margin="10sp"
+                    android:text="texto"/>
+
+                <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:isIndicator="true"
+                    android:layout_height="wrap_content"
+                    android:rating="3.5"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/colorPrimary"
+                    android:progressTint="@color/gold"
+                    android:numStars="5"/>
+
+            </LinearLayout>
+
+
+
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/dialog_text_box_reject_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5sp"
+                android:paddingRight="5sp"
+                android:layout_margin="5sp"
+                android:textSize="15sp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:background="@drawable/round_accent_button"
+                android:visibility="gone"
+                android:text="Cancelar"/>
+
+            <Button
+                android:id="@+id/dialog_text_box_accept_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5sp"
+                android:paddingRight="5sp"
+                android:layout_margin="5sp"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:drawableLeft="@drawable/ic_baseline_star_rate_24"
+                android:drawableRight="@drawable/ic_baseline_star_rate_24"
+                android:textStyle="bold"
+                android:background="@drawable/round_primary_button"
+                android:text="Aceptar"/>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+</LinearLayout>

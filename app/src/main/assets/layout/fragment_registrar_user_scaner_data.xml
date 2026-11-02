@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorblanco"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="70dp"
+        android:gravity="center"
+        android:paddingTop="5dp">
+
+        <LinearLayout
+            android:id="@+id/layout_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/style_rect"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgDNIFotoDNI"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/profile_enable"
+                app:civ_border_color="@color/colorTransBg"
+                app:civ_border_width="1dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fullname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Full name"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/numerodni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="##.###.###"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/sexo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sexo: M"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/fechaNacimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha Nac.: DD/MM/AAAA"
+                    android:textSize="14dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_imagen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/layout_data"
+            android:background="@drawable/style_rect"
+            android:gravity="center_horizontal|center"
+            android:padding="8dp">
+            <LinearLayout
+                android:id="@+id/frente_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingLeft="5dp">
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/style_aler_scan"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="3dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="3dp"
+                    android:text="Frente del DNI"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgDNIFrente"
+                android:layout_width="fill_parent"
+                android:layout_height="130dp"
+                android:layout_below="@id/frente_text"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/frente_dni" />
+            <LinearLayout
+                android:id="@+id/dorso_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_below="@id/imgDNIFrente"
+                android:paddingLeft="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/style_aler_scan"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="3dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="3dp"
+                    android:text="Dorso del DNI"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgDNIDorso"
+                android:layout_width="fill_parent"
+                android:layout_height="130dp"
+                android:layout_below="@id/dorso_text"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/dorso_dni" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:padding="5dp">
+        <Button
+            android:id="@+id/btnContinuarAGestos"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/round_primary_button"
+            android:text="@string/action_continuar"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</RelativeLayout>

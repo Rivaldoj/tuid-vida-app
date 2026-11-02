@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registro Manual"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"/>
+
+
+    <EditText
+        android:id="@+id/dni"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:inputType="number"
+        android:digits="1234567890"
+        android:maxLength="8"
+        android:layout_height="wrap_content"
+        android:background="@drawable/style_edittext_rect"
+        android:padding="10dp"
+        android:hint="DNI"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Sexo:"/>
+
+
+    <RadioGroup
+        android:id="@+id/sexo_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rdb_masculino"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Masculino"/>
+
+
+        <RadioButton
+            android:id="@+id/rdb_femenino"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Femenino"/>
+
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/frente"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Frente del DNI"
+            android:textSize="20sp"/>
+
+
+        <ImageView
+            android:id="@+id/frente_img"
+            android:layout_marginHorizontal="10dp"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:src="@drawable/ic_baseline_upload_file_24"
+            android:background="@drawable/style_edittext_rect"
+            app:tint="@color/colorPrimary" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/dorso"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dorso del DNI"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"/>
+
+
+        <ImageView
+            android:id="@+id/dorso_img"
+            android:layout_marginHorizontal="10dp"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_baseline_upload_file_24"
+            android:background="@drawable/style_edittext_rect"
+            app:tint="@color/colorPrimary" />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_background"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Confirmar"/>
+
+
+
+
+</LinearLayout>

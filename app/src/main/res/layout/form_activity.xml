@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:id="@+id/form_title"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desc"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:id="@+id/form_desc"/>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:id="@+id/form_controls"
+            android:paddingVertical="10dp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/form_cancel"
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorRed"
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:text="Cancelar"/>
+
+            <Button
+                android:id="@+id/form_confirm"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content"
+                android:text="Confirmar"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

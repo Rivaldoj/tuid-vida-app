@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/amp_gray"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/entidades_adheridas_volver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VOLVER"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_baseline_keyboard_arrow_left_24"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdgeLength="5dp"
+        android:requiresFadingEdge="vertical"
+        android:fillViewport="true">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/entidades_adheridas_entidades_list_lo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </ScrollView>
+
+</LinearLayout>

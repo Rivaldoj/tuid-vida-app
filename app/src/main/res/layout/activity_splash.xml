@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TESTING"
+        android:textSize="30sp"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"/>
+
+
+    <ImageView
+        android:id="@+id/imgSplash"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logovida" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="30dp"
+        android:gravity="center|bottom"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btn_sound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_primary_button"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingTop="5dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="5dp">
+
+            <ImageView
+                android:id="@+id/img_sound"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_sound_off_white" />
+
+            <TextView
+                android:id="@+id/text_sound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="3dp"
+                android:text="@string/modal_sonido_configuracion_titulo"
+                android:textColor="@color/white"
+                android:textSize="19dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TESTING"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        android:id="@+id/splash_testing"/>
+
+</RelativeLayout>

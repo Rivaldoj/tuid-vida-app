@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    android:layout_width="match_parent">
+
+    <group android:checkableBehavior="single">
+        <item android:title="Información legal">
+            <menu>
+                <item
+                    android:id="@+id/nav_terminos_condiciones"
+                    android:title=" Términos y Condiciones" />
+                <item
+                    android:id="@+id/nav_politicas"
+                    android:title=" Políticas privacidad" />
+                <item
+                    android:id="@+id/nav_empresa"
+                    android:title=" Empresa" />
+                <item
+                    android:id="@+id/nav_contacto"
+                    android:title=" Contacto" />
+
+            </menu>
+        </item>
+        <item android:title="Información usuario">
+            <menu>
+                <item
+                    android:id="@+id/nav_historial"
+                    android:title="Historial" />
+                <item
+                    android:id="@+id/nav_notificationes"
+                    android:title="Ultimas Notificaciones" />
+
+            </menu>
+        </item>
+
+    </group>
+</menu>
+

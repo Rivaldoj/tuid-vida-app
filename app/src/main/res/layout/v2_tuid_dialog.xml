@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="10dp"
+    android:background="@color/colorTransTotal">
+
+
+    <LinearLayout
+        android:id="@+id/tuid_dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/style_rect"
+        android:padding="20dp"
+        >
+
+        <TextView
+            android:id="@+id/tuid_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="titulo"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tuid_dialog_text"
+            android:layout_weight="1"
+            android:minLines="5"
+            android:text="body"/>
+
+        <TextView
+            android:id="@+id/tuid_dialog_ir_a_registro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Registrarse"
+            android:visibility="gone"
+            android:layout_marginVertical="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tuid_dialog_ir_a_fe_de_vida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:visibility="gone"
+            android:layout_marginVertical="10dp"
+            android:text="Dar Fe de Vida"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tuid_dialog_aceptar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Aceptar"
+            android:layout_marginVertical="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

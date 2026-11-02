@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:padding="8dp"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/id_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textColor="@color/colorAccentDark"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_content_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 1"/>
+        <TextView
+            android:id="@+id/text_content_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 2"/>
+        <TextView
+            android:id="@+id/text_content_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 3"/>
+        <TextView
+            android:id="@+id/text_content_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 4"/>
+        <TextView
+            android:id="@+id/text_content_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 5"/>
+        <TextView
+            android:id="@+id/text_content_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 6"/>
+        <TextView
+            android:id="@+id/text_content_7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 7"/>
+        <TextView
+            android:id="@+id/text_content_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 8"/>
+        <TextView
+            android:id="@+id/text_content_9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="value 9"/>
+
+    </LinearLayout>
+</LinearLayout>

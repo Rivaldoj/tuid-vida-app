@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <com.autenticar.tuid.camera.CameraSourcePreview
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <com.autenticar.tuid.camera.GraphicOverlay
+            android:id="@+id/faceOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.autenticar.tuid.camera.CameraSourcePreview>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/scan_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/white"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:text="@string/capture_front" />
+        <TextView
+            android:id="@+id/scan_guide_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/white"
+            android:textSize="13dp"
+            android:text="" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:max="100"
+            android:visibility="gone"
+            android:layout_marginBottom="5dp"
+            android:theme="@style/GreenAccent" />
+    </LinearLayout>
+
+    <com.autenticar.tuid.camera.DocumentOverlay
+        android:id="@+id/dniOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:animationCache="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scan_view_drawable_rectangle"
+            android:orientation="vertical"/>
+
+        <ImageView
+            android:id="@+id/imgCardfront"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/capture_front"
+            android:padding="40dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/frente" />
+
+        <ImageView
+            android:id="@+id/imgCardBack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/capture_back"
+            android:padding="40dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/dorso_dni" />
+
+    </com.autenticar.tuid.camera.DocumentOverlay>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/dni_transparente"
+        android:visibility="gone" />
+
+
+</FrameLayout>
+
+
+
