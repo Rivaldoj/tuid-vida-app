@@ -153,13 +153,41 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                     }
                     mostrar(s.toString(), bmp);
                 } catch (Exception e) {
-                    mostrar("ERROR: " + e.getClass().getSimpleName() + " - " + e.getMessage()
-                            + "\nRevisá los datos de la MRZ y volvé a apoyar el documento.", null);
+                    mostrar(describirError(e), null);
                 } finally {
                     try { iso.close(); } catch (Exception ignored) { }
                 }
             }
         });
+    }
+
+    /** Etapa + cadena de causas + primeras lineas de la pila (sin datos personales). */
+    private String describirError(Exception e) {
+        StringBuilder s = new StringBuilder();
+        Throwable raiz = e;
+        if (e instanceof EmrtdReader.EmrtdException) {
+            EmrtdReader.EmrtdException x = (EmrtdReader.EmrtdException) e;
+            s.append("ERROR en la etapa: ").append(x.etapa).append('\n');
+            s.append("PACE: ").append(x.detallePace).append('\n');
+            raiz = x.getCause() != null ? x.getCause() : e;
+        }
+        int n = 0;
+        for (Throwable t = raiz; t != null && n < 5; t = t.getCause(), n++) {
+            s.append(n == 0 ? "Causa: " : "  causada por: ").append(t.getClass().getName());
+            if (t.getMessage() != null) s.append(" - ").append(t.getMessage());
+            s.append('\n');
+        }
+        int frames = 0;
+        for (StackTraceElement f : raiz.getStackTrace()) {
+            String c = f.getClassName();
+            if (c.startsWith("org.jmrtd") || c.startsWith("net.sf.scuba") || c.startsWith("android.nfc")) {
+                s.append("   en ").append(c.substring(c.lastIndexOf('.') + 1)).append('.').append(f.getMethodName())
+                        .append(':').append(f.getLineNumber()).append('\n');
+                if (++frames >= 6) break;
+            }
+        }
+        s.append("\nSi dice 'tag lost' / 'Transceive failed': apoyá el documento firme y quieto.");
+        return s.toString();
     }
 
     private void mostrar(final String texto, final Bitmap foto) {

@@ -28,6 +28,16 @@ import java.util.List;
  */
 public class EmrtdReader {
 
+    public static class EmrtdException extends Exception {
+        public final String etapa;
+        public final String detallePace;
+        public EmrtdException(String etapa, String detallePace, Throwable causa) {
+            super(causa);
+            this.etapa = etapa;
+            this.detallePace = detallePace;
+        }
+    }
+
     public static class Result {
         public String protocolo;      // PACE-CAN | PACE-MRZ | BAC
         public String tipoDocumento;
@@ -53,6 +63,20 @@ public class EmrtdReader {
      * @param expiryYyMmDd  fecha de vencimiento AAMMDD
      */
     public Result read(IsoDep isoDep, String can, String docNumber, String birthYyMmDd, String expiryYyMmDd)
+            throws EmrtdException {
+        etapa = "abrir chip";
+        detallePace = "no intentado";
+        try {
+            return readInterno(isoDep, can, docNumber, birthYyMmDd, expiryYyMmDd);
+        } catch (Exception e) {
+            throw new EmrtdException(etapa, detallePace, e);
+        }
+    }
+
+    private String etapa;
+    private String detallePace;
+
+    private Result readInterno(IsoDep isoDep, String can, String docNumber, String birthYyMmDd, String expiryYyMmDd)
             throws Exception {
         isoDep.setTimeout(10000);
         CardService cardService = CardService.getInstance(isoDep);
@@ -67,6 +91,7 @@ public class EmrtdReader {
         BACKey bacKey = new BACKey(docNumber, birthYyMmDd, expiryYyMmDd);
 
         boolean paceOk = false;
+        etapa = "PACE (CardAccess)";
         try {
             InputStream in = service.getInputStream(PassportService.EF_CARD_ACCESS, PassportService.DEFAULT_MAX_BLOCKSIZE);
             CardAccessFile cardAccess = new CardAccessFile(in);
@@ -81,17 +106,22 @@ public class EmrtdReader {
                     break;
                 }
             }
+            if (!paceOk) detallePace = "el chip no anuncia PACE";
         } catch (Exception e) {
             paceOk = false; // el chip no ofrece PACE: se prueba BAC
+            detallePace = e.getClass().getSimpleName() + ": " + e.getMessage();
         }
 
+        etapa = "seleccionar aplicacion";
         service.sendSelectApplet(paceOk);
         if (!paceOk) {
+            etapa = "BAC (clave de la MRZ)";
             service.doBAC(bacKey);
             r.protocolo = "BAC";
         }
 
         // DG1: datos de la MRZ
+        etapa = "leer DG1 (datos)";
         InputStream in1 = service.getInputStream(PassportService.EF_DG1, PassportService.DEFAULT_MAX_BLOCKSIZE);
         MRZInfo mrz = new DG1File(in1).getMRZInfo();
         r.tipoDocumento = mrz.getDocumentCode();
@@ -105,6 +135,7 @@ public class EmrtdReader {
         r.fechaVencimiento = mrz.getDateOfExpiry();
 
         // DG2: foto del rostro (no se decodifica: suele ser JPEG 2000)
+        etapa = "leer DG2 (foto)";
         try {
             InputStream in2 = service.getInputStream(PassportService.EF_DG2, PassportService.DEFAULT_MAX_BLOCKSIZE);
             List<FaceInfo> faces = new DG2File(in2).getFaceInfos();
