@@ -18,11 +18,11 @@ public class ResponseBase {
 
 
     public boolean IsOk() {
-        return (this.Response.equals("ok") && Status == 200 && (!Message.equals("chance")));
+        return ("ok".equals(this.Response) && Status == 200 && !"chance".equals(Message));
     }
 
     public boolean IsChance() {
-        return (this.Response.equals("ok") && Status == 200 && (Message.equals("chance")));
+        return ("ok".equals(this.Response) && Status == 200 && "chance".equals(Message));
     }
 }
 

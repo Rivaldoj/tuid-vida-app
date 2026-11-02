@@ -24,7 +24,7 @@ public class ServiceGenerator {
     public static Retrofit.Builder builder;
     public static Context context;
     private static HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY);
+            .setLevel(com.autenticar.tuid.BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
     private static OkHttpClient.Builder httpClient;
 

@@ -492,6 +492,14 @@ public class ResultLoginActivity extends TuIdActivity{
         if(mode==2) initCodPaisSpinner(dialog);
     }
 
+    // Antes los errores del servidor o de red se ignoraban en silencio y la pantalla parecia colgada.
+    private void mostrarErrorActualizacion(String mensaje) {
+        String texto = (mensaje != null && !mensaje.trim().isEmpty() && !"chance".equals(mensaje))
+                ? mensaje
+                : "No se pudo actualizar los datos. Verificá tu conexión e intentá nuevamente.";
+        HelperFunctions.ShowAlert(activity, texto);
+    }
+
     private  void sendUpdatePhone(){
         final TuidService service = ServiceGenerator.createService(TuidService.class);
         final ValidationRequest2 request = new ValidationRequest2();
@@ -519,18 +527,22 @@ public class ResultLoginActivity extends TuIdActivity{
             public void onResponse(Call<ValidationResponse> call, Response<ValidationResponse> response) {
                 hideProgressDialog();
                 ValidationResponse revalidationResponse = response.body();
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && revalidationResponse != null) {
                     if (revalidationResponse.IsOk()) {
                         dialog.findViewById(R.id.fragment_actualizar).setVisibility(View.GONE);
                         dialog.findViewById(R.id.fragment_validate).setVisibility(View.VISIBLE);
-
+                    } else {
+                        mostrarErrorActualizacion(revalidationResponse.Message);
                     }
+                } else {
+                    mostrarErrorActualizacion(null);
                 }
             }
 
             @Override
             public void onFailure(Call<ValidationResponse> call, Throwable t) {
                 hideProgressDialog();
+                mostrarErrorActualizacion(null);
             }
         });
     }
@@ -548,18 +560,22 @@ public class ResultLoginActivity extends TuIdActivity{
             public void onResponse(Call<RevalidationResponse> call, Response<RevalidationResponse> response) {
                 hideProgressDialog();
                 RevalidationResponse revalidationResponse = response.body();
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && revalidationResponse != null) {
                     if (revalidationResponse.IsOk()) {
                         dialog.findViewById(R.id.fragment_actualizar).setVisibility(View.GONE);
                         dialog.findViewById(R.id.fragment_validate).setVisibility(View.VISIBLE);
-
+                    } else {
+                        mostrarErrorActualizacion(revalidationResponse.Message);
                     }
+                } else {
+                    mostrarErrorActualizacion(null);
                 }
             }
 
             @Override
             public void onFailure(Call<RevalidationResponse> call, Throwable t) {
                 hideProgressDialog();
+                mostrarErrorActualizacion(null);
             }
         });
     }
