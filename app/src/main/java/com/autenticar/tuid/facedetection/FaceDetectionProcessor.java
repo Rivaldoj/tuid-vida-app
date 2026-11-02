@@ -13,6 +13,10 @@
 // limitations under the License.
 package com.autenticar.tuid.facedetection;
 
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,11 +32,6 @@ import com.autenticar.tuid.ui.vision.CameraImageGraphic;
 import com.autenticar.tuid.ui.vision.FrameMetadata;
 import com.autenticar.tuid.ui.vision.GraphicOverlay;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.face.FirebaseVisionFace;
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,16 +40,15 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.ALL_CONTOURS;
 
 /**
  * Face Detector Demo.
  */
-public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVisionFace>> {
+public class FaceDetectionProcessor extends VisionProcessorBase<List<Face>> {
 
     private static final String TAG = "FaceDetectionProcessor";
 
-    private final FirebaseVisionFaceDetector detector;
+    private final com.google.mlkit.vision.face.FaceDetector detector;
 
     public static final int DETECTAR_SIN_GESTOS = 0;
     public static final int DETECTAR_SONRISA = 1;
@@ -80,17 +78,17 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
     public FaceDetectionProcessor(int gestureToDetect, IGestureResult gestureResult, Activity activity, Context context, TextView alertMessager) {
         this.context = context;
         //aqui hay q revisar para q funcione en la nueva version
-        FirebaseVisionFaceDetectorOptions options =
-                new FirebaseVisionFaceDetectorOptions.Builder()
-                        .setClassificationMode(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
-                        .setContourMode(ALL_CONTOURS)
+        FaceDetectorOptions options =
+                new FaceDetectorOptions.Builder()
+                        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
                         .setMinFaceSize(0.7f)
                         .enableTracking()
                         .build();
         this.gestureToDetect = gestureToDetect;
         this.activity = activity;
         this.gestureResult = gestureResult;
-        detector = FirebaseVision.getInstance().getVisionFaceDetector(options);
+        detector = FaceDetection.getClient(options);
         activity.getWindowManager().getDefaultDisplay().getMetrics(display);
         width = display.widthPixels;
         medWidth = display.widthPixels / 2;
@@ -102,20 +100,20 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
     public void stop() {
         try {
             detector.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, "Exception thrown while trying to close Face Detector: " + e);
         }
     }
 
     @Override
-    protected Task<List<FirebaseVisionFace>> detectInImage(FirebaseVisionImage image) {
-        return detector.detectInImage(image);
+    protected Task<List<Face>> detectInImage(InputImage image) {
+        return detector.process(image);
     }
 
     @Override
     protected void onSuccess(
             @Nullable Bitmap originalCameraImage,
-            @NonNull List<FirebaseVisionFace> faces,
+            @NonNull List<Face> faces,
             @NonNull FrameMetadata frameMetadata,
             @NonNull GraphicOverlay graphicOverlay) {
 //        Bitmap displayImage = originalCameraImage.copy(Bitmap.Config.ARGB_8888, true);
@@ -123,7 +121,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
 //            //-------  ESTEBAN
 //            if(faces.size()>0) {
 //                Canvas canvas = new Canvas(displayImage);
-//                for(FirebaseVisionFace f : faces) {
+//                for(Face f : faces) {
 //
 //
 //                    canvas.drawColor(Color.argb(0, 0, 0, 0));
@@ -261,7 +259,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
             }
             for (int i = 0; i < faces.size(); i++) {
                 if (faces.get(i).getTrackingId() == valorID && faces.size() == 1) {
-                    FirebaseVisionFace face = faces.get(i);
+                    Face face = faces.get(i);
                     ProcesarGesto(face, originalCameraImage, faces.size());
                 } else if (faces.size() > 1) {
                     contadorDetecciones = 0;
@@ -297,7 +295,7 @@ public class FaceDetectionProcessor extends VisionProcessorBase<List<FirebaseVis
         faces.clear();
     }
 
-    private void ProcesarGesto(FirebaseVisionFace face, Bitmap bitmap, int i) {
+    private void ProcesarGesto(Face face, Bitmap bitmap, int i) {
         switch (gestureToDetect) {
 //            case DETECTAR_SONRISA:
 //                if ((face.getSmilingProbability() > 0.8)

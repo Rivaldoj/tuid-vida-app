@@ -1,5 +1,19 @@
 package com.autenticar.tuid.utils.cropimage;
 
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.objects.DetectedObject;
+import com.google.mlkit.vision.objects.ObjectDetector;
+import com.google.mlkit.vision.objects.ObjectDetection;
+import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -16,18 +30,6 @@ import android.util.Log;
 import com.autenticar.tuid.DNIDetector;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.CameraSource;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.face.FirebaseVisionFace;
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
-import com.google.firebase.ml.vision.objects.FirebaseVisionObject;
-import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
-import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,10 +71,10 @@ public class CropperDetector {
     public static Date fechaNacimiento;
     public static String sexo;
 
-    FirebaseVisionObjectDetector objectDetector;
-    FirebaseVisionFaceDetector faceDetector;
-    FirebaseVisionTextRecognizer textDetector;
-    FirebaseVisionBarcodeDetector pdfDetector;
+    ObjectDetector objectDetector;
+    com.google.mlkit.vision.face.FaceDetector faceDetector;
+    com.google.mlkit.vision.text.TextRecognizer textDetector;
+    BarcodeScanner pdfDetector;
 
     public boolean faceFoundOnce = false;
     public boolean pdfFoundOnce = false;
@@ -122,25 +124,25 @@ public class CropperDetector {
         }
 
 
-        FirebaseVisionObjectDetectorOptions objectDetectorOptions =
-                new FirebaseVisionObjectDetectorOptions.Builder()
-                        .setDetectorMode(FirebaseVisionObjectDetectorOptions.SINGLE_IMAGE_MODE)
+        ObjectDetectorOptions objectDetectorOptions =
+                new ObjectDetectorOptions.Builder()
+                        .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
                         .enableMultipleObjects()
                         .build();
 
-        objectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(objectDetectorOptions);
+        objectDetector = ObjectDetection.getClient(objectDetectorOptions);
 
-        faceDetector = FirebaseVision.getInstance().getVisionFaceDetector();
+        faceDetector = FaceDetection.getClient();
 
-        textDetector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+        textDetector = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
 
-        FirebaseVisionBarcodeDetectorOptions pdfDetectoroptions =
-                new FirebaseVisionBarcodeDetectorOptions.Builder()
+        BarcodeScannerOptions pdfDetectoroptions =
+                new BarcodeScannerOptions.Builder()
                         .setBarcodeFormats(
-                                FirebaseVisionBarcode.FORMAT_PDF417)
+                                Barcode.FORMAT_PDF417)
                         .build();
 
-        pdfDetector = FirebaseVision.getInstance().getVisionBarcodeDetector(pdfDetectoroptions);
+        pdfDetector = BarcodeScanning.getClient(pdfDetectoroptions);
 //        Log.e("CropperDet", "Instance ready");
 
     }
@@ -250,7 +252,7 @@ public class CropperDetector {
     private void revalidatePreview() {
         if(DNIDetector.tempBitmap!=null){
             currentFrame = DNIDetector.tempBitmap;
-            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(currentFrame);
+            InputImage image = InputImage.fromBitmap(currentFrame, 0);
            if (isFrontDetection)
                processImageFront(image);
            else {
@@ -310,29 +312,29 @@ public class CropperDetector {
     }
 
 
-    public void processImageFront(final FirebaseVisionImage source) {
+    public void processImageFront(final InputImage source) {
         if (!processing) {
             processing = true;
-            objectDetector.processImage(source).addOnSuccessListener(
-                    new OnSuccessListener<List<FirebaseVisionObject>>() {
+            objectDetector.process(source).addOnSuccessListener(
+                    new OnSuccessListener<List<DetectedObject>>() {
                         @Override
-                        public void onSuccess(List<FirebaseVisionObject> detectedObjects) {
+                        public void onSuccess(List<DetectedObject> detectedObjects) {
                             if (detectedObjects.size() > 0) {
 //                                Log.e("CropperD", "Objetos detectados :" + detectedObjects.size());
-                                List<FirebaseVisionObject> detectedPrincipalObjects = new ArrayList<FirebaseVisionObject>();
-                                for (FirebaseVisionObject o : detectedObjects) {
+                                List<DetectedObject> detectedPrincipalObjects = new ArrayList<DetectedObject>();
+                                for (DetectedObject o : detectedObjects) {
 //                                    Log.e("CropperD", o.getBoundingBox().width() + " : " + o.getBoundingBox().height());
                                     if (o.getBoundingBox().width() > 1000 || o.getBoundingBox().height()> 1000 || true) {
                                         detectedPrincipalObjects.add(o);
                                     }
                                 }
                                     if (detectedPrincipalObjects.size()>0) {
-                                        FirebaseVisionObject o = detectedPrincipalObjects.get(0);
+                                        DetectedObject o = detectedPrincipalObjects.get(0);
                                         result = Bitmap.createBitmap(o.getBoundingBox().width(), o.getBoundingBox().height(), Bitmap.Config.ARGB_8888);
                                         Canvas canvas = new Canvas(result);
                                         Rect dstRect = new Rect(0, 0, o.getBoundingBox().width(), o.getBoundingBox().height());
                                         Rect src = new Rect(o.getBoundingBox().left, o.getBoundingBox().top, o.getBoundingBox().right, o.getBoundingBox().bottom);
-                                        canvas.drawBitmap(source.getBitmap(), src, dstRect, null);
+                                        canvas.drawBitmap(currentFrame, src, dstRect, null);
 
 
                                         if (o.getBoundingBox().width() < o.getBoundingBox().height()) {
@@ -341,34 +343,34 @@ public class CropperDetector {
                                             result = Bitmap.createBitmap(result, 0, 0, result.getWidth(), result.getHeight(), matrix, true);
                                         }
 
-                                        final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(result);
+                                        final InputImage image = InputImage.fromBitmap(result, 0);
 
                                         //DETECTAR CARA EN OBJETO DETECTADO (ESTAMOS  EN EL FRENTE)
-                                        faceDetector.detectInImage(image).addOnSuccessListener(
-                                                new OnSuccessListener<List<FirebaseVisionFace>>() {
+                                        faceDetector.process(image).addOnSuccessListener(
+                                                new OnSuccessListener<List<Face>>() {
                                                     @Override
-                                                    public void onSuccess(List<FirebaseVisionFace> detections) {
+                                                    public void onSuccess(List<Face> detections) {
 //                                                        Log.e("FaceDetector", "Detected faces:" + detections.size());
                                                         if (detections.size() > 0) {
                                                             faceFoundOnce = true;
 //                                                            Log.e("CropperD", "CARA detectada");
 //                                                            saveImage(image.getBitmap(), "cara-detectado-" + System.currentTimeMillis());
-                                                            FirebaseVisionFace o = detections.get(0);
+                                                            Face o = detections.get(0);
                                                             Bitmap faceResult = Bitmap.createBitmap(o.getBoundingBox().width(), o.getBoundingBox().height(), Bitmap.Config.ARGB_8888);
                                                             Canvas canvas = new Canvas(faceResult);
                                                             Rect dstRect = new Rect(0, 0, o.getBoundingBox().width(), o.getBoundingBox().height());
                                                             Rect src = new Rect(o.getBoundingBox().left, o.getBoundingBox().top, o.getBoundingBox().right, o.getBoundingBox().bottom);
-                                                            canvas.drawBitmap(image.getBitmap(), src, dstRect, null);
+                                                            canvas.drawBitmap(result, src, dstRect, null);
 //                                                            CropperDetector.faceResult =  scaleBitmap(getGrayscale(faceResult));
                                                             CropperDetector.faceResult =  faceResult;
 
-                                                            pdfDetector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
+                                                            pdfDetector.process(image).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
                                                                 @Override
-                                                                public void onSuccess(List<FirebaseVisionBarcode> BARCODEdetections) {
+                                                                public void onSuccess(List<Barcode> BARCODEdetections) {
                                                                     if (BARCODEdetections.size() > 0) {
 //                                                                        Log.e("CropperD", "QR detectado");
                                                                         model = 1;
-                                                                        FirebaseVisionBarcode o = BARCODEdetections.get(0);
+                                                                        Barcode o = BARCODEdetections.get(0);
 //                                                                        Log.e("CropperD", "BARCODE: " + o.getRawValue());
                                                                         String[] PDFresult = o.getRawValue().split("@");
                                                                         if (PDFresult.length > 7) {
@@ -377,12 +379,12 @@ public class CropperDetector {
                                                                             nombre = PDFresult[2];
                                                                             sexo = PDFresult[3];
                                                                             fechaNacimiento = parseDateDDMMYYYY(PDFresult[6]);
-                                                                            textDetector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                                                                            textDetector.process(image).addOnSuccessListener(new OnSuccessListener<Text>() {
                                                                                 @Override
-                                                                                public void onSuccess(FirebaseVisionText OCRdetection) {
+                                                                                public void onSuccess(Text OCRdetection) {
                                                                                     boolean PDFdetected = false;
-                                                                                    for (FirebaseVisionText.TextBlock tb : OCRdetection.getTextBlocks()) {
-                                                                                        for (FirebaseVisionText.Line l : tb.getLines()) {
+                                                                                    for (Text.TextBlock tb : OCRdetection.getTextBlocks()) {
+                                                                                        for (Text.Line l : tb.getLines()) {
                                                                                             if (l.getText().replace(".","").replace("MO", "M0").contains(dni)){
                                                                                                 PDFdetected = true;
                                                                                             }
@@ -403,14 +405,14 @@ public class CropperDetector {
                                                                         }
                                                                     } else {
 //                                                                        Log.e("CropperD", "QR NO detectado");
-                                                                        textDetector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                                                                        textDetector.process(image).addOnSuccessListener(new OnSuccessListener<Text>() {
                                                                             @Override
-                                                                            public void onSuccess(FirebaseVisionText OCRdetection) {
+                                                                            public void onSuccess(Text OCRdetection) {
                                                                                 boolean PDFdetected = false;
                                                                                 int detectedPDFLines = 0;
                                                                                 dni = "";
-                                                                                for (FirebaseVisionText.TextBlock tb : OCRdetection.getTextBlocks()) {
-                                                                                    for (FirebaseVisionText.Line l : tb.getLines()) {
+                                                                                for (Text.TextBlock tb : OCRdetection.getTextBlocks()) {
+                                                                                    for (Text.Line l : tb.getLines()) {
                                                                                         if (l.getText().contains("<<")){
                                                                                             PDFdetected = true;
                                                                                             detectedPDFLines++;
@@ -465,29 +467,29 @@ public class CropperDetector {
         }
     }
 
-    public void processImageBack(final FirebaseVisionImage source) {
+    public void processImageBack(final InputImage source) {
         if (!processing) {
 //            Log.e("CropperD", "PROCESANDO BACK " + model + (backResult==null?"":"ERORRRORORORRRR"));
             processing = true;
-            objectDetector.processImage(source).addOnSuccessListener(
-                    new OnSuccessListener<List<FirebaseVisionObject>>() {
+            objectDetector.process(source).addOnSuccessListener(
+                    new OnSuccessListener<List<DetectedObject>>() {
                         @Override
-                        public void onSuccess(List<FirebaseVisionObject> detectedObjects) {
+                        public void onSuccess(List<DetectedObject> detectedObjects) {
                             if (detectedObjects.size() > 0) {
 //                                Log.e("CropperD", "Objeto detectado");
-                                List<FirebaseVisionObject> detectedPrincipalObjects = new ArrayList<FirebaseVisionObject>();
-                                for (FirebaseVisionObject o : detectedObjects) {
+                                List<DetectedObject> detectedPrincipalObjects = new ArrayList<DetectedObject>();
+                                for (DetectedObject o : detectedObjects) {
                                     if (o.getBoundingBox().width() > 1000 || o.getBoundingBox().height() > 1000 || true) {
                                         detectedPrincipalObjects.add(o);
                                     }
                                 }
                                 if (detectedPrincipalObjects.size()>0) {
-                                    FirebaseVisionObject o = detectedPrincipalObjects.get(0);
+                                    DetectedObject o = detectedPrincipalObjects.get(0);
                                     result = Bitmap.createBitmap(o.getBoundingBox().width(), o.getBoundingBox().height(), Bitmap.Config.ARGB_8888);
                                     Canvas canvas = new Canvas(result);
                                     Rect dstRect = new Rect(0, 0, o.getBoundingBox().width(), o.getBoundingBox().height());
                                     Rect src = new Rect(o.getBoundingBox().left, o.getBoundingBox().top, o.getBoundingBox().right, o.getBoundingBox().bottom);
-                                    canvas.drawBitmap(source.getBitmap(), src, dstRect, null);
+                                    canvas.drawBitmap(currentFrame, src, dstRect, null);
 //                                    saveImage(result, "LASD"+System.currentTimeMillis());
 
                                     if (o.getBoundingBox().width() < o.getBoundingBox().height()) {
@@ -499,19 +501,19 @@ public class CropperDetector {
 
 //                                        saveImage(result, "objeto-detectado-" + System.currentTimeMillis());
 
-                                    final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(result);
+                                    final InputImage image = InputImage.fromBitmap(result, 0);
 
                                         if(model==1){
-                                            textDetector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                                            textDetector.process(image).addOnSuccessListener(new OnSuccessListener<Text>() {
                                                 @Override
-                                                public void onSuccess(FirebaseVisionText OCRdetection) {
+                                                public void onSuccess(Text OCRdetection) {
                                                     //saveImage(result, "objeto-detectado-text" + System.currentTimeMillis());
 //                                                    Log.e("CropperD", "Detected text: " + OCRdetection.getText());
                                                     boolean PDFdetected = false;
                                                     boolean dniDetected = false;
                                                     int detectedPDFLines = 0;
-                                                     for (FirebaseVisionText.TextBlock tb : OCRdetection.getTextBlocks()) {
-                                                         for (FirebaseVisionText.Line l : tb.getLines()) {
+                                                     for (Text.TextBlock tb : OCRdetection.getTextBlocks()) {
+                                                         for (Text.Line l : tb.getLines()) {
 //                                                             Log.e("CropperD", "Detected text: " + l.getText());
                                                              if (l.getText().contains("<<")){
                                                                  PDFdetected = true;
@@ -534,13 +536,13 @@ public class CropperDetector {
                                         else{
                                             // MODEL 2
 //                                            Log.e("Looking", dni);
-                                            pdfDetector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
+                                            pdfDetector.process(image).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
                                                 @Override
-                                                public void onSuccess(List<FirebaseVisionBarcode> detections) {
+                                                public void onSuccess(List<Barcode> detections) {
 
                                                     if (detections.size() > 0) {
                                                         pdfFoundOnce = true;
-                                                        FirebaseVisionBarcode o = detections.get(0);
+                                                        Barcode o = detections.get(0);
 //                                                        Log.e("CropperD", "BARCODE: " + o.getRawValue());
                                                         String[] PDFresult = o.getRawValue().split("@");
 //                                                        Log.e("Comparing", "." + dni +". ." + PDFresult[1] +".");

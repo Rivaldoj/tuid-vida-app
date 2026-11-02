@@ -1,6 +1,7 @@
 package com.autenticar.tuid.v2;
 
 import android.Manifest;
+import com.google.firebase.messaging.FirebaseMessaging;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -46,8 +47,6 @@ import com.autenticar.tuid.utils.SQLHelper;
 import com.autenticar.tuid.v2.utils.LoadingDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -105,6 +104,12 @@ public class HomeActivity extends TuIdActivity {
         super.onCreate(s);
         setContentView(R.layout.v2_home_activity);
         self = this;
+
+        // Android 13+: permiso en tiempo de ejecucion para mostrar notificaciones push
+        if (Build.VERSION.SDK_INT >= 33
+                && androidx.core.content.ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 9001);
+        }
 
         // borrar prueba webview
 //        Intent i = new Intent(this,WebActivity.class);
@@ -203,12 +208,12 @@ public class HomeActivity extends TuIdActivity {
 
     private void initFirebase(){
         try {
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
                         @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        public void onComplete(@NonNull Task<String> task) {
                             if (task.isSuccessful()) {
-                                token = task.getResult().getToken();
+                                token = task.getResult();
                             }
                         }
                     });

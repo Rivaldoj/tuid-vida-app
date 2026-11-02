@@ -12,7 +12,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -53,13 +52,13 @@ public class BitmapUtils {
         Matrix matrix = new Matrix();
         int rotationDegree = 0;
         switch (rotation) {
-            case FirebaseVisionImageMetadata.ROTATION_90:
+            case 1:
                 rotationDegree = 90;
                 break;
-            case FirebaseVisionImageMetadata.ROTATION_180:
+            case 2:
                 rotationDegree = 180;
                 break;
-            case FirebaseVisionImageMetadata.ROTATION_270:
+            case 3:
                 rotationDegree = 270;
                 break;
             default:

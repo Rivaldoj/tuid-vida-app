@@ -1,6 +1,7 @@
 package com.autenticar.tuid;
 
 import android.Manifest;
+import com.google.firebase.messaging.FirebaseMessaging;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -60,8 +61,6 @@ import com.autenticar.tuid.utils.HelperFunctions;
 import com.autenticar.tuid.utils.SQLHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -197,12 +196,12 @@ public class LoginActivity extends AppCompatActivity
         }
         soun_ini_login();
         try {
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
                         @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        public void onComplete(@NonNull Task<String> task) {
                             if (task.isSuccessful()) {
-                                token = task.getResult().getToken();
+                                token = task.getResult();
                             }
                         }
                     });

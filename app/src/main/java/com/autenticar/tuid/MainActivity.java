@@ -62,8 +62,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
@@ -130,16 +128,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main_menu);
         try {
             FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
                         @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        public void onComplete(@NonNull Task<String> task) {
                             if (!task.isSuccessful()) {
                                 Log.w(TAG, "getInstanceId failed", task.getException());
                                 return;
                             }
                             // Get new Instance ID token
-                            token = task.getResult().getToken();
+                            token = task.getResult();
                             Log.d(TAG, token);
                         }
                     });
@@ -555,12 +553,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             request.version = Build.VERSION.RELEASE;
             profileImage.setImageBitmap(bitmap);
             try {
-                FirebaseInstanceId.getInstance().getInstanceId()
-                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(new OnCompleteListener<String>() {
                             @Override
-                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            public void onComplete(@NonNull Task<String> task) {
                                 if (task.isSuccessful()) {
-                                    request.Token = task.getResult().getToken();
+                                    request.Token = task.getResult();
                                 } else {
                                     request.Token = "";
                                 }

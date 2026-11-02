@@ -1,6 +1,7 @@
 package com.autenticar.tuid.v2;
 
 import android.app.ProgressDialog;
+import com.google.firebase.messaging.FirebaseMessaging;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -27,8 +28,6 @@ import com.autenticar.tuid.utils.HelperFunctions;
 import com.autenticar.tuid.v2.utils.Scanner;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONObject;
 
@@ -212,11 +211,11 @@ public class PreGestureActivity extends TuIdActivity{
 
 
     public void getFirebaseToken(){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                    public void onComplete(@NonNull Task<String> task) {
                         if (task.isSuccessful()) {
-                            token = task.getResult().getToken();
+                            token = task.getResult();
                         }
                     }
                 });

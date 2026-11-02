@@ -1,5 +1,19 @@
 package com.autenticar.tuid.v2.utils;
 
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.objects.DetectedObject;
+import com.google.mlkit.vision.objects.ObjectDetector;
+import com.google.mlkit.vision.objects.ObjectDetection;
+import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -8,18 +22,6 @@ import android.util.Log;
 import com.autenticar.tuid.v2.model.Persona;
 import com.autenticar.tuid.v2.ScanActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.face.FirebaseVisionFace;
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
-import com.google.firebase.ml.vision.objects.FirebaseVisionObject;
-import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
-import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,10 +53,10 @@ public class Scanner {
 //    public static String domicilio = "";
 
     // detectors
-    FirebaseVisionObjectDetector objectDetector;
-    FirebaseVisionFaceDetector faceDetector;
-    FirebaseVisionTextRecognizer textDetector;
-    FirebaseVisionBarcodeDetector pdfDetector;
+    ObjectDetector objectDetector;
+    com.google.mlkit.vision.face.FaceDetector faceDetector;
+    com.google.mlkit.vision.text.TextRecognizer textDetector;
+    BarcodeScanner pdfDetector;
 
     // timeout vars
     public boolean faceFoundOnce = false;
@@ -94,25 +96,25 @@ public class Scanner {
 //        Log.e("Scanner", "Started");
         this.activity = activity;
 
-        FirebaseVisionObjectDetectorOptions objectDetectorOptions =
-                new FirebaseVisionObjectDetectorOptions.Builder()
-                        .setDetectorMode(FirebaseVisionObjectDetectorOptions.SINGLE_IMAGE_MODE)
+        ObjectDetectorOptions objectDetectorOptions =
+                new ObjectDetectorOptions.Builder()
+                        .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
                         .enableMultipleObjects()
                         .build();
 
-        objectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(objectDetectorOptions);
+        objectDetector = ObjectDetection.getClient(objectDetectorOptions);
 
 
-        faceDetector = FirebaseVision.getInstance().getVisionFaceDetector();
+        faceDetector = FaceDetection.getClient();
 
-        textDetector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+        textDetector = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
 
-        FirebaseVisionBarcodeDetectorOptions pdfDetectoroptions =
-                new FirebaseVisionBarcodeDetectorOptions.Builder()
-                        .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_PDF417)
+        BarcodeScannerOptions pdfDetectoroptions =
+                new BarcodeScannerOptions.Builder()
+                        .setBarcodeFormats(Barcode.FORMAT_PDF417)
                         .build();
 
-        pdfDetector = FirebaseVision.getInstance().getVisionBarcodeDetector(pdfDetectoroptions);
+        pdfDetector = BarcodeScanning.getClient(pdfDetectoroptions);
 
     }
 
@@ -198,13 +200,13 @@ public class Scanner {
 
         }
 
-        FirebaseVisionImage frame = FirebaseVisionImage.fromBitmap(_frame);
+        InputImage frame = InputImage.fromBitmap(_frame, 0);
         final ProcessResult result = new ProcessResult(_frame);
 
-        objectDetector.processImage(frame).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionObject>>() {
+        objectDetector.process(frame).addOnSuccessListener(new OnSuccessListener<List<DetectedObject>>() {
             @Override
-            public void onSuccess(List<FirebaseVisionObject> firebaseVisionObjects) {
-                for (FirebaseVisionObject fo : firebaseVisionObjects) {
+            public void onSuccess(List<DetectedObject> firebaseVisionObjects) {
+                for (DetectedObject fo : firebaseVisionObjects) {
                     if (result.frame == null || result.frame.getBoundingBox().width() < fo.getBoundingBox().width())
                         result.frame = fo;
                 }
@@ -212,26 +214,26 @@ public class Scanner {
             }
         });
 
-        textDetector.processImage(frame).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+        textDetector.process(frame).addOnSuccessListener(new OnSuccessListener<Text>() {
             @Override
-            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+            public void onSuccess(Text firebaseVisionText) {
                 result.text = firebaseVisionText;
                 result.taskFinished("text");
             }
         });
 
-        pdfDetector.detectInImage(frame).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
+        pdfDetector.process(frame).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
             @Override
-            public void onSuccess(List<FirebaseVisionBarcode> firebaseVisionBarcodes) {
+            public void onSuccess(List<Barcode> firebaseVisionBarcodes) {
                 if (firebaseVisionBarcodes.size() == 1) result.barcode = firebaseVisionBarcodes.get(0);
                 result.taskFinished("pdf");
             }
         });
 
         if(isFrontDetection) {
-            faceDetector.detectInImage(frame).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
+            faceDetector.process(frame).addOnSuccessListener(new OnSuccessListener<List<Face>>() {
                 @Override
-                public void onSuccess(List<FirebaseVisionFace> firebaseVisionFaces) {
+                public void onSuccess(List<Face> firebaseVisionFaces) {
                     if (firebaseVisionFaces.size() > 0){
                         result.face = firebaseVisionFaces.get(0);
                         faceFoundOnce = true;
@@ -249,10 +251,10 @@ public class Scanner {
 
 
         public Bitmap image;
-        public FirebaseVisionObject frame;
-        public FirebaseVisionFace face;
-        public FirebaseVisionBarcode barcode;
-        public FirebaseVisionText text;
+        public DetectedObject frame;
+        public Face face;
+        public Barcode barcode;
+        public Text text;
 
         public synchronized void taskFinished(String what) {
             tasksResults++;
@@ -292,8 +294,8 @@ public class Scanner {
             }
 
 
-            for (FirebaseVisionText.TextBlock tb : text.getTextBlocks()) {
-                for (FirebaseVisionText.Line l : tb.getLines()) {
+            for (Text.TextBlock tb : text.getTextBlocks()) {
+                for (Text.Line l : tb.getLines()) {
                     if(l.getText().contains("<<")){
                         mode = 2;
 //                        Log.e("Scanner", "Detected Mode 2");
@@ -326,8 +328,8 @@ public class Scanner {
                 tramite = PDFresult[0];
             }
 
-            for (FirebaseVisionText.TextBlock tb : text.getTextBlocks()) {
-                for (FirebaseVisionText.Line l : tb.getLines()) {
+            for (Text.TextBlock tb : text.getTextBlocks()) {
+                for (Text.Line l : tb.getLines()) {
                     if(l.getText().replace(".","").contains(dni) && textIsAligned(tb)) {
                         ((ScanActivity)activity).checkDniIsOk();
                         startTime = new Date().getTime();
@@ -351,13 +353,13 @@ public class Scanner {
             if(text==null || frame==null) return false;
 
             boolean foundDNI = false;
-            List<FirebaseVisionText.Line> mrzLines = new ArrayList<>();
+            List<Text.Line> mrzLines = new ArrayList<>();
 
-            for (FirebaseVisionText.TextBlock tb : text.getTextBlocks()) {
+            for (Text.TextBlock tb : text.getTextBlocks()) {
                 if(tb.getBoundingBox().width() > frame.getBoundingBox().width()) continue;
                 if(tb.getBoundingBox().width()*1.5<frame.getBoundingBox().width()) continue;
                 if(!textIsAligned(tb)) break;
-                for (FirebaseVisionText.Line l : tb.getLines()) {
+                for (Text.Line l : tb.getLines()) {
                     if(l.getText().contains("<<")){
                         mrzLines.add(l);
                         mrzFoundOnce = true;
@@ -384,7 +386,7 @@ public class Scanner {
                 }
             }
 
-//            for (FirebaseVisionText.TextBlock tb : text.getTextBlocks()) {
+//            for (Text.TextBlock tb : text.getTextBlocks()) {
 //                String t = tb.getText().toLowerCase();
 //                if(!(t.contains("pulgar") || t.contains("cuil") || t.contains(dni.toLowerCase()) || t.contains("<")) || t.contains("ministro") || t.contains("domicilio") || t.contains("nacimiento") ){
 //                    domicilio+=t + " ";
@@ -392,7 +394,7 @@ public class Scanner {
 //            }
 
 
-            for(FirebaseVisionText.Line l : mrzLines){
+            for(Text.Line l : mrzLines){
                 if (!foundDNI && l.getText().replace("MO","M0").contains(dni + "<")){
                     foundDNI = true;
                     backDataEqualsFrontOnce = true;
@@ -417,18 +419,18 @@ public class Scanner {
 
             boolean foundDNI = false;
             boolean foundBithdayAndGender = false;
-            List<FirebaseVisionText.Line> mrzLines = new ArrayList<>();
+            List<Text.Line> mrzLines = new ArrayList<>();
 
-            for (FirebaseVisionText.TextBlock tb : text.getTextBlocks()) {
+            for (Text.TextBlock tb : text.getTextBlocks()) {
                 if(!textIsAligned(tb)) break;
-                for (FirebaseVisionText.Line l : tb.getLines()) {
+                for (Text.Line l : tb.getLines()) {
                     if(l.getText().contains("<<")) mrzLines.add(l);
                     mrzFoundOnce = true;
                 }
             }
 
 
-            for(FirebaseVisionText.Line l : mrzLines){
+            for(Text.Line l : mrzLines){
                 String line = l.getText().toString();
                 if (!foundDNI && line.contains("IDARG")){
                     String dniAux = line.substring(5, l.getText().indexOf("<"));
@@ -501,7 +503,7 @@ public class Scanner {
 
         }
 
-        boolean textIsAligned(FirebaseVisionText.TextBlock line){
+        boolean textIsAligned(Text.TextBlock line){
             double angle = Math.atan2(line.getCornerPoints()[1].y - line.getCornerPoints()[0].y, line.getCornerPoints()[1].x - line.getCornerPoints()[0].x) * 180 / Math.PI;
             boolean result =  Math.abs(angle) < 10;
             return result;

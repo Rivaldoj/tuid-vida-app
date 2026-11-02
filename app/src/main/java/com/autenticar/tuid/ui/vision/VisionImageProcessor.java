@@ -15,7 +15,6 @@ package com.autenticar.tuid.ui.vision;
 
 import android.graphics.Bitmap;
 
-import com.google.firebase.ml.common.FirebaseMLException;
 
 import java.nio.ByteBuffer;
 
@@ -28,7 +27,7 @@ public interface VisionImageProcessor {
      * Processes the images with the underlying machine learning models.
      */
     void process(ByteBuffer data, FrameMetadata frameMetadata, GraphicOverlay graphicOverlay)
-            throws FirebaseMLException;
+            throws com.google.mlkit.common.MlKitException;
 
     /**
      * Processes the bitmap images.

@@ -1,6 +1,7 @@
 package com.autenticar.tuid;
 
 import android.Manifest;
+import com.google.firebase.messaging.FirebaseMessaging;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -75,8 +76,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 
 import java.sql.Date;
@@ -485,12 +484,12 @@ public class RegistrarScanUserActivity extends AppCompatActivity implements Navi
                 findViewById(R.id.fragment_registrar_formulario_email_movil).setVisibility(View.GONE);
                 findViewById(R.id.paso_1).setVisibility(View.VISIBLE);
                 TERMINOS = true;
-                FirebaseInstanceId.getInstance().getInstanceId()
-                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(new OnCompleteListener<String>() {
                             @Override
-                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            public void onComplete(@NonNull Task<String> task) {
                                 if (task.isSuccessful()) {
-                                    token = task.getResult().getToken();
+                                    token = task.getResult();
                                 }
                             }
                         });

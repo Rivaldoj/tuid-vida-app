@@ -1,5 +1,10 @@
 package com.autenticar.tuid;
 
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -72,11 +77,6 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -927,22 +927,21 @@ public class RegistrarUserActivity extends AppCompatActivity implements Navigati
 
 
             if (datos.isFront) {
-                FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+                InputImage image = InputImage.fromBitmap(bitmap, 0);
 
-                FirebaseVisionBarcodeDetectorOptions options =
-                        new FirebaseVisionBarcodeDetectorOptions.Builder()
+                BarcodeScannerOptions options =
+                        new BarcodeScannerOptions.Builder()
                                 .setBarcodeFormats(
-                                        FirebaseVisionBarcode.FORMAT_PDF417
+                                        Barcode.FORMAT_PDF417
                                 )
                                 .build();
 
-                FirebaseVisionBarcodeDetector detector = FirebaseVision.getInstance()
-                        .getVisionBarcodeDetector(options);
+                BarcodeScanner detector = BarcodeScanning.getClient(options);
 
-                detector.detectInImage(image)
-                        .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
+                detector.process(image)
+                        .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
                             @Override
-                            public void onSuccess(List<FirebaseVisionBarcode> barcodes) {
+                            public void onSuccess(List<Barcode> barcodes) {
                                 // Task completed successfully
 
                                 if (barcodes.size() > 0) {

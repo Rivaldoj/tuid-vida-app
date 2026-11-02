@@ -13,6 +13,7 @@
 // limitations under the License.
 package com.autenticar.tuid;
 
+import com.google.mlkit.vision.face.Face;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -52,7 +53,6 @@ import com.autenticar.tuid.ui.vision.GraphicOverlay;
 import com.autenticar.tuid.utils.HelperFunctions;
 import com.google.android.gms.common.annotation.KeepName;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -278,7 +278,7 @@ public final class LivePreviewActivity extends AppCompatActivity
     }
 
     @Override
-    public void GestureDetected(FirebaseVisionFace face, Bitmap bitmap, int gestureType) {
+    public void GestureDetected(Face face, Bitmap bitmap, int gestureType) {
         setResult(RESULT_OK);
         HelperFunctions.Vibrate(this);
         // if (gestureType == DETECTAR_SIN_GESTOS || gestureType == DETECTAR_PESTANEO_NEUTRAL) {

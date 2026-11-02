@@ -1,6 +1,7 @@
 package com.autenticar.tuid.v2;
 
 import android.app.Activity;
+import com.google.firebase.messaging.FirebaseMessaging;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -55,8 +56,6 @@ import com.autenticar.tuid.v2.services.Pago;
 import com.autenticar.tuid.v2.utils.LoadingDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONObject;
 
@@ -121,12 +120,12 @@ public class RegistroManualActivity extends AppCompatActivity {
 
     private void initFirebase(){
         try {
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
                         @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        public void onComplete(@NonNull Task<String> task) {
                             if (task.isSuccessful()) {
-                                token = task.getResult().getToken();
+                                token = task.getResult();
                                 Log.e("Token",token);
                             }
                         }

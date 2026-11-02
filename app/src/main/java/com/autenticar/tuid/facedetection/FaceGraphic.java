@@ -14,6 +14,9 @@
 
 package com.autenticar.tuid.facedetection;
 
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceLandmark;
+import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,9 +24,6 @@ import android.graphics.Paint;
 import com.autenticar.tuid.ui.vision.GraphicOverlay;
 import com.autenticar.tuid.ui.vision.GraphicOverlay.Graphic;
 import com.google.android.gms.vision.CameraSource;
-import com.google.firebase.ml.vision.common.FirebaseVisionPoint;
-import com.google.firebase.ml.vision.face.FirebaseVisionFace;
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark;
 
 /**
  * Graphic instance for rendering face position, orientation, and landmarks within an associated
@@ -39,9 +39,9 @@ public class FaceGraphic extends Graphic {
     private final Paint idPaint;
     private final Paint boxPaint;
     private int facing;
-    private volatile FirebaseVisionFace firebaseVisionFace;
+    private volatile Face firebaseVisionFace;
 
-    public FaceGraphic(GraphicOverlay overlay, FirebaseVisionFace face, int facing) {
+    public FaceGraphic(GraphicOverlay overlay, Face face, int facing) {
         super(overlay);
 
         firebaseVisionFace = face;
@@ -66,7 +66,7 @@ public class FaceGraphic extends Graphic {
      */
     @Override
     public void draw(Canvas canvas) {
-        FirebaseVisionFace face = firebaseVisionFace;
+        Face face = firebaseVisionFace;
         if (face == null) {
             return;
         }
@@ -115,25 +115,25 @@ public class FaceGraphic extends Graphic {
         canvas.drawRect(left, top, right, bottom, boxPaint);
 
         // draw landmarks
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.MOUTH_BOTTOM);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.LEFT_CHEEK);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.LEFT_EAR);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.MOUTH_LEFT);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.LEFT_EYE);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.NOSE_BASE);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.RIGHT_CHEEK);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.RIGHT_EAR);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.RIGHT_EYE);
-        drawLandmarkPosition(canvas, face, FirebaseVisionFaceLandmark.MOUTH_RIGHT);
+        drawLandmarkPosition(canvas, face, FaceLandmark.MOUTH_BOTTOM);
+        drawLandmarkPosition(canvas, face, FaceLandmark.LEFT_CHEEK);
+        drawLandmarkPosition(canvas, face, FaceLandmark.LEFT_EAR);
+        drawLandmarkPosition(canvas, face, FaceLandmark.MOUTH_LEFT);
+        drawLandmarkPosition(canvas, face, FaceLandmark.LEFT_EYE);
+        drawLandmarkPosition(canvas, face, FaceLandmark.NOSE_BASE);
+        drawLandmarkPosition(canvas, face, FaceLandmark.RIGHT_CHEEK);
+        drawLandmarkPosition(canvas, face, FaceLandmark.RIGHT_EAR);
+        drawLandmarkPosition(canvas, face, FaceLandmark.RIGHT_EYE);
+        drawLandmarkPosition(canvas, face, FaceLandmark.MOUTH_RIGHT);
     }
 
-    private void drawLandmarkPosition(Canvas canvas, FirebaseVisionFace face, int landmarkID) {
-        FirebaseVisionFaceLandmark landmark = face.getLandmark(landmarkID);
+    private void drawLandmarkPosition(Canvas canvas, Face face, int landmarkID) {
+        FaceLandmark landmark = face.getLandmark(landmarkID);
         if (landmark != null) {
-            FirebaseVisionPoint point = landmark.getPosition();
+            PointF point = landmark.getPosition();
             canvas.drawCircle(
-                    translateX(point.getX()),
-                    translateY(point.getY()),
+                    translateX(point.x),
+                    translateY(point.y),
                     10f, idPaint);
         }
     }
