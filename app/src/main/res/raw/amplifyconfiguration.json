@@ -12,8 +12,8 @@
         "CredentialsProvider": {
           "CognitoIdentity": {
             "Default": {
-              "PoolId": "REEMPLAZAR_REGION:REEMPLAZAR_IDENTITY_POOL_ID",
-              "Region": "REEMPLAZAR_REGION"
+              "PoolId": "us-east-1:REEMPLAZAR_IDENTITY_POOL_ID",
+              "Region": "us-east-1"
             }
           }
         }
