@@ -4,5 +4,17 @@
     <!-- Solo debug: permite http contra servidores de QA/desarrollo -->
     <application
         android:usesCleartextTraffic="true"
-        tools:replace="android:usesCleartextTraffic" />
+        tools:replace="android:usesCleartextTraffic">
+        <!-- Solo debug: segundo icono "NFC Test" para probar la lectura del chip de un documento -->
+        <activity
+            android:name="com.autenticar.tuid.v2.nfc.NfcTestActivity"
+            android:label="NFC Test"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
