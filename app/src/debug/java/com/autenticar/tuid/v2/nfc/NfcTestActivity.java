@@ -27,6 +27,7 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
     private EditText etDoc, etBirth, etExpiry, etCan;
     private TextView tvOut;
     private ImageView ivFoto;
+    private static final int REQ_MRZ = 3001;
     private NfcAdapter nfc;
     private final ExecutorService io = Executors.newSingleThreadExecutor();
 
@@ -40,9 +41,19 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
 
         TextView t = new TextView(this);
         t.setText("Prueba NFC (solo debug)\n"
-                + "Cargá los datos de la zona MRZ del documento y apoyalo en la parte trasera del teléfono.\n"
+                + "Tocá \"Escanear MRZ con la cámara\" (o cargá los datos a mano) y después apoyá el documento en la parte trasera del teléfono.\n"
                 + "Fechas en formato AAMMDD. El código CAN (6 dígitos) es opcional: si lo dejás vacío se usa la MRZ.");
         root.addView(t);
+
+        android.widget.Button btnScan = new android.widget.Button(this);
+        btnScan.setText("Escanear MRZ con la cámara");
+        btnScan.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+                startActivityForResult(new android.content.Intent(NfcTestActivity.this, MrzScanActivity.class), REQ_MRZ);
+            }
+        });
+        root.addView(btnScan);
 
         etDoc = campo(root, "N° de documento (como figura en la MRZ)", InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
         etBirth = campo(root, "Fecha de nacimiento AAMMDD", InputType.TYPE_CLASS_NUMBER);
@@ -64,6 +75,17 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
         nfc = NfcAdapter.getDefaultAdapter(this);
         if (nfc == null) tvOut.setText("Este teléfono no tiene NFC.");
         else if (!nfc.isEnabled()) tvOut.setText("El NFC está apagado: activalo en Ajustes.");
+    }
+
+    @Override
+    protected void onActivityResult(int req, int res, android.content.Intent data) {
+        super.onActivityResult(req, res, data);
+        if (req == REQ_MRZ && res == RESULT_OK && data != null) {
+            etDoc.setText(data.getStringExtra(MrzScanActivity.EXTRA_DOC));
+            etBirth.setText(data.getStringExtra(MrzScanActivity.EXTRA_BIRTH));
+            etExpiry.setText(data.getStringExtra(MrzScanActivity.EXTRA_EXPIRY));
+            tvOut.setText("MRZ leída y validada. Ahora apoyá el documento contra la parte trasera del teléfono.");
+        }
     }
 
     private EditText campo(LinearLayout parent, String hint, int type) {
