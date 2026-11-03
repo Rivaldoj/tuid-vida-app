@@ -3,3 +3,5 @@
 baseUrl=https://api.autenticartuid.com/vida/v2
 # Token de la marca blanca (header Authorization). Secreto: no compartir ni commitear.
 token=
+# Numero del proyecto de Google Cloud vinculado a la app en Play Console (Play Integrity). 0 = desactivado.
+playCloudProject=0

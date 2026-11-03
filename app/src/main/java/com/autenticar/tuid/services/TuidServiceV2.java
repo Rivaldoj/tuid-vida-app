@@ -1,0 +1,20 @@
+package com.autenticar.tuid.services;
+
+import com.autenticar.tuid.model.LoginRequest;
+import com.autenticar.tuid.model.LoginResponse;
+import com.autenticar.tuid.model.SearchdniRequest;
+import com.autenticar.tuid.model.SearchdniResponse;
+
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+
+/** Backend Vida v2 ({base}/vida/v2): Fe de Vida con AWS Face Liveness. */
+public interface TuidServiceV2 {
+
+    @POST("searchdni")
+    Call<SearchdniResponse> searchdni(@Body SearchdniRequest request);
+
+    @POST("login")
+    Call<LoginResponse> login(@Body LoginRequest request);
+}

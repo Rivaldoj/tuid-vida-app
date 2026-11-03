@@ -24,6 +24,10 @@ public class LoginRequest implements LocationListener {
     @SerializedName("latitud")
     public String latitud = "-0.000001";
 
+    // v2: sesion de AWS Face Liveness ya completada en el dispositivo (reemplaza a "file")
+    @SerializedName("sessionId")
+    public String sessionId;
+
     @SerializedName("idValidation")
     public int idValidation = 0;
 

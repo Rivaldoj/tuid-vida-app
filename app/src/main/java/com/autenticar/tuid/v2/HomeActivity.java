@@ -39,6 +39,8 @@ import com.autenticar.tuid.model.LoginResponse;
 import com.autenticar.tuid.model.SearchdniRequest;
 import com.autenticar.tuid.model.SearchdniResponse;
 import com.autenticar.tuid.services.TuidService;
+import com.autenticar.tuid.services.TuidServiceV2;
+import com.autenticar.tuid.v2.aws.LivenessActivity;
 import com.autenticar.tuid.services.utils.ServiceGenerator;
 import com.autenticar.tuid.utils.GPSLocation;
 import com.autenticar.tuid.utils.HelperFunctions;
@@ -80,6 +82,10 @@ public class HomeActivity extends TuIdActivity {
     private String from_notification_gender;
 
     public static final int REQUEST_LIVE_PREVIEW = 7002;
+    public static final int REQUEST_AWS_LIVENESS = 7003;
+    // true: searchdni/login contra /vida/v2 con AWS Face Liveness; false: flujo anterior (3 pestaneos + selfie)
+    private static final boolean USE_LIVENESS_V2 = true;
+    private String livenessSessionId;
     private int idValidacion=0;
     private SQLHelper sql;
 
@@ -343,13 +349,16 @@ public class HomeActivity extends TuIdActivity {
             @Override
             public void onClick(View view) {
                 final SearchdniRequest request = new SearchdniRequest();
-                TuidService service = ServiceGenerator.createService(TuidService.class);
                 request.dni=String.valueOf(text_content_info_cuil_text.getText());
                 if(rdb_genero.getCheckedRadioButtonId()==R.id.rdb_masculino){
                     request.sexo="m";
                 }else if(rdb_genero.getCheckedRadioButtonId()==R.id.rdb_femenino){
                     request.sexo="f";
                 }
+                if (USE_LIVENESS_V2 && request.sexo != null) request.sexo = request.sexo.toUpperCase();
+                request.os = "Android " + Build.VERSION.RELEASE + " (" + Build.MANUFACTURER + " " + Build.MODEL + ")";
+                request.version = String.valueOf(Build.VERSION.SDK_INT);
+                request.appversion = BuildConfig.VERSION_NAME;
 
                 if (request.dni.trim().equals("")) {
                     text_content_info_cuil_text.requestFocus();
@@ -357,7 +366,9 @@ public class HomeActivity extends TuIdActivity {
                     return;
                 }
                 try {
-                    Call<SearchdniResponse> callUser = service.searchdni(request);
+                    Call<SearchdniResponse> callUser = USE_LIVENESS_V2
+                            ? ServiceGenerator.createV2Service(TuidServiceV2.class).searchdni(request)
+                            : ServiceGenerator.createService(TuidService.class).searchdni(request);
                     try{
                         LoadingDialog.getInstance().show(self,"Aguarde un momento, procesando la información");
                     }
@@ -372,6 +383,7 @@ public class HomeActivity extends TuIdActivity {
                                 if (Response.IsOk()) {
                                     if (Response.idValidacion>0) {
                                         idValidacion=Response.idValidacion;
+                                        livenessSessionId=Response.sessionId;
                                         dialog.dismiss();
                                         irAFeDeVida(request.dni, request.sexo);
 
@@ -443,13 +455,23 @@ public class HomeActivity extends TuIdActivity {
         new AmplitudeManager().log(this, "Login Process Started", data);
         ResultLoginActivity.dni = dni;
         ResultLoginActivity.sexo = sexo;
+        if (USE_LIVENESS_V2 && livenessSessionId != null && !livenessSessionId.isEmpty()) {
+            startActivityForResult(LivenessActivity.Companion.intent(this, livenessSessionId, getString(R.string.aws_liveness_region)), REQUEST_AWS_LIVENESS);
+            return;
+        }
         startActivityForResult(intent,REQUEST_LIVE_PREVIEW);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode != RESULT_OK) {
+            if (requestCode == REQUEST_AWS_LIVENESS) {
+                HelperFunctions.ShowAlert(self, "No se pudo completar la prueba de vida. Intentá nuevamente en un lugar con buena luz y buena conexión a internet.");
+            }
             return;
+        } else if (requestCode == REQUEST_AWS_LIVENESS) {
+            pedirPermisoNotificaciones();
+            login();
         } else if (requestCode == REQUEST_LIVE_PREVIEW) {
             pedirPermisoNotificaciones();
             login();
@@ -479,7 +501,11 @@ public class HomeActivity extends TuIdActivity {
             request.longitud = "0.0";
             request.latitud = "0.0";
         }
-        request.FileEncode64 = HelperFunctions.encodeTobase64(bitmap);
+        if (USE_LIVENESS_V2) {
+            request.sessionId = livenessSessionId;   // el servidor consulta el resultado en AWS; no se envia selfie
+        } else {
+            request.FileEncode64 = HelperFunctions.encodeTobase64(bitmap);
+        }
         request.Token = token;
         request.idValidation=idValidacion;
         try {
@@ -489,7 +515,9 @@ public class HomeActivity extends TuIdActivity {
         }
         request.os = "Android " + Build.VERSION.RELEASE + " (" + Build.MANUFACTURER + " " + Build.MODEL + ")";
         request.version = BuildConfig.VERSION_CODE + "(" + BuildConfig.VERSION_NAME + ")";
-        Call<LoginResponse> callUser = apiServiceUser.login(request);
+        Call<LoginResponse> callUser = USE_LIVENESS_V2
+                ? ServiceGenerator.createV2Service(TuidServiceV2.class).login(request)
+                : apiServiceUser.login(request);
         showProgressDialog(getString(R.string.alert_validando_identidad));
         callUser.enqueue(new Callback<LoginResponse>() {
             @Override

@@ -37,6 +37,8 @@ android {
     defaultConfig {
         buildConfigField 'String', 'VIDA_BASE_URL', '"' + vidaProps.getProperty('baseUrl', 'https://api.autenticartuid.com/vida/v2') + '"'
         buildConfigField 'String', 'VIDA_TOKEN', '""'
+        // Play Integrity: numero del proyecto de Google Cloud vinculado en Play Console (0 = desactivado)
+        buildConfigField 'long', 'PLAY_CLOUD_PROJECT', vidaProps.getProperty('playCloudProject', '0') + 'L'
     }
 
     def keystorePropsFile = rootProject.file('keystore.properties')
@@ -115,6 +117,7 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation 'com.google.android.play:integrity:1.4.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
 

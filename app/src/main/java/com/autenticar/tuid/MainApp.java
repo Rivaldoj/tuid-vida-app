@@ -124,6 +124,8 @@ public class MainApp extends Application {
                 //  .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson));
         ServiceGenerator.context = getBaseContext();
+        ServiceGenerator.v2BaseUrl = stringConnection + "vida/v2/";
+        new Thread(() -> com.autenticar.tuid.services.utils.IntegrityInterceptor.warmUp(this)).start();
 
         InitPersonaToRegister();
         FirebaseApp.initializeApp(this);

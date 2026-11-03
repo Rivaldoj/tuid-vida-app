@@ -27,6 +27,27 @@ public class ServiceGenerator {
             .setLevel(com.autenticar.tuid.BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
     private static OkHttpClient.Builder httpClient;
+    private static boolean integrityAdded = false;
+
+    private static void addIntegrity() {
+        if (integrityAdded || context == null) return;
+        httpClient.addInterceptor(new IntegrityInterceptor(context));
+        integrityAdded = true;
+    }
+
+    /** URL base del backend v2 (la fija MainApp junto con la del v1). */
+    public static String v2BaseUrl;
+
+    public static <S> S createV2Service(Class<S> serviceClass) {
+        createService(com.autenticar.tuid.services.TuidService.class); // asegura cliente + interceptores
+        addIntegrity();
+        retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
+                .baseUrl(v2BaseUrl)
+                .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+                .client(httpClient.build())
+                .build();
+        return retrofit.create(serviceClass);
+    }
 
     public static <S> S createService(Class<S> serviceClass) {
         return createService(serviceClass, null);
@@ -58,6 +79,7 @@ public class ServiceGenerator {
         });
         //}
 
+        addIntegrity();
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = builder.client(client).build();
         return retrofit.create(serviceClass);
@@ -90,6 +112,7 @@ public class ServiceGenerator {
         });
         //}
 
+        addIntegrity();
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = builder.client(client).build();
         return retrofit.create(serviceClass);
