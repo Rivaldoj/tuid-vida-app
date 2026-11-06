@@ -31,7 +31,33 @@ public class HistoryAdapter extends BaseAdapter {
     private Dialog dialog;
 
 
+    // CUIL (11 digitos) -> "Nombre Apellido" de los usuarios guardados en este telefono
+    private final java.util.Map<String, String> nombres = new java.util.HashMap<>();
+
+    /** El servidor informa "APELLIDO, NOMBRE": se muestra como "NOMBRE APELLIDO". */
+    public static String nombreYApellido(String deServidor) {
+        if (deServidor == null) return null;
+        String n = deServidor.trim();
+        int coma = n.indexOf(',');
+        if (coma > 0 && coma < n.length() - 1) {
+            return (n.substring(coma + 1).trim() + " " + n.substring(0, coma).trim()).trim();
+        }
+        return n.isEmpty() ? null : n;
+    }
+
+    private String nombreDe(String cuil) {
+        return cuil == null ? null : nombres.get(com.autenticar.tuid.utils.CuilValidator.normalizar(cuil));
+    }
+
     public HistoryAdapter(Context context, List<CUIL> item,  Dialog dialog, GoogleMap mMap) {
+        try {
+            for (com.autenticar.tuid.usuarios.LocalUser u : com.autenticar.tuid.usuarios.LocalUserStore.get(context).list()) {
+                String n = nombreYApellido(u.nombre);
+                if (n != null) nombres.put(u.cuil, n);
+            }
+        } catch (Exception ignored) {
+            // sin nombres se muestra el CUIL como antes
+        }
         this.context = context;
         this.item = item;
         this.itemCopy.addAll(item);
@@ -74,6 +100,7 @@ public class HistoryAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(context).inflate(R.layout.content_history_cuil, parent, false);
             viewHolder.num_cuil = (TextView) convertView.findViewById(R.id.num_cuil);
+            viewHolder.label_cuil = (TextView) convertView.findViewById(R.id.label_cuil);
             viewHolder.date_cuil = (TextView) convertView.findViewById(R.id.date_cuil);
             viewHolder.img_gps = (ImageView) convertView.findViewById(R.id.ico_gps);
             viewHolder.entidad_pagadora = (TextView) convertView.findViewById(R.id.num_entidad_pagadora);
@@ -84,7 +111,15 @@ public class HistoryAdapter extends BaseAdapter {
         }
         if (!item.get(position).getNum_cuil().equals("")) {
             viewHolder.id = position;
-            viewHolder.num_cuil.setText(item.get(position).getNum_cuil());
+            String titular = nombreDe(item.get(position).getNum_cuil());
+            if (titular != null) {
+                // se muestra la persona (nombre y apellido) y no su numero de CUIL
+                viewHolder.label_cuil.setText("Titular");
+                viewHolder.num_cuil.setText(titular);
+            } else {
+                viewHolder.label_cuil.setText("CUIL");
+                viewHolder.num_cuil.setText(item.get(position).getNum_cuil());
+            }
             viewHolder.date_cuil.setText(item.get(position).getDate_cuil());
             viewHolder.latitud = item.get(position).getLatitude_cuil();
             viewHolder.longitud = item.get(position).getLongitude_cuil();
@@ -155,6 +190,7 @@ public class HistoryAdapter extends BaseAdapter {
     public static class ViewHolder {
         int id;
         TextView num_cuil;
+        TextView label_cuil;
         TextView date_cuil;
         String longitud;
         String latitud;
@@ -170,7 +206,9 @@ public class HistoryAdapter extends BaseAdapter {
             item.addAll(itemCopy);
         } else {
             for (CUIL item : itemCopy) {
-                if (item.getNum_cuil().contains(value)) {
+                String nombre = nombreDe(item.getNum_cuil());
+                if (item.getNum_cuil().contains(value)
+                        || (nombre != null && nombre.toLowerCase().contains(value.toLowerCase()))) {
                     this.item.add(item);
                 }
             }

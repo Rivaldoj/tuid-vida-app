@@ -3,6 +3,9 @@ package com.autenticar.tuid.model;
 import com.google.gson.annotations.SerializedName;
 
 public class SearchdniRequest {
+    // Identificador recomendado (11 digitos). Si se envia, el backend ignora dni y sexo.
+    @SerializedName("cuil")
+    public String cuil;
     @SerializedName("dni")
     public String dni;
     @SerializedName("sexo")

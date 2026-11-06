@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/raiz"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/usuarios_titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Usuarios de este teléfono"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/usuarios_vacio"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Todavía no hay usuarios en este teléfono. Se agregan solos después de realizar su primera Fe de Vida."
+        android:textColor="@color/colorGrisOscuro"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/usuarios_lista"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:divider="#DDDDDD"
+        android:dividerHeight="1dp" />
+
+    <Button
+        android:id="@+id/usuarios_agregar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/round_accent_button"
+        android:text="Registrar a otra persona"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+</LinearLayout>

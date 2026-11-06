@@ -37,11 +37,15 @@ public class CuandoCobroActivity extends TuIdActivity{
 
         String dni = getIntent().getStringExtra("dni");
         String sexo = getIntent().getStringExtra("sexo");
+        String cuil = getIntent().getStringExtra("cuil");
 
-        logAmplitude(dni,sexo);
+        // por CUIL no se registra ningun dato personal en el analisis de uso
+        logAmplitude(cuil != null ? "cuil" : dni, cuil != null ? "" : sexo);
         final GetCuandoCobroRequest request = new GetCuandoCobroRequest();
         TuidService service = ServiceGenerator.createService(TuidService.class);
-        Call<GetCuandoCobroResponse> callUser = service.getCuandoCobro(dni, sexo);
+        Call<GetCuandoCobroResponse> callUser = cuil != null
+                ? service.getCuandoCobroPorCuil(cuil)
+                : service.getCuandoCobro(dni, sexo);
         LoadingDialog.getInstance().show(this, "Aguarde un momento, procesando la información");
         callUser.enqueue(new Callback<GetCuandoCobroResponse>() {
             @Override

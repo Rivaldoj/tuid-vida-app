@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SOLO para pruebas locales (-PlocalServer=true): apunta la app al servidor de prueba en la PC via "adb reverse tcp:3003 tcp:3003". -->
+<resources>
+    <string name="urlConnectionProd" translatable="false">http://127.0.0.1:3003/</string>
+</resources>

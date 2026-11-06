@@ -57,10 +57,13 @@ public class CertificadoActivity extends TuIdActivity{
 
         String dni = getIntent().getStringExtra("dni");
         String sexo = getIntent().getStringExtra("sexo");
+        String cuil = getIntent().getStringExtra("cuil");
 
         final SolicitarCertificadoRequest request = new SolicitarCertificadoRequest();
         TuidService service = ServiceGenerator.createService(TuidService.class);
-        Call<SolicitarCertificadoResponse> callUser = service.getCertificate(dni, sexo);
+        Call<SolicitarCertificadoResponse> callUser = cuil != null
+                ? service.getCertificatePorCuil(cuil)
+                : service.getCertificate(dni, sexo);
         LoadingDialog.getInstance().show(this, "Aguarde un momento, procesando la información");
         callUser.enqueue(new Callback<SolicitarCertificadoResponse>() {
             @Override

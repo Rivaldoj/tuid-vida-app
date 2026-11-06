@@ -86,6 +86,7 @@ public class ResultLoginActivity extends TuIdActivity{
 
     public static String dni ="";
     public static String sexo = "";
+    public static String cuil = "";   // se completa cuando la Fe de Vida se hizo identificando por CUIL
     boolean avoidRateAppDialog = false;
 
     @Override
@@ -597,8 +598,12 @@ public class ResultLoginActivity extends TuIdActivity{
 
     void getCertificate(){
         Intent i = new Intent(context, CertificadoActivity.class);
-        i.putExtra("sexo", sexo);
-        i.putExtra("dni",dni);
+        if (cuil != null && !cuil.isEmpty()) {
+            i.putExtra("cuil", cuil);
+        } else {
+            i.putExtra("sexo", sexo);
+            i.putExtra("dni",dni);
+        }
         startActivity(i);
     }
 

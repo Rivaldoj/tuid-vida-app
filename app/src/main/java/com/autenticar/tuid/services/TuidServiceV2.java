@@ -1,5 +1,9 @@
 package com.autenticar.tuid.services;
 
+import com.autenticar.tuid.model.CheckRegistrationRequest;
+import com.autenticar.tuid.model.CheckRegistrationResponse;
+import com.autenticar.tuid.model.HistoryRequest;
+import com.autenticar.tuid.model.HistoryResponse;
 import com.autenticar.tuid.model.LoginRequest;
 import com.autenticar.tuid.model.LoginResponse;
 import com.autenticar.tuid.model.SearchdniRequest;
@@ -14,6 +18,12 @@ public interface TuidServiceV2 {
 
     @POST("searchdni")
     Call<SearchdniResponse> searchdni(@Body SearchdniRequest request);
+
+    @POST("checkregistration")
+    Call<CheckRegistrationResponse> checkRegistration(@Body CheckRegistrationRequest request);
+
+    @POST("history")
+    Call<HistoryResponse> history(@Body HistoryRequest request);
 
     @POST("login")
     Call<LoginResponse> login(@Body LoginRequest request);

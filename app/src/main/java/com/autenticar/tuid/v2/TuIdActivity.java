@@ -315,6 +315,24 @@ public abstract class TuIdActivity extends AppCompatActivity implements Navigati
 
     private Dialog dialog;
     public void searchDniForCertificate(){
+        if (com.autenticar.tuid.BuildConfig.USE_CUIL_API) {
+            // Por CUIL: se elige la persona (o se ingresa su CUIL) y no se pide DNI ni sexo
+            new com.autenticar.tuid.usuarios.SelectorUsuario(this, com.autenticar.tuid.usuarios.LocalUserStore.get(this),
+                    "la solicitud de certificado", new com.autenticar.tuid.usuarios.SelectorUsuario.Callback() {
+                @Override
+                public void onCuil(String cuil) {
+                    Intent i = new Intent(context, CertificadoActivity.class);
+                    i.putExtra("cuil", cuil);
+                    startActivity(i);
+                }
+
+                @Override
+                public void onRegistrar() {
+                    startActivity(new Intent(context, TerminosYCondicionesActivity.class));
+                }
+            }).mostrar();
+            return;
+        }
         dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

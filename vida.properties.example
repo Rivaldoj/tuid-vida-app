@@ -5,3 +5,5 @@ baseUrl=https://api.autenticartuid.com/vida/v2
 token=
 # Numero del proyecto de Google Cloud vinculado a la app en Play Console (Play Integrity). 0 = desactivado.
 playCloudProject=0
+# Identificar por CUIL (requiere los cambios de backend ya desplegados). false = DNI + sexo.
+useCuilApi=false

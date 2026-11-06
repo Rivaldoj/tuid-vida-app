@@ -94,11 +94,17 @@ public interface TuidService {
     @GET("payments")
     Call<GetCuandoCobroResponse> getCuandoCobro(@Query("dni") String dni, @Query("sexo") String sexo);
 
+    @GET("payments")
+    Call<GetCuandoCobroResponse> getCuandoCobroPorCuil(@Query("cuil") String cuil);
+
     @POST("checkDocument")
     Call<CheckDocumentResponse> checkDni(@Body CheckDocumentRequest request);
 
     @GET("certificate")
     Call<SolicitarCertificadoResponse> getCertificate(@Query("dni") String dni, @Query("sexo") String sexo);
+
+    @GET("certificate")
+    Call<SolicitarCertificadoResponse> getCertificatePorCuil(@Query("cuil") String cuil);
 
     @POST("manual")
     Call<ManualRegisterResponse> registroManual(@Body ManualRegisterRequest request);

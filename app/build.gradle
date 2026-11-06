@@ -39,6 +39,9 @@ android {
         buildConfigField 'String', 'VIDA_TOKEN', '""'
         // Play Integrity: numero del proyecto de Google Cloud vinculado en Play Console (0 = desactivado)
         buildConfigField 'long', 'PLAY_CLOUD_PROJECT', vidaProps.getProperty('playCloudProject', '0') + 'L'
+        // true: la app identifica por CUIL (selector de usuarios, aviso de ya registrado, actualizar historial).
+        // Solo activar cuando el backend ya tenga desplegados los cambios por CUIL. false = flujo anterior DNI + sexo.
+        buildConfigField 'boolean', 'USE_CUIL_API', String.valueOf(project.findProperty('useCuilApi') ?: vidaProps.getProperty('useCuilApi', 'false'))
     }
 
     def keystorePropsFile = rootProject.file('keystore.properties')
@@ -51,6 +54,15 @@ android {
                 storePassword keystoreProps['storePassword']
                 keyAlias keystoreProps['keyAlias']
                 keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
+    // Prueba contra un servidor LOCAL (sin tocar produccion): ./gradlew assembleDebug -PlocalServer=true -PuseCuilApi=true
+    if (project.hasProperty('localServer')) {
+        sourceSets {
+            debug {
+                res.srcDir 'src/localserver/res'
             }
         }
     }

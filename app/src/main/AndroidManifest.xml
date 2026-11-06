@@ -105,6 +105,15 @@
         <activity
             android:name=".HistoryActivity"
             android:label="@string/history" />
+        <activity
+            android:name=".v2.captura.PreCapturaActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".usuarios.UsuariosActivity"
+            android:label="Usuarios"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

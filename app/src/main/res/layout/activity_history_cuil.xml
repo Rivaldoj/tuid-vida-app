@@ -8,9 +8,67 @@
     android:orientation="vertical"
     android:background="@color/colorblanco">
 
+    <!-- Barra de usuario y actualizacion (solo se muestra cuando la app identifica por CUIL) -->
+    <LinearLayout
+        android:id="@+id/history_barra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/history_usuario_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Seleccione el usuario:"
+            android:textColor="@color/colorGrisOscuro"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/history_usuario"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/history_usuario_unico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/history_actualizar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/round_primary_button"
+            android:text="Actualizar historial"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/history_mensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="6dp"
+            android:textColor="@color/colorGrisOscuro"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/history_barra"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:fillViewport="true">

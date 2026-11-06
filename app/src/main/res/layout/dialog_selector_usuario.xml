@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/picker_titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/picker_mensaje"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/colorGrisOscuro"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/picker_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/picker_unico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/colorGrisOscuro"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/picker_cuil"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:digits="0123456789- "
+        android:hint="CUIL (11 números)"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:maxLength="14"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/picker_ayuda"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Su CUIL figura en su recibo de haberes o en su constancia de ANSES."
+        android:textColor="#555555"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/picker_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/colorAccentDark"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <!-- Botones grandes y visibles dentro del cuadro (principal, secundario y cancelar) -->
+    <Button
+        android:id="@+id/picker_principal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/round_primary_button"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/picker_secundario"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/round_accent_button"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/picker_cancelar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="6dp"
+        android:background="@android:color/transparent"
+        android:text="Cancelar"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="17sp" />
+</LinearLayout>

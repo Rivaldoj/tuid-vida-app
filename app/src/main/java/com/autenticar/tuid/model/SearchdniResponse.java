@@ -11,6 +11,10 @@ public class SearchdniResponse extends ResponseBase {
     @SerializedName("sessionId")
     public String sessionId;
 
+    // v2 por CUIL: "NOT_REGISTERED" cuando no existe un registro para ese CUIL
+    @SerializedName("registration")
+    public String registration;
+
     @SerializedName("url")
     public String url;
 

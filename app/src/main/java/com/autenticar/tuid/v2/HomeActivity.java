@@ -83,6 +83,8 @@ public class HomeActivity extends TuIdActivity {
 
     public static final int REQUEST_LIVE_PREVIEW = 7002;
     public static final int REQUEST_AWS_LIVENESS = 7003;
+    public static final int REQUEST_PRE_CAPTURA = 7004;
+    public static final int REQUEST_USUARIOS = 7005;
     // true: searchdni/login contra /vida/v2 con AWS Face Liveness; false: flujo anterior (3 pestaneos + selfie)
     private static final boolean USE_LIVENESS_V2 = true;
     private String livenessSessionId;
@@ -92,6 +94,7 @@ public class HomeActivity extends TuIdActivity {
     @Override
     public void onResume(){
         super.onResume();
+        if (permisosFeDeVida != null) permisosFeDeVida.onResume();
         if(irAFeDeVidaOnResume){
             irAFeDeVidaOnResume = false;
             requestPermissions();
@@ -158,6 +161,10 @@ public class HomeActivity extends TuIdActivity {
         findViewById(R.id.btnRegistrarUser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (BuildConfig.USE_CUIL_API) {
+                    comprobarRegistroPrevio();
+                    return;
+                }
                 Intent intent = new Intent(getBaseContext(), TerminosYCondicionesActivity.class);
                 startActivity(intent);
             }
@@ -172,16 +179,33 @@ public class HomeActivity extends TuIdActivity {
             }
         });
 
-        findViewById(R.id.v2_home_cuando_cobro).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnUsuarios).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                searchDniForCobro();
+            public void onClick(View v) {
+                startActivityForResult(new Intent(getBaseContext(), com.autenticar.tuid.usuarios.UsuariosActivity.class), REQUEST_USUARIOS);
             }
         });
+
+        // "Cuando cobro": servicio SUSPENDIDO por el momento (el boton esta comentado en v2_home_activity.xml).
+        // Para reactivarlo, descomentar el boton del layout y este bloque.
+        // findViewById(R.id.v2_home_cuando_cobro).setOnClickListener(new View.OnClickListener() {
+        // @Override
+        // public void onClick(View view) {
+        // if (BuildConfig.USE_CUIL_API) {
+        // elegirUsuarioPara("la consulta de cobro", CuandoCobroActivity.class);
+        // return;
+        // }
+        // searchDniForCobro();
+        // }
+        // });
 
         findViewById(R.id.home_solicitar_certifiado).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (BuildConfig.USE_CUIL_API) {
+                    elegirUsuarioPara("la solicitud de certificado", CertificadoActivity.class);
+                    return;
+                }
                 searchDniForCertificate();
             }
         });
@@ -221,22 +245,35 @@ public class HomeActivity extends TuIdActivity {
         }
     }
 
+    private PermisosFeDeVida permisosFeDeVida;
+
+    /** Comprueba camara, ubicacion y GPS (explicando que falta) y recien entonces pide los datos para la Fe de Vida. */
     public void requestPermissions() {
-        if (checkGPSStatus()) {
-            String[] permisions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA};
-            if (!hasPermissions(this, permisions)) {
-                ActivityCompat.requestPermissions(this, permisions, 1501);
-            } else {
-                gpsLocation = new GPSLocation(activity, getApplicationContext());
-                latitud = gpsLocation.getLatitud();
-                longitud = gpsLocation.getLongitud();
-                searchDniForAuthentication();
-            }
-        }else{
-            if(isGpsEnabled()) {
-                requestPermissions();
-            }
+        if (permisosFeDeVida == null) {
+            permisosFeDeVida = new PermisosFeDeVida(this, new PermisosFeDeVida.Listener() {
+                @Override
+                public void onListo() {
+                    gpsLocation = new GPSLocation(activity, getApplicationContext());
+                    latitud = gpsLocation.getLatitud();
+                    longitud = gpsLocation.getLongitud();
+                    if (BuildConfig.USE_CUIL_API) {
+                        // Primero se elige la persona; los controles de luz y rostro van despues (ver iniciarIdentificacion)
+                        iniciarIdentificacion();
+                    } else {
+                        // Controles de luz y rostro ANTES de pedir los datos: la sesion de prueba de vida que
+                        // crea searchdni vence a los 3 minutos, por eso este paso va antes y no despues
+                        startActivityForResult(new Intent(HomeActivity.this, com.autenticar.tuid.v2.captura.PreCapturaActivity.class), REQUEST_PRE_CAPTURA);
+                    }
+                }
+            });
         }
+        permisosFeDeVida.iniciar();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (permisosFeDeVida != null) permisosFeDeVida.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private boolean checkGPSStatus() {
@@ -441,7 +478,200 @@ public class HomeActivity extends TuIdActivity {
 
 
 
+    // ------------------------------------------------------------------
+    // Identificacion por CUIL (BuildConfig.USE_CUIL_API)
+    // ------------------------------------------------------------------
+
+    private String cuilPrecargado;   // viene del aviso "ya registrado": se salta el selector
+    private String cuilPendiente;    // persona elegida; se consulta al servidor despues de los controles de camara
+
+    /** Persona ya elegida: controles de luz y rostro y, si salen bien, searchdni (la sesion de prueba de vida dura 3 minutos). */
+    private void irAControlesPrevios(final String cuil) {
+        // Primero se comprueba si esta registrado: si no lo esta, el aviso sale ANTES de abrir la camara
+        LoadingDialog.getInstance().show(self, "Aguarde un momento, comprobando su registro");
+        ServiceGenerator.createV2Service(TuidServiceV2.class)
+                .checkRegistration(new com.autenticar.tuid.model.CheckRegistrationRequest(cuil))
+                .enqueue(new Callback<com.autenticar.tuid.model.CheckRegistrationResponse>() {
+                    @Override
+                    public void onResponse(Call<com.autenticar.tuid.model.CheckRegistrationResponse> call,
+                                           Response<com.autenticar.tuid.model.CheckRegistrationResponse> response) {
+                        LoadingDialog.getInstance().hide();
+                        com.autenticar.tuid.model.CheckRegistrationResponse r = response.body();
+                        if (!response.isSuccessful() || r == null) {
+                            falloConsultaRegistro(cuil);
+                        } else if (!r.IsOk()) {
+                            com.autenticar.tuid.usuarios.Cuadro.mostrar(self, "No pudimos continuar",
+                                    r.Message != null ? r.Message : "Inténtelo nuevamente en unos minutos.", "Entendido", null, null);
+                        } else if (com.autenticar.tuid.model.CheckRegistrationResponse.NOT_REGISTERED.equals(r.registration)) {
+                            ofrecerRegistro();
+                        } else if (com.autenticar.tuid.model.CheckRegistrationResponse.UP_TO_DATE.equals(r.registration)) {
+                            // Al dia: no hace falta Fe de Vida. Se informa la proxima fecha y se vuelve al menu principal, sin abrir la camara
+                            com.autenticar.tuid.usuarios.Cuadro.mostrar(HomeActivity.this, "Fe de Vida al día",
+                                    com.autenticar.tuid.usuarios.AlDia.mensaje(r.proximas), "Volver al menú", null, null);
+                        } else if (com.autenticar.tuid.model.CheckRegistrationResponse.INCOMPLETE.equals(r.registration)) {
+                            // registro desaprobado o sin completar: antes de la camara, se lo manda con Soporte
+                            com.autenticar.tuid.usuarios.Soporte.mostrarRegistroIncompleto(HomeActivity.this, cuil);
+                        } else {
+                            cuilPendiente = cuil;
+                            startActivityForResult(new Intent(HomeActivity.this, com.autenticar.tuid.v2.captura.PreCapturaActivity.class), REQUEST_PRE_CAPTURA);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<com.autenticar.tuid.model.CheckRegistrationResponse> call, Throwable t) {
+                        LoadingDialog.getInstance().hide();
+                        falloConsultaRegistro(cuil);
+                    }
+                });
+    }
+
+    /** Sin conexion NO se asume que no esta registrado: se avisa y se permite reintentar. */
+    private void falloConsultaRegistro(final String cuil) {
+        com.autenticar.tuid.usuarios.Cuadro.mostrar(this, "Sin conexión",
+                "No pudimos comprobar su registro. Verifique su conexión a Internet e inténtelo nuevamente.",
+                "Reintentar", new Runnable() {
+                    @Override
+                    public void run() {
+                        irAControlesPrevios(cuil);
+                    }
+                }, "Cancelar");
+    }
+
+    private void irARegistro() {
+        startActivity(new Intent(getBaseContext(), TerminosYCondicionesActivity.class));
+    }
+
+    /** Despues de los controles previos: con CUIL se elige la persona; si no, el formulario DNI + sexo de siempre. */
+    private void iniciarIdentificacion() {
+        if (!BuildConfig.USE_CUIL_API) {
+            searchDniForAuthentication();
+            return;
+        }
+        if (cuilPrecargado != null) {
+            String c = cuilPrecargado;
+            cuilPrecargado = null;
+            irAControlesPrevios(c);
+            return;
+        }
+        new com.autenticar.tuid.usuarios.SelectorUsuario(this, com.autenticar.tuid.usuarios.LocalUserStore.get(this),
+                "su Fe de Vida", new com.autenticar.tuid.usuarios.SelectorUsuario.Callback() {
+            @Override
+            public void onCuil(String cuil) {
+                irAControlesPrevios(cuil);
+            }
+
+            @Override
+            public void onRegistrar() {
+                comprobarRegistroPrevio();
+            }
+        }).mostrar();
+    }
+
+    /** Cobro / certificado: elige la persona y abre la pantalla con su CUIL. */
+    private void elegirUsuarioPara(String accion, final Class<?> destino) {
+        new com.autenticar.tuid.usuarios.SelectorUsuario(this, com.autenticar.tuid.usuarios.LocalUserStore.get(this),
+                accion, new com.autenticar.tuid.usuarios.SelectorUsuario.Callback() {
+            @Override
+            public void onCuil(String cuil) {
+                Intent i = new Intent(context, destino);
+                i.putExtra("cuil", cuil);
+                startActivity(i);
+            }
+
+            @Override
+            public void onRegistrar() {
+                comprobarRegistroPrevio();
+            }
+        }).mostrar();
+    }
+
+    /** "Registrarse": primero se comprueba si la persona ya esta registrada. */
+    private void comprobarRegistroPrevio() {
+        new com.autenticar.tuid.usuarios.ComprobarRegistro(this, new com.autenticar.tuid.usuarios.ComprobarRegistro.Destino() {
+            @Override
+            public void onContinuarRegistro() {
+                irARegistro();
+            }
+
+            @Override
+            public void onRealizarFeDeVida(String cuil) {
+                cuilPrecargado = cuil;   // el formulario ya entra con el CUIL cargado
+                requestPermissions();
+            }
+        }).mostrar();
+    }
+
+    private void buscarPorCuil(final String cuil) {
+        final SearchdniRequest request = new SearchdniRequest();
+        request.cuil = cuil;
+        request.os = "Android " + Build.VERSION.RELEASE + " (" + Build.MANUFACTURER + " " + Build.MODEL + ")";
+        request.version = String.valueOf(Build.VERSION.SDK_INT);
+        request.appversion = BuildConfig.VERSION_NAME;
+        try {
+            LoadingDialog.getInstance().show(self, "Aguarde un momento, procesando la información");
+        } catch (Exception e) {
+        }
+        ServiceGenerator.createV2Service(TuidServiceV2.class).searchdni(request).enqueue(new Callback<SearchdniResponse>() {
+            @Override
+            public void onResponse(Call<SearchdniResponse> call, Response<SearchdniResponse> response) {
+                LoadingDialog.getInstance().hide();
+                SearchdniResponse r = response.body();
+                if (!response.isSuccessful() || r == null) {
+                    HelperFunctions.ShowAlert(self, "No pudimos iniciar su Fe de Vida. Inténtelo nuevamente en unos minutos.");
+                    return;
+                }
+                if (r.IsOk() && r.idValidacion > 0 && r.sessionId != null && !r.sessionId.isEmpty()) {
+                    idValidacion = r.idValidacion;
+                    livenessSessionId = r.sessionId;
+                    irAFeDeVidaCuil(cuil);
+                } else if (r.IsOk() || noRegistrado(r)) {
+                    ofrecerRegistro();
+                } else {
+                    HelperFunctions.ShowAlertWithContact(self, r.Message, 0, "DONTFINISHACTIVITY");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SearchdniResponse> call, Throwable t) {
+                LoadingDialog.getInstance().hide();
+                HelperFunctions.ShowAlertWithContact(self, context.getString(R.string.no_hay_conexion_a_internet), 1, "DONTFINISHACTIVITY");
+            }
+        });
+    }
+
+    /** El servidor avisa con el codigo NOT_REGISTERED; se acepta tambien el texto del mensaje por compatibilidad. */
+    private boolean noRegistrado(SearchdniResponse r) {
+        return "NOT_REGISTERED".equals(r.registration)
+                || (r.Message != null && r.Message.contains("Previamente debe registrarse"));
+    }
+
+    /** No esta registrado: en lugar de un cartel con un error, se lo lleva a registrarse. */
+    private void ofrecerRegistro() {
+        com.autenticar.tuid.usuarios.Cuadro.mostrar(this, "Usted no está registrado", "Previamente debe registrarse.",
+                "Registrarse", new Runnable() {
+                    @Override
+                    public void run() {
+                        irARegistro();
+                    }
+                }, "Cancelar");
+    }
+
+    private void irAFeDeVidaCuil(String cuil) {
+        new AmplitudeManager().log(this, "Login Process Started", new JSONObject());
+        ResultLoginActivity.dni = "";
+        ResultLoginActivity.sexo = "";
+        ResultLoginActivity.cuil = cuil;
+        if (BuildConfig.DEBUG && ServiceGenerator.v2BaseUrl != null && ServiceGenerator.v2BaseUrl.startsWith("http://127.0.0.1")) {
+            // SOLO pruebas locales (servidor de prueba en la PC, sin AWS): se omite la prueba de vida real
+            pedirPermisoNotificaciones();
+            login();
+            return;
+        }
+        startActivityForResult(LivenessActivity.Companion.intent(this, livenessSessionId, getString(R.string.aws_liveness_region)), REQUEST_AWS_LIVENESS);
+    }
+
     protected void irAFeDeVida(String dni, String sexo) {
+        ResultLoginActivity.cuil = "";
         Intent intent = new Intent(getBaseContext(), FeDeVidaActivity.class);
         intent.putExtra(GESTURE_TO_DETECT, FeDeVidaActivity.DETECTAR_PESTANEO_CLOSED_EYES);
         JSONObject data = new JSONObject();
@@ -469,6 +699,21 @@ public class HomeActivity extends TuIdActivity {
                 HelperFunctions.ShowAlert(self, "No se pudo completar la prueba de vida. Intentá nuevamente en un lugar con buena luz y buena conexión a internet.");
             }
             return;
+        } else if (requestCode == REQUEST_USUARIOS) {
+            // se eligio una persona en "Usuarios": Fe de Vida con su CUIL ya cargado
+            String c = data != null ? data.getStringExtra("cuil") : null;
+            if (c != null) {
+                cuilPrecargado = c;
+                requestPermissions();
+            }
+        } else if (requestCode == REQUEST_PRE_CAPTURA) {
+            if (BuildConfig.USE_CUIL_API) {
+                String c = cuilPendiente;
+                cuilPendiente = null;
+                if (c != null) buscarPorCuil(c);
+            } else {
+                searchDniForAuthentication();
+            }
         } else if (requestCode == REQUEST_AWS_LIVENESS) {
             pedirPermisoNotificaciones();
             login();
@@ -567,6 +812,9 @@ public class HomeActivity extends TuIdActivity {
                         String Diretion = GPSLocation.getmAddress() + " '\n'" + GPSLocation.getmCity() + " '\n'" + GPSLocation.getmState() + " '\n'" + GPSLocation.getmCountry() + " '\n'" + GPSLocation.getmPostalCode();
                         CUIL cuil = new CUIL(null, loginResponse.Cuil.toUpperCase(), dateFormat.format(date), String.valueOf(gpsLocation.getLatitud()), String.valueOf(gpsLocation.getLongitud()), Diretion,loginResponse.Banco!=null?loginResponse.Banco:"");
                         sql.insertCUIL(cuil);
+                        sql.recortarHistorial(cuil.getNum_cuil(), SQLHelper.MAX_HISTORIAL_POR_USUARIO);
+                        // La persona se guarda en este telefono solo despues de una Fe de Vida confirmada por el servidor
+                        com.autenticar.tuid.usuarios.LocalUserStore.get(self).addOrUpdate(loginResponse.Cuil, loginResponse.Name);
                         startActivity(intent);
                     } else {
                         HelperFunctions.ShowAlert(self, response.body().Message);
@@ -669,6 +917,10 @@ public class HomeActivity extends TuIdActivity {
 
 
     public void searchDniForCertificate(){
+        if (BuildConfig.USE_CUIL_API) {
+            super.searchDniForCertificate();   // selector por CUIL (menu lateral)
+            return;
+        }
         dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

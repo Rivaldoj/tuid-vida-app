@@ -37,6 +37,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.ArrayList;
 
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import com.autenticar.tuid.usuarios.HistorialSync;
+import com.autenticar.tuid.usuarios.LocalUser;
+import com.autenticar.tuid.usuarios.LocalUserStore;
+import com.autenticar.tuid.utils.CuilValidator;
+
 
 public class HistoryActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ListView list_cuil;
@@ -89,15 +99,100 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
 
         list_cuil = findViewById(R.id.list_cuil);
         sql = new SQLHelper(this);
-        item = sql.getAllCUIL();
-        // item.listIterator().();
-        historyAdapter = new HistoryAdapter(this, item, dialog, mMap);
-        list_cuil.setAdapter(historyAdapter);
-        if (historyAdapter.getCount() == 0) {
-            findViewById(R.id.no_registro).setVisibility(View.VISIBLE);
+        mapaDialog = dialog;
+        if (BuildConfig.USE_CUIL_API) {
+            configurarPorUsuario();
         } else {
-            findViewById(R.id.no_registro).setVisibility(View.GONE);
+            cargarLista(null);
         }
+    }
+
+    private Dialog mapaDialog;
+    private String cuilSeleccionado;
+
+    /** Carga la lista local; con cuilFiltro muestra solo las certificaciones de esa persona (nunca se mezclan). */
+    private void cargarLista(String cuilFiltro) {
+        ArrayList<CUIL> todos = sql.getAllCUIL();
+        item = new ArrayList<>();
+        for (CUIL c : todos) {
+            if (cuilFiltro == null || cuilFiltro.equals(CuilValidator.normalizar(c.getNum_cuil()))) item.add(c);
+        }
+        historyAdapter = new HistoryAdapter(this, item, mapaDialog, mMap);
+        list_cuil.setAdapter(historyAdapter);
+        TextView vacio = findViewById(R.id.no_registro);
+        if (historyAdapter.getCount() == 0) {
+            if (BuildConfig.USE_CUIL_API && cuilFiltro != null) {
+                vacio.setText("No hay certificaciones guardadas en este dispositivo. Puede recuperar sus últimas 20 certificaciones desde el sistema.");
+            }
+            vacio.setVisibility(View.VISIBLE);
+        } else {
+            vacio.setVisibility(View.GONE);
+        }
+    }
+
+    /** Selector de usuario (o usuario unico) y boton "Actualizar historial". */
+    private void configurarPorUsuario() {
+        final java.util.List<LocalUser> usuarios = LocalUserStore.get(this).list();
+        findViewById(R.id.history_barra).setVisibility(View.VISIBLE);
+        final TextView mensaje = findViewById(R.id.history_mensaje);
+        final Button actualizar = findViewById(R.id.history_actualizar);
+        if (usuarios.isEmpty()) {
+            actualizar.setVisibility(View.GONE);
+            mensaje.setVisibility(View.VISIBLE);
+            mensaje.setText("Solo podrá actualizar su historial luego de la próxima certificación.");
+            cargarLista(null);
+            return;
+        }
+        // arranca con la persona que hizo la Fe de Vida mas reciente (la ultima de la lista)
+        cuilSeleccionado = usuarios.get(usuarios.size() - 1).cuil;
+        if (usuarios.size() == 1) {
+            TextView unico = findViewById(R.id.history_usuario_unico);
+            unico.setVisibility(View.VISIBLE);
+            unico.setText(usuarios.get(0).nombre);
+        } else {
+            Spinner spinner = findViewById(R.id.history_usuario);
+            java.util.List<String> etiquetas = new ArrayList<>();
+            for (LocalUser u : usuarios) etiquetas.add(u.nombre + " — CUIL: " + CuilValidator.formatear(u.cuil));
+            spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, etiquetas));
+            spinner.setSelection(usuarios.size() - 1);
+            findViewById(R.id.history_usuario_label).setVisibility(View.VISIBLE);
+            spinner.setVisibility(View.VISIBLE);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    cuilSeleccionado = usuarios.get(position).cuil;
+                    mensaje.setVisibility(View.GONE);
+                    cargarLista(cuilSeleccionado);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+        }
+        cargarLista(cuilSeleccionado);
+        actualizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String cuil = cuilSeleccionado;
+                actualizar.setEnabled(false);
+                mensaje.setVisibility(View.VISIBLE);
+                mensaje.setText("Actualizando su historial…");
+                HistorialSync.actualizar(HistoryActivity.this, cuil, new HistorialSync.Resultado() {
+                    @Override
+                    public void onTerminado(final boolean ok, final String texto) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                actualizar.setEnabled(true);
+                                mensaje.setText(texto);
+                                if (ok && cuil.equals(cuilSeleccionado)) cargarLista(cuil);
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     @Override

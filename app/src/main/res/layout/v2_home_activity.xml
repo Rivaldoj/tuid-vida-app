@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/lblLogo"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/v2_home_cuando_cobro"
+            app:layout_constraintRight_toLeftOf="@id/btnUsuarios"
             android:background="@drawable/rounded_background"
             android:textColor="#B1BCBE"
             android:layout_margin="10dp"
@@ -53,6 +53,8 @@
             />
 
 
+        <!-- "Cuando cobro": servicio SUSPENDIDO (no se presta por el momento). Para reactivarlo, sacar este
+             comentario, volver a habilitar el click en HomeActivity y dejar a "Usuarios" debajo de la fila.
         <Button
             android:id="@+id/v2_home_cuando_cobro"
             app:layout_constraintTop_toBottomOf="@id/lblLogo"
@@ -65,7 +67,20 @@
             android:textColor="#B1BCBE"
             android:text="Cuando cobro"
             android:layout_weight="1"/>
+        -->
 
+
+        <Button
+            android:id="@+id/btnUsuarios"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/lblLogo"
+            app:layout_constraintLeft_toRightOf="@id/btnHistorial"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/rounded_background"
+            android:textColor="#B1BCBE"
+            android:layout_margin="10dp"
+            android:text="Usuarios" />
 
         <Button
             android:id="@+id/btnLoginDBiom"
