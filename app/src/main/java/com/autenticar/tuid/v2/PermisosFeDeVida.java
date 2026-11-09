@@ -3,6 +3,8 @@ package com.autenticar.tuid.v2;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.view.View;
+import com.autenticar.tuid.R;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,6 +40,7 @@ public class PermisosFeDeVida {
     private final Listener listener;
     private boolean esperandoAjustes = false;
     private AlertDialog dialogoActual;
+    private int iconoPendiente = R.drawable.ic_alerta_camara; // icono del cuadro que se va a mostrar
 
     public PermisosFeDeVida(Activity activity, Listener listener) {
         this.activity = activity;
@@ -50,12 +53,14 @@ public class PermisosFeDeVida {
         esperandoAjustes = false;
 
         if (!tiene(Manifest.permission.CAMERA)) {
+            iconoPendiente = R.drawable.ic_alerta_camara;
             pedir(Manifest.permission.CAMERA,
                     "Permiso de cámara necesario",
                     "TuID Vida necesita utilizar la cámara de su dispositivo para verificar su identidad mediante el reconocimiento facial. Por favor, habilite el acceso a la cámara para continuar.",
                     "Cámara");
             return;
         }
+        iconoPendiente = R.drawable.ic_alerta_ubicacion;
         if (!tiene(Manifest.permission.ACCESS_FINE_LOCATION)) {
             pedir(Manifest.permission.ACCESS_FINE_LOCATION,
                     "Permiso de ubicación necesario",
@@ -148,20 +153,29 @@ public class PermisosFeDeVida {
         }
     }
 
+    /** Cuadro con icono de alerta, texto y dos botones tipo chip grandes dentro del cuadro. */
     private void mostrar(String titulo, String mensaje, String botonPositivo, final Runnable accion) {
         if (activity.isFinishing()) return;
-        dialogoActual = new AlertDialog.Builder(activity)
-                .setTitle(titulo)
-                .setMessage(mensaje)
-                .setCancelable(true)
-                .setNegativeButton("Ahora no", null)
-                .setPositiveButton(botonPositivo, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        accion.run();
-                    }
-                })
-                .create();
+        View v = android.view.LayoutInflater.from(activity).inflate(R.layout.dialog_permiso, null);
+        ((android.widget.ImageView) v.findViewById(R.id.permiso_icono)).setImageResource(iconoPendiente);
+        ((android.widget.TextView) v.findViewById(R.id.permiso_titulo)).setText(titulo);
+        ((android.widget.TextView) v.findViewById(R.id.permiso_mensaje)).setText(mensaje);
+        android.widget.Button aceptar = (android.widget.Button) v.findViewById(R.id.permiso_aceptar);
+        aceptar.setText(botonPositivo);
+        dialogoActual = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(v).setCancelable(true).create();
+        aceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogoActual.dismiss();
+                accion.run();
+            }
+        });
+        v.findViewById(R.id.permiso_ahora_no).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogoActual.dismiss();
+            }
+        });
         dialogoActual.show();
     }
 }

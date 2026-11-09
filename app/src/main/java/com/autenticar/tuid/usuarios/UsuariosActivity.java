@@ -45,6 +45,12 @@ public class UsuariosActivity extends AppCompatActivity {
         vacio = findViewById(R.id.usuarios_vacio);
         adapter = new UsuariosAdapter(new ArrayList<LocalUser>());
         lista.setAdapter(adapter);
+        findViewById(R.id.usuarios_volver).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         Button agregar = findViewById(R.id.usuarios_agregar);
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override

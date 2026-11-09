@@ -100,6 +100,19 @@ public abstract class TuIdActivity extends AppCompatActivity implements Navigati
         getLayoutInflater().inflate(layoutResID, actContent, true);
         super.setContentView(fullLayout);
 
+        // Deja libres la barra de estado (arriba) y la de navegacion del telefono (abajo): la barra superior ya no se
+        // superpone con la hora y los botones de abajo no quedan tapados por los botones del sistema.
+        fullLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(fullLayout, new androidx.core.view.OnApplyWindowInsetsListener() {
+            @Override
+            public androidx.core.view.WindowInsetsCompat onApplyWindowInsets(View v, androidx.core.view.WindowInsetsCompat insets) {
+                androidx.core.graphics.Insets bars = insets.getInsets(
+                        androidx.core.view.WindowInsetsCompat.Type.systemBars() | androidx.core.view.WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                return insets;
+            }
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(fullLayout);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

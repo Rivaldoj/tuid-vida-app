@@ -1,148 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Terminos y condiciones. Estilo "D": cabecera turquesa, hoja blanca redondeada, casillas grandes (estilo Odis relleno).
+     Los ids no cambian: TerminosYCondicionesActivity los sigue usando igual. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/colorblanco"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
 
-    <ScrollView
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/oswald"
+        android:text="Términos"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/subrayado_titulo" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="70dp"
-        android:clipToPadding="false"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/hoja_blanca"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/relative_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/style_rect"
-                android:gravity="center"
-                android:paddingTop="5dp">
-
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="8dp">
 
                 <ImageView
                     android:id="@+id/img_muestra_frente"
-                    android:layout_width="fill_parent"
-                    android:layout_height="250dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="170dp"
+                    android:contentDescription="Privacidad"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/logo_dnis" />
+                    android:src="@drawable/ic_privacidad" />
 
+                <!-- El dorso se dibuja junto al frente en la imagen anterior; se deja el id por compatibilidad -->
                 <ImageView
                     android:id="@+id/imagen_muestra_dorso"
-                    android:layout_width="fill_parent"
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_below="@id/img_muestra_frente"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="false"
-                    android:layout_marginStart="30dp"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/dorso_dni" />
+                    android:importantForAccessibility="no"
+                    android:visibility="gone" />
+
+                <!-- El mensaje del scan va en la pantalla de instrucciones que sigue (segun el tipo de DNI), no aca -->
                 <TextView
                     android:id="@+id/paso_1"
-                    android:layout_width="150dp"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/imagen_muestra_dorso"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="30dp"
-                    android:text="@string/explicacion_registro_scan_paso1"
-                    android:textAlignment="center"
+                    android:layout_marginTop="12dp"
                     android:gravity="center"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16dp" />
+                    android:lineSpacingMultiplier="1.1"
+                    android:text="@string/explicacion_registro_scan_paso1"
+                    android:textColor="@color/tu_tinta"
+                    android:textSize="19sp" />
 
                 <LinearLayout
                     android:id="@+id/layout_terminos"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/paso_1"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="5dp"
-                    android:gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/tarjeta_aviso"
+                    android:gravity="center_vertical"
+                    android:minHeight="72dp"
                     android:orientation="horizontal"
-                    android:paddingLeft="5dp">
+                    android:padding="12dp">
 
                     <CheckBox
                         android:id="@+id/checkbox_terminos"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/check_tu"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:paddingStart="0dp" />
 
                     <TextView
                         android:id="@+id/checkbox_terminos_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/layout_terminos"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginBottom="@dimen/padding"
-                        android:text="@string/label_terminos_text" />
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:text="@string/label_terminos_text"
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/chip_claro"
+                        android:elevation="3dp"
+                        android:fontFamily="@font/oswald"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="LEER"
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/layout_politicas"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/layout_terminos"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentEnd="false"
-                    android:layout_alignParentRight="true"
-                    android:gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/tarjeta_aviso"
+                    android:gravity="center_vertical"
+                    android:minHeight="72dp"
                     android:orientation="horizontal"
-                    android:textAlignment="center">
+                    android:padding="12dp">
 
                     <CheckBox
                         android:id="@+id/checkbox_politicas"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/check_tu"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:paddingStart="0dp" />
 
                     <TextView
                         android:id="@+id/checkbox_politicas_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginBottom="@dimen/padding"
-                        android:text="@string/label_politicas_text" />
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:text="@string/label_politicas_text"
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/chip_claro"
+                        android:elevation="3dp"
+                        android:fontFamily="@font/oswald"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="LEER"
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="16sp" />
                 </LinearLayout>
-
-            </RelativeLayout>
-        </LinearLayout>
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="5dp">
+            </LinearLayout>
+        </ScrollView>
 
         <Button
             android:id="@+id/btnIniciarScan"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/round_primary_button"
+            android:layout_height="64dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/boton_pildora"
+            android:fontFamily="@font/oswald"
+            android:letterSpacing="0.05"
             android:text="@string/iniciar_scan"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
-</RelativeLayout>
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="21sp" />
+    </LinearLayout>
+</LinearLayout>

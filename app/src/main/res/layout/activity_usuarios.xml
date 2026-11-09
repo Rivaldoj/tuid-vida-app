@@ -1,49 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Usuarios de este telefono. Estilo "D": cabecera turquesa, hoja blanca y botones chicos tipo chip. Los ids no cambian. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/raiz"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/usuarios_titulo"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Usuarios de este teléfono"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp">
 
-    <TextView
-        android:id="@+id/usuarios_vacio"
+        <ImageButton
+            android:id="@+id/usuarios_volver"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Volver"
+            android:src="@drawable/ic_volver_blanco" />
+
+        <TextView
+            android:id="@+id/usuarios_titulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/oswald"
+            android:paddingStart="4dp"
+            android:text="Usuarios"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/subrayado_titulo" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Todavía no hay usuarios en este teléfono. Se agregan solos después de realizar su primera Fe de Vida."
-        android:textColor="@color/colorGrisOscuro"
-        android:textSize="18sp"
-        android:visibility="gone" />
+        android:background="@drawable/hoja_blanca"
+        android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/usuarios_lista"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_weight="1"
-        android:divider="#DDDDDD"
-        android:dividerHeight="1dp" />
+        <TextView
+            android:id="@+id/usuarios_vacio"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="Todavía no hay usuarios en este teléfono. Se agregan solos después de realizar su primera Fe de Vida."
+            android:textAlignment="center"
+            android:textColor="#46585C"
+            android:textSize="19sp"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/usuarios_agregar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/round_accent_button"
-        android:text="Registrar a otra persona"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        <ListView
+            android:id="@+id/usuarios_lista"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="12dp"
+            android:paddingStart="16dp"
+            android:paddingTop="22dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
+            android:scrollbars="none" />
+
+        <Button
+            android:id="@+id/usuarios_agregar"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/boton_pildora"
+            android:fontFamily="@font/oswald"
+            android:letterSpacing="0.05"
+            android:text="Registrar a otra persona"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </LinearLayout>
 </LinearLayout>
