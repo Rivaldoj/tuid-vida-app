@@ -59,7 +59,7 @@ public class SelectorUsuario {
         contenido = LayoutInflater.from(activity).inflate(R.layout.dialog_selector_usuario, null);
         texto(R.id.picker_titulo).setText(titulo);
         texto(R.id.picker_mensaje).setText(mensaje);
-        AlertDialog nuevo = new AlertDialog.Builder(activity).setView(contenido).setCancelable(true).create();
+        AlertDialog nuevo = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(contenido).setCancelable(true).create();
         nuevo.setCanceledOnTouchOutside(false);   // un toque fuera del cuadro no lo cierra (se cierra con Cancelar)
         if (dialog != null && dialog.isShowing()) dialog.dismiss();
         dialog = nuevo;

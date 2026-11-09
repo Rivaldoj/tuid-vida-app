@@ -98,7 +98,7 @@ public final class Soporte {
         nombre.setHint("Nombre y apellido");
         nombre.setVisibility(View.VISIBLE);
         final TextView error = (TextView) v.findViewById(R.id.picker_error);
-        final AlertDialog d = new AlertDialog.Builder(activity).setView(v).setCancelable(false).create();
+        final AlertDialog d = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(v).setCancelable(false).create();
         d.setCanceledOnTouchOutside(false);
 
         Button enviar = (Button) v.findViewById(R.id.picker_principal);

@@ -46,7 +46,20 @@ public class MyFirebaseMessagingService extends  FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.e("PUSH_NOTIFICATION", "From: " + remoteMessage.getFrom());
-        
+
+        // Guarda el aviso en "Mis avisos" (llega aca cuando la app esta abierta)
+        try {
+            String tituloAviso = remoteMessage.getData().get("titulo");
+            String mensajeAviso = remoteMessage.getData().get("mensaje");
+            if (mensajeAviso == null && remoteMessage.getNotification() != null) {
+                tituloAviso = remoteMessage.getNotification().getTitle();
+                mensajeAviso = remoteMessage.getNotification().getBody();
+            }
+            com.autenticar.tuid.avisos.AvisosStore.get(this).agregar(tituloAviso, mensajeAviso, remoteMessage.getSentTime());
+        } catch (Exception e) {
+            Log.e("AVISOS", "no se pudo guardar el aviso: " + e);
+        }
+
         if (remoteMessage.getData().size() > 0) {
             Log.e("PUSH_NOTIFICATION", "Message data payload: " + remoteMessage.getData());
 

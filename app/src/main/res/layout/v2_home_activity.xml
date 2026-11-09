@@ -1,133 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Pantalla principal. Estilo "D" (Odis con colores TuID): cabecera turquesa y hoja blanca redondeada.
+     Los ids de los botones no cambian: HomeActivity los sigue usando igual. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/raiz"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFFFFF"
-    android:padding="3dp"
-    android:orientation="vertical">
-
+    android:background="@color/colorPrimary">
 
     <Button
+        android:id="@+id/v2_home_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TEST"
-        android:id="@+id/v2_home_test"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Logo dentro de un circulo blanco amplio, para que no lo pise -->
     <ImageView
         android:id="@+id/lblLogo"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/circulo_blanco"
+        android:contentDescription="TuID Vida"
+        android:elevation="4dp"
+        android:padding="12dp"
+        android:src="@drawable/logo_tuid_vida"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnHistorial"
-        android:adjustViewBounds="true"
-        android:src="@drawable/banner_login" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtVersionName"
+        android:id="@+id/home_titulo"
         android:layout_width="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_height="wrap_content"
-        android:text="1.0.0"
-        android:textSize="12dp" />
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="14dp"
+        android:fontFamily="@font/oswald"
+        android:text="Inicio"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblLogo" />
 
+    <View
+        android:layout_width="52dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFF"
+        app:layout_constraintLeft_toLeftOf="@id/home_titulo"
+        app:layout_constraintTop_toBottomOf="@id/home_titulo" />
+
+    <!-- Hoja blanca con todo el contenido -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_hoja"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/hoja_blanca"
+        android:paddingStart="18dp"
+        android:paddingTop="22dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_titulo">
 
         <Button
             android:id="@+id/btnHistorial"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/lblLogo"
+            android:layout_height="124dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/boton_tarjeta"
+            android:drawableTop="@drawable/ic_menu_certificado"
+            android:drawablePadding="4dp"
+            android:fontFamily="@font/oswald"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp"
+            android:text="Historial de\ncertificaciones"
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="15sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/btnUsuarios"
-            android:background="@drawable/rounded_background"
-            android:textColor="#B1BCBE"
-            android:layout_margin="10dp"
-            android:layout_marginRight="10dp"
-            android:text="Historial de\ncertificaciones"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-        <!-- "Cuando cobro": servicio SUSPENDIDO (no se presta por el momento). Para reactivarlo, sacar este
-             comentario, volver a habilitar el click en HomeActivity y dejar a "Usuarios" debajo de la fila.
-        <Button
-            android:id="@+id/v2_home_cuando_cobro"
-            app:layout_constraintTop_toBottomOf="@id/lblLogo"
-            app:layout_constraintLeft_toRightOf="@id/btnHistorial"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_width="0dp"
-            android:layout_margin="10dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_background"
-            android:textColor="#B1BCBE"
-            android:text="Cuando cobro"
-            android:layout_weight="1"/>
-        -->
-
+        <!-- "Cuando cobro": servicio SUSPENDIDO (no se presta por el momento). Para reactivarlo, agregar de nuevo
+             el boton v2_home_cuando_cobro (ver HomeActivity) y dejar a "Usuarios" debajo de la fila. -->
 
         <Button
             android:id="@+id/btnUsuarios"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/lblLogo"
+            android:layout_height="124dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/boton_tarjeta"
+            android:drawableTop="@drawable/ic_menu_usuarios"
+            android:drawablePadding="4dp"
+            android:fontFamily="@font/oswald"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp"
+            android:text="Usuarios"
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="15sp"
             app:layout_constraintLeft_toRightOf="@id/btnHistorial"
             app:layout_constraintRight_toRightOf="parent"
-            android:background="@drawable/rounded_background"
-            android:textColor="#B1BCBE"
-            android:layout_margin="10dp"
-            android:text="Usuarios" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnLoginDBiom"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/btnHistorial"
+            android:layout_height="64dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/boton_pildora"
+            android:fontFamily="@font/oswald"
+            android:letterSpacing="0.05"
+            android:text="@string/ingreso_por_datos_biometricos"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="21sp"
+            app:layout_constraintBottom_toTopOf="@id/home_solicitar_certifiado"
+            app:layout_constraintTop_toBottomOf="@id/btnAvisos"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <!-- Acceso a "Mis avisos": el texto lleva la cantidad de avisos sin leer (lo pone HomeActivity) -->
+        <Button
+            android:id="@+id/btnAvisos"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/boton_tarjeta"
+            android:drawableStart="@drawable/ic_menu_avisos"
+            android:drawablePadding="12dp"
+            android:fontFamily="@font/oswald"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Mis avisos"
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="17sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/home_solicitar_certifiado"
-            android:background="@drawable/round_primary_button"
-            android:text="@string/ingreso_por_datos_biometricos"
-            android:layout_margin="10dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            app:layout_constraintTop_toBottomOf="@id/btnHistorial" />
 
-
-    <Button
-        android:id="@+id/home_solicitar_certifiado"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/btnLoginDBiom"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnRegistrarUser"
-        android:background="@color/amp_gray"
-        android:visibility="gone"
-        android:text="Solicitar certificado"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
+        <Button
+            android:id="@+id/home_solicitar_certifiado"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/boton_pildora_borde"
+            android:fontFamily="@font/oswald"
+            android:text="Solicitar certificado"
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="19sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/btnRegistrarUser"
+            app:layout_constraintTop_toBottomOf="@id/btnLoginDBiom" />
 
         <Button
             android:id="@+id/btnRegistrarUser"
-            app:layout_constraintTop_toBottomOf="@id/home_solicitar_certifiado"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/txtVersionName"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_accent_button"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/boton_pildora_borde"
+            android:fontFamily="@font/oswald"
+            android:letterSpacing="0.05"
             android:text="@string/action_register"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="19sp"
+            app:layout_constraintBottom_toTopOf="@id/txtVersionName"
+            app:layout_constraintTop_toBottomOf="@id/home_solicitar_certifiado" />
 
-
-
-
+        <TextView
+            android:id="@+id/txtVersionName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.0.0"
+            android:textColor="#56666A"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

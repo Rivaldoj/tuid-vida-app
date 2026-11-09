@@ -125,6 +125,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <activity android:name=".v2.HomeActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".avisos.AvisosActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".v2.TerminosYCondicionesActivity"  android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".v2.ScanActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".v2.ScanResultActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar" />

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono de avisos: campana blanca sobre circulo turquesa (mismo estilo que los iconos de TuID) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#01acc2"
+        android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+    <group
+        android:pivotX="24"
+        android:pivotY="24"
+        android:scaleX="1.25"
+        android:scaleY="1.25">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24,34c1.1,0 2,-0.9 2,-2h-4c0,1.1 0.89,2 2,2zM30,28v-5c0,-3.07 -1.64,-5.64 -4.5,-6.32V16c0,-0.83 -0.67,-1.5 -1.5,-1.5s-1.5,0.67 -1.5,1.5v0.68C19.63,17.36 18,19.92 18,23v5l-2,2v1h16v-1l-2,-2z" />
+    </group>
+</vector>

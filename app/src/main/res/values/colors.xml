@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#00ABC0</color>
+  <color name="colorPrimary">#01acc2</color>
   <color name="colorAccent">#8a8a8a</color>
   <color name="colorPrimaryDark">#006E7B</color>
-  <color name="colorAccentDark">#e43935</color>
+  <color name="colorAccentDark">#e63936</color>
   <color name="colorAccentDarkSecund">#C22420</color>
     <color name="colorGrisOscuro">#2B2A2A</color>
   <color name="black_overlay">#66000000</color>
@@ -21,4 +21,8 @@
   <color name="colorThirdDark">#F44336</color>
     <color name="colorRed">#F44336</color>
     <color name="gold">#FFD600</color>
+  <color name="tu_tinta">#1d2a2c</color>
+  <color name="tu_claro">#d9f1f5</color>
+  <color name="tu_sombra">#018899</color>
+  <color name="tu_borde_campo">#7fa0a6</color>
 </resources>

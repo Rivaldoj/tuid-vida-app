@@ -94,6 +94,7 @@ public class HomeActivity extends TuIdActivity {
     @Override
     public void onResume(){
         super.onResume();
+        actualizarAvisos();
         if (permisosFeDeVida != null) permisosFeDeVida.onResume();
         if(irAFeDeVidaOnResume){
             irAFeDeVidaOnResume = false;
@@ -107,11 +108,44 @@ public class HomeActivity extends TuIdActivity {
         }
     }
 
+    /** Trae los avisos que siguen en la barra de notificaciones y muestra cuantos hay sin leer en el boton "Mis avisos". */
+    private void actualizarAvisos() {
+        try {
+            com.autenticar.tuid.avisos.AvisosStore store = com.autenticar.tuid.avisos.AvisosStore.get(this);
+            store.importarActivas(this);
+            int n = store.sinLeer();
+            Button b = findViewById(R.id.btnAvisos);
+            b.setText(n > 0 ? "Mis avisos (" + n + " nuevo" + (n == 1 ? "" : "s") + ")" : "Mis avisos");
+        } catch (Exception e) {
+            Log.e("AVISOS", "no se pudo actualizar: " + e);
+        }
+    }
+
+    /** Deja libre la barra de estado (arriba, en turquesa como la cabecera) y la de navegacion (abajo, dentro de la hoja blanca). */
+    private void ajustarBarrasDelSistema() {
+        final View raiz = fullLayout; // contiene la barra superior (toolbar) y el contenido de esta pantalla
+        final View hoja = findViewById(R.id.home_hoja);
+        final int baseAbajo = hoja.getPaddingBottom();
+        raiz.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(raiz, new androidx.core.view.OnApplyWindowInsetsListener() {
+            @Override
+            public androidx.core.view.WindowInsetsCompat onApplyWindowInsets(View v, androidx.core.view.WindowInsetsCompat insets) {
+                androidx.core.graphics.Insets bars = insets.getInsets(
+                        androidx.core.view.WindowInsetsCompat.Type.systemBars() | androidx.core.view.WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(bars.left, bars.top, bars.right, 0);
+                hoja.setPadding(hoja.getPaddingLeft(), hoja.getPaddingTop(), hoja.getPaddingRight(), baseAbajo + bars.bottom);
+                return insets;
+            }
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(raiz);
+    }
+
     @Override
     public void onCreate(Bundle s){
         super.onCreate(s);
         setContentView(R.layout.v2_home_activity);
         self = this;
+        ajustarBarrasDelSistema();
 
         // borrar prueba webview
 //        Intent i = new Intent(this,WebActivity.class);
@@ -176,6 +210,13 @@ public class HomeActivity extends TuIdActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.btnAvisos).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), com.autenticar.tuid.avisos.AvisosActivity.class));
             }
         });
 

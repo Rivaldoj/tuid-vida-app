@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Oswald (SIL Open Font License) para titulos y botones. Es una fuente variable: se usa el peso 500. -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        android:font="@font/oswald_variable"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/oswald_variable"
+        app:fontStyle="normal"
+        app:fontWeight="500"
+        app:fontVariationSettings="'wght' 500" />
+</font-family>

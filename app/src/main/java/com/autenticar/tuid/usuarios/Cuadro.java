@@ -28,7 +28,7 @@ public final class Cuadro {
         View v = LayoutInflater.from(activity).inflate(R.layout.dialog_selector_usuario, null);
         ((TextView) v.findViewById(R.id.picker_titulo)).setText(titulo);
         ((TextView) v.findViewById(R.id.picker_mensaje)).setText(mensaje);
-        final AlertDialog d = new AlertDialog.Builder(activity).setView(v).setCancelable(false).create();
+        final AlertDialog d = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(v).setCancelable(false).create();
         d.setCanceledOnTouchOutside(false);
 
         Button p = (Button) v.findViewById(R.id.picker_principal);

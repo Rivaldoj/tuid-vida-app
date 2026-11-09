@@ -55,6 +55,14 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <!-- Cuadros de aviso con estilo "D": fondo blanco redondeado, sin marco del sistema -->
+    <style name="DialogoTuID" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialogo_fondo</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+    </style>
+
     <style name="Theme.AppCompat.modalmenu" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@color/colorTransTotal</item>
         <item name="android:windowIsTranslucent">true</item>

@@ -107,6 +107,8 @@ public class SplashActivity extends AppCompatActivity {
 
     public void goToHome(){
         Intent i = new Intent(SplashActivity.this, HomeActivity.class);
+        // Si la app se abrio al tocar un aviso (push), se guarda en "Mis avisos"
+        com.autenticar.tuid.avisos.AvisosStore.get(this).guardarDeIntent(getIntent());
 
         try {
             Bundle bundle  = getIntent().getExtras();

@@ -59,7 +59,7 @@ public class ComprobarRegistro {
         v.findViewById(R.id.picker_ayuda).setVisibility(View.VISIBLE);
         final TextView error = (TextView) v.findViewById(R.id.picker_error);
 
-        dialog = new AlertDialog.Builder(activity).setView(v).setCancelable(true).create();
+        dialog = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(v).setCancelable(true).create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
         dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Boton secundario: pildora blanca con borde turquesa -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tu_claro" />
+            <stroke android:width="2dp" android:color="@color/colorPrimary" />
+            <corners android:radius="40dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" />
+            <stroke android:width="2dp" android:color="@color/colorPrimary" />
+            <corners android:radius="40dp" />
+        </shape>
+    </item>
+</selector>

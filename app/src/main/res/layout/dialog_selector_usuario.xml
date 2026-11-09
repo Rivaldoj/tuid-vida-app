@@ -1,53 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Cuadro de aviso con estilo "D": titulo en Oswald, botones pildora grandes dentro del cuadro.
+     Lo usan SelectorUsuario, Cuadro, ComprobarRegistro y Soporte (los ids no cambian). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:paddingStart="24dp"
+    android:paddingTop="26dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="18dp">
 
     <TextView
         android:id="@+id/picker_titulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:fontFamily="@font/oswald"
+        android:textAllCaps="true"
+        android:textColor="@color/tu_tinta"
+        android:textSize="26sp" />
 
     <TextView
         android:id="@+id/picker_mensaje"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="@color/colorGrisOscuro"
+        android:lineSpacingMultiplier="1.1"
+        android:textColor="#46585C"
         android:textSize="18sp" />
 
     <Spinner
         android:id="@+id/picker_spinner"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/campo_redondo"
+        android:paddingStart="8dp"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/picker_unico"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textColor="@color/colorGrisOscuro"
-        android:textSize="20sp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/campo_redondo"
+        android:padding="14dp"
+        android:textColor="@color/tu_tinta"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:visibility="gone" />
 
     <EditText
         android:id="@+id/picker_cuil"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/campo_redondo"
         android:digits="0123456789- "
         android:hint="CUIL (11 números)"
         android:importantForAutofill="no"
         android:inputType="number"
         android:maxLength="14"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/tu_tinta"
+        android:textColorHint="#7A8A8E"
         android:textSize="20sp"
         android:visibility="gone" />
 
@@ -57,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Su CUIL figura en su recibo de haberes o en su constancia de ANSES."
-        android:textColor="#555555"
+        android:textColor="#46585C"
         android:textSize="16sp"
         android:visibility="gone" />
 
@@ -66,37 +82,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="@color/colorAccentDark"
+        android:textColor="#B3201E"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:visibility="gone" />
 
     <!-- Botones grandes y visibles dentro del cuadro (principal, secundario y cancelar) -->
     <Button
         android:id="@+id/picker_principal"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/round_primary_button"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_height="62dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/boton_pildora"
+        android:fontFamily="@font/oswald"
+        android:letterSpacing="0.05"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/picker_secundario"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/round_accent_button"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:background="@drawable/boton_pildora_borde"
+        android:fontFamily="@font/oswald"
+        android:letterSpacing="0.05"
+        android:textAllCaps="true"
+        android:textColor="@color/tu_tinta"
+        android:textSize="19sp"
         android:visibility="gone" />
 
     <Button
         android:id="@+id/picker_cancelar"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginTop="6dp"
         android:background="@android:color/transparent"
+        android:fontFamily="@font/oswald"
         android:text="Cancelar"
-        android:textColor="@color/colorPrimaryDark"
+        android:textAllCaps="true"
+        android:textColor="@color/tu_tinta"
         android:textSize="17sp" />
 </LinearLayout>
