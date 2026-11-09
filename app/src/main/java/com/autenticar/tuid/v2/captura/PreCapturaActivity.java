@@ -239,15 +239,16 @@ public class PreCapturaActivity extends AppCompatActivity {
         }
         titulo.setText(t);
         mensaje.setText(m);
-        titulo.setTextColor(ContextCompat.getColor(this, hint == Hint.OK ? R.color.colorPrimaryDark : R.color.colorAccentDark));
+        // listo: tinta oscura; si hay algo para corregir: rojo oscuro (la tarjeta es blanca)
+        titulo.setTextColor(hint == Hint.OK ? ContextCompat.getColor(this, R.color.tu_tinta) : 0xFFB3201E);
         continuar.setEnabled(hint == Hint.OK);
-        continuar.setAlpha(hint == Hint.OK ? 1f : 0.5f);
+        continuar.setAlpha(1f); // el boton deshabilitado ya se ve gris por si mismo
     }
 
     private void mostrarError() {
         titulo.setText("No pudimos usar la cámara");
         mensaje.setText("Cierre otras aplicaciones que estén usando la cámara y vuelva a intentarlo.");
         continuar.setEnabled(false);
-        continuar.setAlpha(0.5f);
+        continuar.setAlpha(1f);
     }
 }

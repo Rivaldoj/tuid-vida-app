@@ -50,7 +50,8 @@ public class SelectorUsuario {
 
     public void mostrar() {
         usuarios = store.list();
-        if (usuarios.isEmpty()) mostrarVacio();
+        // Sin usuarios guardados se pide el CUIL directamente (con "Nuevo usuario" para registrarse); con uno o varios se elige
+        if (usuarios.isEmpty()) mostrarCuil(true);
         else mostrarSeleccion();
     }
 
@@ -86,8 +87,8 @@ public class SelectorUsuario {
     private void secundario(String etiqueta, View.OnClickListener l) {
         Button b = (Button) contenido.findViewById(R.id.picker_secundario);
         b.setText(etiqueta);
-        b.setBackgroundResource(R.drawable.btn_outline);
-        b.setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+        b.setBackgroundResource(R.drawable.boton_pildora_borde);
+        b.setTextColor(activity.getResources().getColor(R.color.tu_tinta));
         b.setVisibility(View.VISIBLE);
         b.setOnClickListener(l);
     }
@@ -106,7 +107,7 @@ public class SelectorUsuario {
         secundario("Vincular usuario", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mostrarCuil();
+                mostrarCuil(false);
             }
         });
     }
@@ -145,13 +146,13 @@ public class SelectorUsuario {
         secundario("Nuevo usuario", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mostrarCuil();
+                mostrarCuil(false);
             }
         });
     }
 
-    // ---- ingreso manual de CUIL (primera vez o otra persona)
-    private void mostrarCuil() {
+    // ---- ingreso manual de CUIL (primera vez o otra persona). conNuevoUsuario: ofrece "Nuevo usuario" (ir a registrarse)
+    private void mostrarCuil(boolean conNuevoUsuario) {
         nuevoCuadro("Ingrese el CUIL",
                 "Ingrese el CUIL de la persona que realizará " + accion + ".");
         final EditText cuil = (EditText) contenido.findViewById(R.id.picker_cuil);
@@ -170,6 +171,15 @@ public class SelectorUsuario {
                 callback.onCuil(n);
             }
         });
+        if (conNuevoUsuario) {
+            secundario("Nuevo usuario", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    callback.onRegistrar();
+                }
+            });
+        }
         cuil.requestFocus();
         dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }

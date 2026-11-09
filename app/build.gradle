@@ -35,7 +35,8 @@ android {
     def vidaProps = new Properties()
     if (vidaPropsFile.exists()) vidaPropsFile.withInputStream { vidaProps.load(it) }
     defaultConfig {
-        buildConfigField 'String', 'VIDA_BASE_URL', '"' + vidaProps.getProperty('baseUrl', 'https://api.autenticartuid.com/vida/v2') + '"'
+        // -PvidaBaseUrl=http://127.0.0.1:3003/vida/v2 permite apuntar una prueba al servidor local sin tocar vida.properties
+        buildConfigField 'String', 'VIDA_BASE_URL', '"' + (project.findProperty('vidaBaseUrl') ?: vidaProps.getProperty('baseUrl', 'https://api.autenticartuid.com/vida/v2')) + '"'
         buildConfigField 'String', 'VIDA_TOKEN', '""'
         // Play Integrity: numero del proyecto de Google Cloud vinculado en Play Console (0 = desactivado)
         buildConfigField 'long', 'PLAY_CLOUD_PROJECT', vidaProps.getProperty('playCloudProject', '0') + 'L'

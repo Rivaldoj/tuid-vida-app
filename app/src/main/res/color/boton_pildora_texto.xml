@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Letra de los botones pildora: blanca; gris oscuro cuando el boton esta deshabilitado -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#5D6B6E" android:state_enabled="false" />
+    <item android:color="#FFFFFF" />
+</selector>

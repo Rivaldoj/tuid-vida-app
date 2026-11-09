@@ -543,6 +543,8 @@ public class HomeActivity extends TuIdActivity {
                         } else if (!r.IsOk()) {
                             com.autenticar.tuid.usuarios.Cuadro.mostrar(self, "No pudimos continuar",
                                     r.Message != null ? r.Message : "Inténtelo nuevamente en unos minutos.", "Entendido", null, null);
+                        } else if (com.autenticar.tuid.model.CheckRegistrationResponse.NOT_ADHERED.equals(r.registration)) {
+                            avisarEntidadNoAdherida(r.Message);
                         } else if (com.autenticar.tuid.model.CheckRegistrationResponse.NOT_REGISTERED.equals(r.registration)) {
                             ofrecerRegistro();
                         } else if (com.autenticar.tuid.model.CheckRegistrationResponse.UP_TO_DATE.equals(r.registration)) {
@@ -665,6 +667,8 @@ public class HomeActivity extends TuIdActivity {
                     idValidacion = r.idValidacion;
                     livenessSessionId = r.sessionId;
                     irAFeDeVidaCuil(cuil);
+                } else if ("NOT_ADHERED".equals(r.registration)) {
+                    avisarEntidadNoAdherida(r.Message);
                 } else if (r.IsOk() || noRegistrado(r)) {
                     ofrecerRegistro();
                 } else {
@@ -684,6 +688,18 @@ public class HomeActivity extends TuIdActivity {
     private boolean noRegistrado(SearchdniResponse r) {
         return "NOT_REGISTERED".equals(r.registration)
                 || (r.Message != null && r.Message.contains("Previamente debe registrarse"));
+    }
+
+    /** El CUIL no figura en usuario_empresa: la persona no pertenece a una entidad adherida y no puede registrarse. */
+    private void avisarEntidadNoAdherida(String mensaje) {
+        com.autenticar.tuid.usuarios.Cuadro.mostrar(this, "Entidad no adherida",
+                mensaje != null ? mensaje : "Su CUIL no figura en ninguna entidad adherida a TuID Vida.",
+                "Ver entidades adheridas", new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(HomeActivity.this, EntidadesAdheridasActivity.class));
+                    }
+                }, "Volver");
     }
 
     /** No esta registrado: en lugar de un cartel con un error, se lo lleva a registrarse. */

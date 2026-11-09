@@ -147,6 +147,16 @@ public class ComprobarRegistro {
             aviso("Usuario registrado",
                     "Usted ya se encuentra registrado en TuID Vida.\n\n" + AlDia.mensaje(r.proximas),
                     null, null);
+        } else if (CheckRegistrationResponse.NOT_ADHERED.equals(estado)) {
+            // El CUIL no figura en usuario_empresa: no pertenece a una entidad adherida, no se puede registrar
+            Cuadro.mostrar(activity, "Entidad no adherida",
+                    r.Message != null ? r.Message : "Su CUIL no figura en ninguna entidad adherida a TuID Vida.",
+                    "Ver entidades adheridas", new Runnable() {
+                        @Override
+                        public void run() {
+                            activity.startActivity(new android.content.Intent(activity, com.autenticar.tuid.v2.EntidadesAdheridasActivity.class));
+                        }
+                    }, "Volver");
         } else if (CheckRegistrationResponse.INCOMPLETE.equals(estado)) {
             Soporte.mostrarRegistroIncompleto(activity, cuil);
         } else {

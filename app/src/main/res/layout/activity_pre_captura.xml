@@ -1,93 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Camara previa de la prueba de vida ("Antes de comenzar"). Estilo "D": aviso fijo de anteojos arriba, camara con ovalo guia,
+     tarjeta con la indicacion del momento y botones abajo. Los ids no cambian: PreCapturaActivity los sigue usando igual. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/raiz"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#10191B"
     android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Antes de comenzar"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+    android:padding="12dp">
 
     <!-- Aviso fijo sobre anteojos (no se detectan automaticamente) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="#FFF3E0"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:background="@drawable/aviso_amarillo"
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Retire sus anteojos"
-            android:textColor="#BF360C"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_atencion_chico" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Su certificación puede ser observada o considerada nula por haberla realizado con anteojos."
-            android:textColor="#4E342E"
-            android:textSize="16sp" />
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Retire sus anteojos"
+                android:textColor="#2B2200"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Su certificación puede ser observada o considerada nula por haberla realizado con anteojos."
+                android:textColor="#2B2200"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
 
-    <FrameLayout
+    <!-- Camara con el ovalo guia (el ovalo queda en el centro de la imagen, que es donde se evalua el rostro) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:background="#151919">
+        android:background="@drawable/marco_camara"
+        android:clipToOutline="true">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/pre_captura_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </FrameLayout>
 
-    <TextView
-        android:id="@+id/pre_captura_titulo"
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/ovalo_guia"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="4:5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.72"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Indicacion del momento -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/colorGrisOscuro"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="10dp"
+        android:background="@drawable/tarjeta_blanca_16"
+        android:orientation="vertical"
+        android:padding="14dp">
 
-    <TextView
-        android:id="@+id/pre_captura_mensaje"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minLines="3"
-        android:textColor="@color/colorGrisOscuro"
-        android:textSize="17sp" />
+        <TextView
+            android:id="@+id/pre_captura_titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/oswald"
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/pre_captura_mensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="3"
+            android:textColor="#46585C"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/pre_captura_continuar"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/round_primary_button"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/boton_pildora"
         android:enabled="false"
+        android:fontFamily="@font/oswald"
+        android:letterSpacing="0.05"
         android:text="Comenzar"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textAllCaps="true"
+        android:textColor="@color/boton_pildora_texto"
+        android:textSize="21sp" />
 
     <Button
         android:id="@+id/pre_captura_cancelar"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="4dp"
-        android:background="@android:color/transparent"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/chip_claro"
+        android:elevation="3dp"
         android:text="Cancelar"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="16sp" />
+        android:textAllCaps="false"
+        android:textColor="@color/tu_tinta"
+        android:textSize="17sp"
+        android:textStyle="bold" />
 </LinearLayout>

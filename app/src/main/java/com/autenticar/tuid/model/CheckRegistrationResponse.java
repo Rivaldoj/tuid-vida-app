@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 /** Respuesta de /checkregistration. No trae datos personales. */
 public class CheckRegistrationResponse extends ResponseBase {
     public static final String NOT_REGISTERED = "NOT_REGISTERED";
+    /** No esta registrada y su CUIL no figura en ninguna entidad adherida (no puede registrarse). */
+    public static final String NOT_ADHERED = "NOT_ADHERED";
     public static final String INCOMPLETE = "REGISTRATION_INCOMPLETE";
     public static final String PENDING = "REGISTERED_PENDING";
     public static final String UP_TO_DATE = "REGISTERED_UP_TO_DATE";

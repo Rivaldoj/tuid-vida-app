@@ -364,6 +364,13 @@ public class ScanActivity extends TuIdActivity {
                 LoadingDialog.getInstance().hide();
 //                Log.e("CheckDocumentSuccess", request.dni + " " + request.sexo + " " + request.birth);
 //                Log.e("CheckDocumentSuccess", response.body().Message + " " + response.body().proceed + " " + response.body().resultCode);
+                if (response.body() == null) {
+                    // El servidor no respondio con los datos esperados (error, mantenimiento): se avisa en vez de cerrar la app
+                    stopCamera();
+                    HelperFunctions.ShowAlertWithContact(activity,
+                            "Validación del documento\nNo pudimos validar su documento en este momento. Inténtelo nuevamente en unos minutos.", 1, "0");
+                    return;
+                }
                 if(response.body().proceed){
                     flipDNI();
                 }
