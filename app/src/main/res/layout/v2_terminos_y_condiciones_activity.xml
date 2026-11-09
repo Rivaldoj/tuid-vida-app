@@ -184,7 +184,7 @@
             android:background="@drawable/boton_pildora"
             android:fontFamily="@font/oswald"
             android:letterSpacing="0.05"
-            android:text="@string/iniciar_scan"
+            android:text="Continuar"
             android:textAllCaps="true"
             android:textColor="#FFFFFF"
             android:textSize="21sp" />

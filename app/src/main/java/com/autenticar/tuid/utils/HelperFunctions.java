@@ -139,11 +139,23 @@ public class HelperFunctions {
 
     public static AlertDialog CreateAlertWithContact(final Activity context, String title, String message, View.OnClickListener onClickListener, int type, String response_code){
         boolean finishActivityAfter = !response_code.equalsIgnoreCase("DONTFINISHACTIVITY");
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.DialogoTuID);
         View view = context.getLayoutInflater().inflate(R.layout.custom_alert_with_contact, null);
         dialog.setView(view);
         final AlertDialog alert = dialog.create();
-        ((TextView) view.findViewById(R.id.dialog_text)).setText(message);
+        // Si el mensaje trae un titulo en la primera linea ("Deteccion del documento\n<detalle>"), se muestra aparte
+        String tituloCuadro = "Aviso";
+        String cuerpo = message == null ? "" : message;
+        int salto = cuerpo.indexOf('\n');
+        if (salto > 0 && salto <= 40) {
+            tituloCuadro = cuerpo.substring(0, salto).trim();
+            cuerpo = cuerpo.substring(salto + 1).trim();
+        }
+        ((TextView) view.findViewById(R.id.dialog_titulo)).setText(tituloCuadro);
+        // Icono chico: rojo de alerta cuando es un problema con el documento; turquesa en los demas avisos
+        ((ImageView) view.findViewById(R.id.dialog_icono)).setImageResource(
+                tituloCuadro.toLowerCase().contains("documento") ? R.drawable.ic_alerta_documento : R.drawable.ic_atencion_chico);
+        ((TextView) view.findViewById(R.id.dialog_text)).setText(cuerpo);
         ImageView ok = (ImageView) view.findViewById(R.id.ok_action);
         if (onClickListener == null) {
             onClickListener = new View.OnClickListener() {

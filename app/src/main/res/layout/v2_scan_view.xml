@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Escaneo del DNI antiguo. La lectura es automatica (no hay botones de captura): arriba una tarjeta dice que se esta
+     leyendo (frente o dorso) y abajo otra guia a la persona. Los ids no cambian. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
@@ -6,51 +8,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
     <androidx.camera.view.PreviewView
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:gravity="center|bottom"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/scan_guide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="2dp"
-            android:textColor="@color/white"
-            android:textSize="15dp"
-            android:textStyle="bold"
-            android:text="@string/capture_front" />
-        <TextView
-            android:id="@+id/scan_guide_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/white"
-            android:textSize="13dp"
-            android:text="" />
-
-        <ProgressBar
-            android:id="@+id/progressbar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="false"
-            android:max="100"
-            android:visibility="gone"
-            android:layout_marginBottom="5dp"
-            android:theme="@style/GreenAccent" />
-    </LinearLayout>
 
     <com.autenticar.tuid.camera.DocumentOverlay
         android:id="@+id/dniOverlay"
@@ -93,8 +54,97 @@
         android:src="@drawable/dni_transparente"
         android:visibility="gone" />
 
+    <!-- Tarjeta de arriba: que se esta leyendo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_margin="12dp"
+        android:background="@drawable/tarjeta_blanca_16"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
+        <ImageView
+            android:id="@+id/scan_icono"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_scan_frente" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/scan_titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/oswald"
+                android:text="Frente del DNI"
+                android:textAllCaps="true"
+                android:textColor="@color/tu_tinta"
+                android:textSize="21sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lectura automática"
+                android:textColor="#46585C"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Tarjeta de abajo: guia para la persona -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/tarjeta_blanca_16"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/scan_guide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/oswald"
+            android:text="Ubique el frente del DNI"
+            android:textAllCaps="true"
+            android:textColor="@color/tu_tinta"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/scan_guide_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Colóquelo dentro del marco, sin reflejos."
+            android:textColor="#46585C"
+            android:textSize="16sp" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:theme="@style/TurquesaAccent"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Se lee solo, no toque nada."
+            android:textColor="#46585C"
+            android:textSize="15sp" />
+    </LinearLayout>
 </FrameLayout>
-
-
-

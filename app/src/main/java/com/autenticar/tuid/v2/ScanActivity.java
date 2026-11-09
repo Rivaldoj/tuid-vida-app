@@ -144,7 +144,7 @@ public class ScanActivity extends TuIdActivity {
 
         mVideo = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.videoView);
         scan_guide_info = (TextView) findViewById(R.id.scan_guide_info);
-        scan_guide_info.setText("");
+        // (el texto de ayuda de la tarjeta de abajo viene del layout: "Colóquelo dentro del marco, sin reflejos.")
 
         progressBar = findViewById(R.id.progressbar);
         progressBar.setIndeterminate(true);
@@ -156,7 +156,9 @@ public class ScanActivity extends TuIdActivity {
     }
 
     public void flipDNI (){
-        ((TextView) findViewById(R.id.scan_guide)).setText("Por favor, enfoca el dorso del DNI");
+        ((TextView) findViewById(R.id.scan_guide)).setText("Gire el DNI y muestre el dorso");
+        ((TextView) findViewById(R.id.scan_titulo)).setText("Dorso del DNI");
+        ((android.widget.ImageView) findViewById(R.id.scan_icono)).setImageResource(R.drawable.ic_scan_dorso);
         playGuideSounds(new int[]{R.raw.giradni, R.raw.fondoclaro}, 0, null);
         try{
             GifDrawable gifDrawable = new GifDrawable(getResources(), R.drawable.dni_transparente);
@@ -166,8 +168,9 @@ public class ScanActivity extends TuIdActivity {
                 @Override
                 public void run() {
                     mVideo.setVisibility(GONE);
-                    s.isFrontDetection = false;
-                    Scanner.busy = false;
+                    // Tiempo para acomodar el dorso: la lectura del dorso arranca recien al terminar la cuenta regresiva
+                    // (antes empezaba apenas se terminaba la animacion y la imagen salia torcida)
+                    esperarAcomodarDorso(SEGUNDOS_PARA_ACOMODAR_DORSO);
                 }
             }, 3000);
         }
@@ -176,6 +179,27 @@ public class ScanActivity extends TuIdActivity {
         }
     }
 
+
+    /** Segundos que se le dan a la persona para acomodar el dorso antes de empezar a leerlo. */
+    private static final int SEGUNDOS_PARA_ACOMODAR_DORSO = 4;
+
+    private void esperarAcomodarDorso(final int segundosRestantes) {
+        final TextView info = (TextView) findViewById(R.id.scan_guide_info);
+        if (segundosRestantes <= 0) {
+            info.setText("Colóquelo dentro del marco, sin reflejos.");
+            s.isFrontDetection = false;
+            Scanner.busy = false;
+            return;
+        }
+        info.setText("Acomode el dorso y manténgalo quieto. Empezamos en " + segundosRestantes + "…");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isFinishing()) return;
+                esperarAcomodarDorso(segundosRestantes - 1);
+            }
+        }, 1000);
+    }
 
     public void informTimeout(boolean isFront){
         // TODO:

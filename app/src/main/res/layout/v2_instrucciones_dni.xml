@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Instrucciones del escaneo del DNI antiguo (con codigo de barras). Estilo "D". -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/oswald"
+        android:text="Escaneo del DNI"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/subrayado_titulo" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/hoja_blanca"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier="1.1"
+                    android:text="El primer paso consiste en realizar un scan del frente y dorso de su DNI."
+                    android:textColor="@color/tu_tinta"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/tarjeta_aviso"
+                    android:gravity="center_vertical"
+                    android:minHeight="76dp"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_tip_luz" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Busque un lugar con buena iluminación, pero sin reflejos."
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/tarjeta_aviso"
+                    android:gravity="center_vertical"
+                    android:minHeight="76dp"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_tip_barras" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Procure que el código de barras salga nítido."
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/tarjeta_aviso"
+                    android:gravity="center_vertical"
+                    android:minHeight="76dp"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_tip_flash" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="De ser necesario, puede habilitar el flash."
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Una vez que haga foco, el proceso se realiza automáticamente."
+                    android:textColor="#46585C"
+                    android:textSize="17sp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btnContinuarScan"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/boton_pildora"
+            android:fontFamily="@font/oswald"
+            android:letterSpacing="0.05"
+            android:text="Iniciar el Scan"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="21sp" />
+    </LinearLayout>
+</LinearLayout>

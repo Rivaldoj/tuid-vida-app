@@ -19,7 +19,7 @@
             android:id="@+id/img_prueba_vida_hm"
             android:layout_width="230dp"
             android:layout_height="230dp"
-            app:srcCompat="@drawable/fe_vida_ico_h" />
+            app:srcCompat="@drawable/ic_prueba_vida" />
 
         <TextView
             android:id="@+id/textGestoVida"

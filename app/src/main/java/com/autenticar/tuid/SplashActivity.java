@@ -50,6 +50,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+        com.autenticar.tuid.utils.EdgeInsets.aplicar(findViewById(R.id.raiz)); // el boton de sonido no queda tapado por la barra del telefono
 
         findViewById(R.id.splash_testing).setVisibility(MainApp.isTesting?View.VISIBLE:View.GONE);
 

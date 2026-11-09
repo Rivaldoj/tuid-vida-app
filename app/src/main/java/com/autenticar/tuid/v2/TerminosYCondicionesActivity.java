@@ -59,7 +59,8 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
     private void iniciarScan() {
         ((MainApp) getApplication()).InitPersonaToRegister();
         new AmplitudeManager().log(this, "Registration Process Started", null);
-        startActivity(new Intent(getBaseContext(), ScanActivity.class));
+        // Primero las instrucciones (luz, codigo nitido, flash); su boton "Continuar" abre la camara
+        startActivity(new Intent(getBaseContext(), InstruccionesDniActivity.class));
 //        startActivity(new Intent(getBaseContext(), DNIDetector.class));
         finish();
     }
