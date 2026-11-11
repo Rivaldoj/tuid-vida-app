@@ -237,18 +237,22 @@ public class PreCapturaActivity extends AppCompatActivity {
                 break;
             default:
                 t = "Todo listo";
-                m = "Su rostro se ve bien. Toque \"Comenzar\" y siga las indicaciones en pantalla.";
+                m = "Su rostro se ve bien. Toque \"Continuar\" y siga las indicaciones en pantalla.";
         }
         titulo.setText(t);
         mensaje.setText(m);
+        boolean listo = hint == Hint.OK;
         int voz = hint == Hint.MULTIPLE_FACES ? R.raw.a14 : hint == Hint.NO_FACE ? R.raw.a15
                 : hint == Hint.ADJUST_POSITION ? R.raw.a16 : hint == Hint.TOO_DARK ? R.raw.a17
                 : hint == Hint.TOO_BRIGHT ? R.raw.a18 : R.raw.a19;
         if (!anteojosAvisado) {
             anteojosAvisado = true;   // la primera vez se anticipa el aviso fijo de anteojos
-            com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a13, voz);
+            if (listo) com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a13, voz, R.raw.a31_4);
+            else com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a13, voz);
         } else {
-            com.autenticar.tuid.usuarios.Audio.play(this, voz);
+            // cuando todo esta bien, despues de "Todo listo" se da la orden de tocar el boton
+            if (listo) com.autenticar.tuid.usuarios.Audio.play(this, voz, R.raw.a31_4);
+            else com.autenticar.tuid.usuarios.Audio.play(this, voz);
         }
         // listo: tinta oscura; si hay algo para corregir: rojo oscuro (la tarjeta es blanca)
         titulo.setTextColor(hint == Hint.OK ? ContextCompat.getColor(this, R.color.tu_tinta) : 0xFFB3201E);

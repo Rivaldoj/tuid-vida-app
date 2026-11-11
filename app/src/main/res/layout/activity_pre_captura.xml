@@ -112,7 +112,7 @@
         android:enabled="false"
         android:fontFamily="@font/oswald"
         android:letterSpacing="0.05"
-        android:text="Comenzar"
+        android:text="Continuar"
         android:textAllCaps="true"
         android:textColor="@color/boton_pildora_texto"
         android:textSize="21sp" />
