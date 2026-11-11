@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Casilla de verificacion grande (estilo Odis "relleno", con los colores de TuID) -->
+<!-- Casilla de verificacion grande: fondo celeste claro #d9f1f5; tildada, con borde turquesa y tilde oscuro -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_checked="true">
         <layer-list>
             <item>
                 <shape android:shape="rectangle">
                     <size android:width="36dp" android:height="36dp" />
-                    <solid android:color="@color/colorPrimary" />
+                    <solid android:color="#D9F1F5" />
+                    <stroke android:width="3dp" android:color="@color/tu_sombra" />
                     <corners android:radius="8dp" />
                 </shape>
             </item>
             <item
-                android:drawable="@drawable/ic_tilde_blanco"
+                android:drawable="@drawable/ic_tilde_tinta"
                 android:left="5dp"
                 android:top="5dp"
                 android:right="5dp"
@@ -21,8 +22,8 @@
     <item>
         <shape android:shape="rectangle">
             <size android:width="36dp" android:height="36dp" />
-            <solid android:color="#FFFFFF" />
-            <stroke android:width="3dp" android:color="#56666A" />
+            <solid android:color="#D9F1F5" />
+            <stroke android:width="3dp" android:color="@color/tu_borde_campo" />
             <corners android:radius="8dp" />
         </shape>
     </item>

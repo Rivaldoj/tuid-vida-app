@@ -39,6 +39,20 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
             }
         });
 
+        // Al aceptar los dos, se indica que ya puede continuar
+        final CheckBox cbTerminos = (CheckBox) findViewById(R.id.checkbox_terminos);
+        final CheckBox cbPoliticas = (CheckBox) findViewById(R.id.checkbox_politicas);
+        android.widget.CompoundButton.OnCheckedChangeListener aceptados = new android.widget.CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(android.widget.CompoundButton b, boolean marcado) {
+                if (marcado && cbTerminos.isChecked() && cbPoliticas.isChecked()) {
+                    playGuideSounds(new int[]{R.raw.a31}, 0, null);
+                }
+            }
+        };
+        cbTerminos.setOnCheckedChangeListener(aceptados);
+        cbPoliticas.setOnCheckedChangeListener(aceptados);
+
         findViewById(R.id.btnIniciarScan).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
