@@ -54,7 +54,7 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
             }
         });
 
-        playGuideSounds(new int[]{ R.raw.a28}, 0, null);
+        playGuideSounds(new int[]{R.raw.a27}, 0, null);
     }
 
     private void iniciarScan() {
