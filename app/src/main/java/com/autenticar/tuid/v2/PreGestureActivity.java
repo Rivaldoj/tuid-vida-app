@@ -59,7 +59,7 @@ public class PreGestureActivity extends TuIdActivity{
     public void onCreate(Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.v2_pre_gesture_activity);
-        playGuideSounds(new int[]{R.raw.a31_5}, 0, null);
+        playGuideSounds(new int[]{R.raw.a31_6, R.raw.a31_5}, 0, null);   // instrucciones y orden de tocar Comenzar
         findViewById(R.id.btnCaptureGestures).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
