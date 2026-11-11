@@ -42,7 +42,7 @@ android {
         buildConfigField 'long', 'PLAY_CLOUD_PROJECT', vidaProps.getProperty('playCloudProject', '0') + 'L'
         // true: la app identifica por CUIL (selector de usuarios, aviso de ya registrado, actualizar historial).
         // Solo activar cuando el backend ya tenga desplegados los cambios por CUIL. false = flujo anterior DNI + sexo.
-        buildConfigField 'boolean', 'USE_CUIL_API', String.valueOf(project.findProperty('useCuilApi') ?: vidaProps.getProperty('useCuilApi', 'false'))
+        buildConfigField 'boolean', 'USE_CUIL_API', String.valueOf(project.findProperty('useCuilApi') ?: vidaProps.getProperty('useCuilApi', 'true'))
     }
 
     def keystorePropsFile = rootProject.file('keystore.properties')
