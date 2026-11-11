@@ -59,7 +59,7 @@ public class PreGestureActivity extends TuIdActivity{
     public void onCreate(Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.v2_pre_gesture_activity);
-        playGuideSounds(new int[]{R.raw.a31_6, R.raw.a31_5}, 0, null);   // instrucciones y orden de tocar Comenzar
+        playGuideSounds(new int[]{R.raw.a31_7, R.raw.a31_6, R.raw.a31_5}, 0, null);   // instrucciones y orden de tocar Comenzar
         findViewById(R.id.btnCaptureGestures).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,8 +132,8 @@ public class PreGestureActivity extends TuIdActivity{
                             return;
                         }
                         livenessSessionId = r.sessionId;
-                        startActivityForResult(com.autenticar.tuid.v2.aws.LivenessActivity.Companion.intent(
-                                PreGestureActivity.this, livenessSessionId, getString(R.string.aws_liveness_region)),
+                        startActivityForResult(com.autenticar.tuid.v2.aws.LivenessActivity.intent(
+                                PreGestureActivity.this, livenessSessionId, getString(R.string.aws_liveness_region), false),
                                 REQUEST_LIVENESS_REGISTRO);
                     }
 

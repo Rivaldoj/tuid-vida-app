@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Prueba de vida del registro (antes de la camara). Estilo "D". Los ids no cambian. -->
+<!-- Prueba de vida del registro (antes de la prueba de AWS). Estilo "D": aviso de fotosensibilidad arriba
+     (fondo #fff4b8, icono redondo de Atencion) y las instrucciones. Los ids no cambian. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,14 +45,58 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="18dp"
-                android:paddingTop="22dp"
+                android:paddingTop="20dp"
                 android:paddingEnd="18dp"
                 android:paddingBottom="8dp">
+
+                <!-- Aviso de fotosensibilidad -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tarjeta_fotosensibilidad"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:contentDescription="Atención"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_atencion" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/oswald"
+                            android:text="Aviso de fotosensibilidad"
+                            android:textAllCaps="true"
+                            android:textColor="@color/tu_tinta"
+                            android:textSize="19sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:lineSpacingMultiplier="1.05"
+                            android:text="Esta prueba muestra destellos de colores. Tenga precaución si es sensible a las luces."
+                            android:textColor="@color/tu_tinta"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/img_prueba_vida_hm"
                     android:layout_width="match_parent"
-                    android:layout_height="130dp"
+                    android:layout_height="110dp"
+                    android:layout_marginTop="14dp"
                     android:contentDescription="Prueba de vida"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_prueba_vida" />
@@ -60,13 +105,11 @@
                     android:id="@+id/textGestoVida"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
                     android:lineSpacingMultiplier="1.1"
-                    android:text="Ahora vamos a capturar movimientos como prueba de vida.&#10;&#10;Coloca el dispositivo a la altura de los ojos.&#10;&#10;Tu rostro debe estar en el centro del óvalo.&#10;&#10;Sigue las instrucciones de pantalla."
+                    android:text="Ahora vamos a capturar movimientos como prueba de vida.&#10;Coloca el dispositivo a la altura de los ojos.&#10;Tu rostro debe estar en el centro del óvalo.&#10;Sigue las instrucciones."
                     android:textColor="@color/tu_tinta"
-                    android:textSize="21sp"
-                    android:textStyle="bold" />
+                    android:textSize="19sp" />
             </LinearLayout>
         </ScrollView>
 

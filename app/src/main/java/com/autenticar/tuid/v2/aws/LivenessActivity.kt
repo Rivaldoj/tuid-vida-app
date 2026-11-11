@@ -70,6 +70,8 @@ class LivenessActivity : ComponentActivity() {
 
         val sessionId = intent.getStringExtra(EXTRA_SESSION_ID)
         val region = intent.getStringExtra(EXTRA_REGION)
+        // el registro ya mostro el aviso en su propia pantalla: va directo a la prueba
+        val mostrarInicio = intent.getBooleanExtra(EXTRA_MOSTRAR_INICIO, true)
         if (sessionId.isNullOrBlank() || region.isNullOrBlank()) {
             finishWithError("Faltan sessionId o region")
             return
@@ -83,7 +85,7 @@ class LivenessActivity : ComponentActivity() {
             MaterialTheme(colorScheme = colores(), typography = tipografia()) {
                 // systemBarsPadding: deja libres la barra de estado y la de navegacion del telefono
                 // (sin esto el boton queda tapado por los botones del sistema)
-                var iniciado by remember { mutableStateOf(!USAR_PANTALLA_PROPIA) }
+                var iniciado by remember { mutableStateOf(!mostrarInicio) }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -96,7 +98,7 @@ class LivenessActivity : ComponentActivity() {
                         FaceLivenessDetector(
                             sessionId = sessionId,
                             region = region,
-                            disableStartView = USAR_PANTALLA_PROPIA,
+                            disableStartView = true,
                             onComplete = {
                                 setResult(RESULT_OK)
                                 finish()
@@ -151,6 +153,9 @@ class LivenessActivity : ComponentActivity() {
      */
     @Composable
     private fun PantallaInicio(onComenzar: () -> Unit) {
+        androidx.compose.runtime.LaunchedEffect(Unit) {
+            com.autenticar.tuid.usuarios.Audio.play(this@LivenessActivity, R.raw.a31_7)
+        }
         val oswald = FontFamily(Font(R.font.oswald_variable))
         val tinta = Color(0xFF1D2A2C)
         Column(modifier = Modifier.fillMaxSize()) {
@@ -201,13 +206,6 @@ class LivenessActivity : ComponentActivity() {
                             )
                         }
                     }
-                    Spacer(Modifier.height(20.dp))
-                    Text(
-                        text = "Ubique su rostro en el centro del óvalo y siga las indicaciones de la pantalla.",
-                        color = tinta,
-                        fontSize = 19.sp,
-                        fontWeight = FontWeight.Bold
-                    )
                 }
                 Button(
                     onClick = onComenzar,
@@ -240,18 +238,22 @@ class LivenessActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "LivenessActivity"
-
-        /** true: pantalla de inicio propia (icono y boton de TuID); false: la vista de inicio de la libreria. */
-        private const val USAR_PANTALLA_PROPIA = true
         const val EXTRA_SESSION_ID = "SESSION_ID"
         const val EXTRA_REGION = "REGION"
         const val EXTRA_ERROR = "ERROR"
+        const val EXTRA_MOSTRAR_INICIO = "MOSTRAR_INICIO"
 
         @JvmStatic
         fun intent(context: Context, sessionId: String, region: String): Intent =
+            intent(context, sessionId, region, true)
+
+        /** mostrarInicio=false: va directo a la prueba (la pantalla anterior ya mostro el aviso de fotosensibilidad). */
+        @JvmStatic
+        fun intent(context: Context, sessionId: String, region: String, mostrarInicio: Boolean): Intent =
             Intent(context, LivenessActivity::class.java)
                 .putExtra(EXTRA_SESSION_ID, sessionId)
                 .putExtra(EXTRA_REGION, region)
+                .putExtra(EXTRA_MOSTRAR_INICIO, mostrarInicio)
 
         @Volatile
         private var amplifyReady = false
