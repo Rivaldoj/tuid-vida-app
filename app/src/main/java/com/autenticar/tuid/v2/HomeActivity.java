@@ -267,7 +267,7 @@ public class HomeActivity extends TuIdActivity {
         }
 
         initFirebase();
-        playGuideSounds(new int[]{R.raw.fedevida, R.raw.registrate}, 0, null);
+        playGuideSounds(new int[]{R.raw.a01_2}, 0, null);
     }
 
     private void initFirebase(){
