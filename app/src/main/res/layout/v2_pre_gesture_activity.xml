@@ -63,13 +63,7 @@
                     android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:lineSpacingMultiplier="1.1"
-                    android:text="Ahora vamos a capturar movimientos como prueba de vida.
-
-Coloque el dispositivo a la altura de los ojos.
-
-Su rostro debe estar en el centro del óvalo.
-
-Siga las instrucciones de pantalla."
+                    android:text="Ahora vamos a capturar movimientos como prueba de vida.&#10;&#10;Coloca el dispositivo a la altura de los ojos.&#10;&#10;Tu rostro debe estar en el centro del óvalo.&#10;&#10;Sigue las instrucciones de pantalla."
                     android:textColor="@color/tu_tinta"
                     android:textSize="21sp"
                     android:textStyle="bold" />
