@@ -7,6 +7,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import com.autenticar.tuid.R
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
@@ -44,7 +50,7 @@ class LivenessActivity : ComponentActivity() {
         }
 
         setContent {
-            MaterialTheme(colorScheme = LivenessColorScheme.default()) {
+            MaterialTheme(colorScheme = colores(), typography = tipografia()) {
                 FaceLivenessDetector(
                     sessionId = sessionId,
                     region = region,
@@ -59,6 +65,36 @@ class LivenessActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    /** Colores de TuID (turquesa #01acc2) sobre el esquema base de la libreria. */
+    @Composable
+    private fun colores() = LivenessColorScheme.default().copy(
+        primary = Color(0xFF01ACC2),
+        onPrimary = Color.White,
+        primaryContainer = Color(0xFFD9F1F5),
+        onPrimaryContainer = Color(0xFF1D2A2C),
+        secondary = Color(0xFF018899),
+        onSecondary = Color.White,
+        secondaryContainer = Color(0xFFD9F1F5),
+        onSecondaryContainer = Color(0xFF1D2A2C),
+        tertiary = Color(0xFF018899),
+        error = Color(0xFFE63936),
+        onError = Color.White
+    )
+
+    /** Titulos con Oswald (la letra de TuID); el resto conserva la tipografia base. */
+    private fun tipografia(): Typography {
+        val oswald = FontFamily(Font(R.font.oswald_variable))
+        val base = Typography()
+        return base.copy(
+            headlineLarge = base.headlineLarge.copy(fontFamily = oswald),
+            headlineMedium = base.headlineMedium.copy(fontFamily = oswald),
+            headlineSmall = base.headlineSmall.copy(fontFamily = oswald),
+            titleLarge = base.titleLarge.copy(fontFamily = oswald),
+            titleMedium = base.titleMedium.copy(fontFamily = oswald),
+            labelLarge = base.labelLarge.copy(fontFamily = oswald)
+        )
     }
 
     private fun finishWithError(message: String) {
