@@ -221,7 +221,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
                         //go to validacion
                         boolean isEmail = !isPhone;
                         goToValidacion(isEmail, isEmail? ((((TextInputLayout) findViewById(R.id.txtEmail)).getEditText().getText().toString())) : ((((TextInputLayout) findViewById(R.id.txtTelefono)).getEditText().getText().toString())));
-                        HelperFunctions.ShowAlert(activity, getString(R.string.alert_recibiras_codigo_verificacion));
+                        com.autenticar.tuid.usuarios.Cuadro.mostrar(activity, "Código en camino", getString(R.string.alert_recibiras_codigo_verificacion) + ".", "Entendido", null, null, R.drawable.ic_ayuda_email);
                     } else {
                         HelperFunctions.ShowAlert(activity, validationResponse.Message);
                     }
@@ -260,7 +260,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
 
     void goToValidacion(boolean isEmail, String dato){
         setContentView(R.layout.v2_validar_telefono_mail_verificacion_activity);
-        playGuideSounds(new int[]{R.raw.ingresacodigo}, 0, null);
+        playGuideSounds(new int[]{isEmail ? R.raw.a40_3 : R.raw.ingresacodigo}, 0, null);
 
         if (!isEmail) {
             ((ImageView)findViewById(R.id.imgEmailSms)).setImageResource(R.drawable.enviar_sms);
