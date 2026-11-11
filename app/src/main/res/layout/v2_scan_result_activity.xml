@@ -182,7 +182,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:text="Revise que todo esté bien escrito. Si algo no coincide, puede volver a escanear su DNI."
+                    android:text="Revise que los datos sean correctos. Si algo no coincide, puede volver a escanear su DNI. Para continuar, presione “Los datos son correctos”."
                     android:textColor="#46585C"
                     android:textSize="17sp" />
 

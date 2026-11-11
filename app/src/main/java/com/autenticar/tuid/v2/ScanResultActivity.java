@@ -40,7 +40,7 @@ public class ScanResultActivity extends TuIdActivity {
 
             ((TextView) findViewById(R.id.fechaNacimiento)).setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(persona.nacimiento));
 
-            playGuideSounds(new int[]{R.raw.a31}, 0, null);
+            playGuideSounds(new int[]{R.raw.a31_3}, 0, null);
 
             // Si algun dato no coincide, la persona vuelve a escanear su DNI desde las instrucciones
             findViewById(R.id.btnCorregirDatos).setOnClickListener(new View.OnClickListener() {
