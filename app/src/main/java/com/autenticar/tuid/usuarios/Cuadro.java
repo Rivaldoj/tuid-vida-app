@@ -39,6 +39,12 @@ public final class Cuadro {
      */
     public static AlertDialog mostrar(Activity activity, String titulo, String mensaje,
                                       String principal, final Runnable accionPrincipal, String cancelar) {
+        return mostrar(activity, titulo, mensaje, principal, accionPrincipal, cancelar, 0);
+    }
+
+    /** Igual que el anterior, con un icono propio (recurso drawable; 0 = el que corresponda al titulo). */
+    public static AlertDialog mostrar(Activity activity, String titulo, String mensaje,
+                                      String principal, final Runnable accionPrincipal, String cancelar, int iconoRes) {
         View v = LayoutInflater.from(activity).inflate(R.layout.dialog_selector_usuario, null);
         ((TextView) v.findViewById(R.id.picker_titulo)).setText(titulo);
         ((TextView) v.findViewById(R.id.picker_mensaje)).setText(mensaje);
@@ -49,6 +55,11 @@ public final class Cuadro {
             icono.setVisibility(View.VISIBLE);
         }
         Audio.play(activity, audioDe(titulo));
+        if (iconoRes != 0) {
+            android.widget.ImageView icono = (android.widget.ImageView) v.findViewById(R.id.picker_icono);
+            icono.setImageResource(iconoRes);
+            icono.setVisibility(View.VISIBLE);
+        }
         final AlertDialog d = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(v).setCancelable(false).create();
         d.setCanceledOnTouchOutside(false);
 

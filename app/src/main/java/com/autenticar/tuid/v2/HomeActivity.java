@@ -755,7 +755,7 @@ public class HomeActivity extends TuIdActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode != RESULT_OK) {
             if (requestCode == REQUEST_AWS_LIVENESS) {
-                HelperFunctions.ShowAlert(self, "No se pudo completar la prueba de vida. Intentá nuevamente en un lugar con buena luz y buena conexión a internet.");
+                com.autenticar.tuid.usuarios.Cuadro.mostrar(self, "No se pudo completar la prueba de vida", "Inténtelo nuevamente en un lugar con buena luz y buena conexión a Internet.", "Entendido", null, null, R.drawable.ic_alerta_prueba_vida);
             }
             return;
         } else if (requestCode == REQUEST_USUARIOS) {

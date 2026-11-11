@@ -82,7 +82,7 @@ public class PreGestureActivity extends TuIdActivity{
             if (resultCode == RESULT_OK) {
                 mostrarIdentificacionSatisfactoria();
             } else {
-                HelperFunctions.ShowAlert(this, "No se pudo completar la prueba de vida. Inténtelo nuevamente en un lugar con buena luz y buena conexión a Internet.");
+                com.autenticar.tuid.usuarios.Cuadro.mostrar(this, "No se pudo completar la prueba de vida", "Inténtelo nuevamente en un lugar con buena luz y buena conexión a Internet.", "Entendido", null, null, R.drawable.ic_alerta_prueba_vida);
             }
             return;
         }
