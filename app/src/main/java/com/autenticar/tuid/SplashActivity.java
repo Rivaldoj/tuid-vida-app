@@ -87,7 +87,7 @@ public class SplashActivity extends AppCompatActivity {
 
     public  void cargaPantalla() {
         if (sound) {
-            mp = MediaPlayer.create(this, R.raw.bienvenido_vida);
+            mp = MediaPlayer.create(this, R.raw.a01);
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {

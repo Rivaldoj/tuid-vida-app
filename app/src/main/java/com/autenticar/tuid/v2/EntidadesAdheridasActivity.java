@@ -50,7 +50,7 @@ public class EntidadesAdheridasActivity extends TuIdActivity{
                 LoadingDialog.getInstance().hide();
                 LinearLayoutCompat lo = findViewById(R.id.entidades_adheridas_entidades_list_lo);
                 LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10,10,10,10);
+                params.setMargins(0,0,0,(int) (14 * getResources().getDisplayMetrics().density));
                 LayoutInflater flater = getLayoutInflater();
                 List<Entidad> entidades = response.body().entidades;
                 for(Entidad e: entidades){

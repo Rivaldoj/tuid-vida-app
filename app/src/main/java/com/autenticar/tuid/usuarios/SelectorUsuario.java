@@ -95,6 +95,7 @@ public class SelectorUsuario {
 
     // ---- sin usuarios guardados
     private void mostrarVacio() {
+        Audio.play(activity, R.raw.a02);
         nuevoCuadro("No hay usuarios en este teléfono",
                 "No hay usuarios disponibles en este dispositivo. Para realizar una Fe de Vida, primero debe registrarse o, si ya se encuentra registrado en TuID Vida, vincular un usuario.");
         principal("Registrarse", new View.OnClickListener() {
@@ -153,6 +154,7 @@ public class SelectorUsuario {
 
     // ---- ingreso manual de CUIL (primera vez o otra persona). conNuevoUsuario: ofrece "Nuevo usuario" (ir a registrarse)
     private void mostrarCuil(boolean conNuevoUsuario) {
+        Audio.play(activity, R.raw.a03);
         nuevoCuadro("Ingrese el CUIL",
                 "Ingrese el CUIL de la persona que realizará " + accion + ".");
         final EditText cuil = (EditText) contenido.findViewById(R.id.picker_cuil);
@@ -188,5 +190,6 @@ public class SelectorUsuario {
         TextView e = texto(R.id.picker_error);
         e.setText(mensaje);
         e.setVisibility(View.VISIBLE);
+        if (mensaje != null && mensaje.toLowerCase().contains("cuil")) Audio.play(activity, R.raw.a04);
     }
 }

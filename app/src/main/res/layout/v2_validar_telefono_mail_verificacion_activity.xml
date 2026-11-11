@@ -1,141 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Codigo de verificacion. Estilo "D": cabecera turquesa, hoja blanca redondeada. Los ids no cambian (los usa ValidarTelefonoMail). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/colorblanco">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
 
-    <ScrollView
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/oswald"
+        android:text="Código"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/subrayado_titulo" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/hoja_blanca"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:fillViewport="true"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/style_rect"
-                android:gravity="center"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:paddingStart="18dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:layout_marginBottom="15dp"
-                    android:orientation="horizontal">
+                    android:background="@drawable/tarjeta_aviso"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
 
                     <ImageView
                         android:id="@+id/imgEmailSms"
-                        android:layout_width="90dp"
-                        android:layout_height="130dp"
-                        android:background="@drawable/enviar_email"
-                        android:cropToPadding="true"
-                        android:scaleType="center" />
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="centerInside" />
 
                     <TextView
                         android:id="@+id/textCodigoEnvio"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
-                        android:gravity="center|left"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.1"
                         android:text="@string/explicacion_registro_validacion"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
-                <LinearLayout
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/prompt_codigo_validacion"
+                    android:textColor="@color/tu_tinta"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editCodigoValidacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="68dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/campo_redondo"
                     android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="5dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:text="@string/prompt_codigo_validacion"
-                        android:textAlignment="center"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:textColor="@color/colorPrimary" />
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!--<android.support.design.widget.TextInputLayout
-                            android:id="@+id/txtCodigoValidacion"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:textAlignment="center"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginRight="30dp">-->
-
-                        <EditText
-                            android:id="@+id/editCodigoValidacion"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginRight="30dp"
-                            android:background="@drawable/style_edittext_rect"
-                            android:hint="_ _ _ _"
-                            android:inputType="number"
-                            android:maxLength="4"
-                            android:maxLines="1"
-                            android:padding="10dp"
-                            android:singleLine="true"
-                            android:textAlignment="center"
-                            android:gravity="center"/>
-
-                        <!--</android.support.design.widget.TextInputLayout>-->
-
-                    </LinearLayout>
-                </LinearLayout>
+                    android:hint="_ _ _ _"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:letterSpacing="0.3"
+                    android:maxLength="4"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/tu_tinta"
+                    android:textColorHint="#7A8A8E"
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/textCodigoEnvioAviso"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center|left"
+                    android:layout_marginTop="14dp"
+                    android:lineSpacingMultiplier="1.1"
                     android:text="@string/formulario_validacion_email"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center|bottom"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                    android:textColor="#46585C"
+                    android:textSize="16sp" />
 
-                <Button
-                    android:id="@+id/btnSendCodeValidation"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/round_primary_button"
-                    android:text="@string/send_validation_code"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
             </LinearLayout>
+        </ScrollView>
 
-        </LinearLayout>
-    </ScrollView>
+        <Button
+            android:id="@+id/btnSendCodeValidation"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="18dp"
+            android:background="@drawable/boton_pildora"
+            android:fontFamily="@font/oswald"
+            android:letterSpacing="0.05"
+            android:text="Verificar"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </LinearLayout>
 </LinearLayout>

@@ -156,6 +156,10 @@ public class PermisosFeDeVida {
     /** Cuadro con icono de alerta, texto y dos botones tipo chip grandes dentro del cuadro. */
     private void mostrar(String titulo, String mensaje, String botonPositivo, final Runnable accion) {
         if (activity.isFinishing()) return;
+        if (titulo.startsWith("Permiso de cámara")) {
+            // a11 (mas larga) = con los pasos de Ajustes; a12 = pedido comun. Ver nota de entrega.
+            com.autenticar.tuid.usuarios.Audio.play(activity, mensaje.contains("Para habilitarlo") ? R.raw.a11 : R.raw.a12);
+        }
         View v = android.view.LayoutInflater.from(activity).inflate(R.layout.dialog_permiso, null);
         ((android.widget.ImageView) v.findViewById(R.id.permiso_icono)).setImageResource(iconoPendiente);
         ((android.widget.TextView) v.findViewById(R.id.permiso_titulo)).setText(titulo);

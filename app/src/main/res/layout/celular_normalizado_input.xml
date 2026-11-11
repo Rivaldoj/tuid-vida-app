@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Telefono: pais, codigo de area y numero, con campos redondeados (estilo D) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -8,32 +8,39 @@
     <Spinner
         android:id="@+id/text_content_info_phone_cod_pais_spinner"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginRight="3dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="6dp"
         android:layout_weight="2"
-        android:background="@color/black_2"/>
+        android:background="@drawable/campo_redondo" />
 
     <EditText
         android:id="@+id/text_content_info_phone_cod_area"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Cod. area"
-        android:padding="10dp"
-        android:layout_marginRight="3dp"
-        android:inputType="number"
+        android:layout_height="60dp"
+        android:layout_marginEnd="6dp"
         android:layout_weight="2"
-        android:background="@color/black_2" />
+        android:background="@drawable/campo_redondo"
+        android:hint="Cód. área"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/tu_tinta"
+        android:textColorHint="#7A8A8E"
+        android:textSize="19sp" />
 
     <EditText
         android:id="@+id/text_content_info_phone_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Número"
-        android:padding="10dp"
-        android:inputType="number"
+        android:layout_height="60dp"
         android:layout_weight="3"
-        android:background="@color/black_2" />
-
-
+        android:background="@drawable/campo_redondo"
+        android:hint="Número"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/tu_tinta"
+        android:textColorHint="#7A8A8E"
+        android:textSize="19sp" />
 </LinearLayout>
-

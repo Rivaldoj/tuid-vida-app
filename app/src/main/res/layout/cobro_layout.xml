@@ -1,76 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Un cobro: tarjeta con beneficiario, entidad pagadora y fechas (estilo D). Los ids no cambian. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@color/white"
-    android:padding="10dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/tarjeta_aviso"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/cobro_layout_nombre"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cobro_layout_nombre"/>
-
+        android:fontFamily="@font/oswald"
+        android:textAllCaps="true"
+        android:textColor="@color/tu_tinta"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Entidad pagadora"
-            android:drawableLeft="@drawable/ic_baseline_account_balance_24"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/ic_baseline_account_balance_24"
+            android:drawablePadding="10dp"
             android:drawableTint="@color/colorPrimary"
             android:gravity="center_vertical"
-            android:layout_weight="1"
-            android:drawablePadding="10dp"/>
-
+            android:text="Entidad pagadora"
+            android:textColor="#46585C"
+            android:textSize="17sp" />
 
         <TextView
+            android:id="@+id/cuando_cobro_caja"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/cuando_cobro_caja"/>
-
-
+            android:textColor="@color/tu_tinta"
+            android:textSize="17sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/cobro_layout_entidad_pagadora"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/tu_tinta"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/cobro_layout_entidad_pagadora_domicilio"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cobro_layout_entidad_pagadora"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cobro_layout_entidad_pagadora_domicilio"/>
-
+        android:textColor="#46585C"
+        android:textSize="16sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/cuando_cobro_actual"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
+            android:background="@drawable/chip_claro"
             android:gravity="center"
-            android:id="@+id/cuando_cobro_actual"/>
-
+            android:padding="10dp"
+            android:textColor="@color/tu_tinta"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/cuando_cobro_proxima"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
             android:layout_weight="1"
+            android:background="@drawable/chip_turquesa"
             android:gravity="center"
-            android:id="@+id/cuando_cobro_proxima"/>
-
-
+            android:padding="10dp"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
     </LinearLayout>
-
-    
-
 </LinearLayout>

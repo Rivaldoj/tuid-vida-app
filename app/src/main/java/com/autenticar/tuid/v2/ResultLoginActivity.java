@@ -93,6 +93,7 @@ public class ResultLoginActivity extends TuIdActivity{
     public void onCreate(Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.result_login_activity);
+        com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a26);
 
         check_novedades();
         initView();

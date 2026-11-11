@@ -140,6 +140,7 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
             actualizar.setVisibility(View.GONE);
             mensaje.setVisibility(View.VISIBLE);
             mensaje.setText("Solo podrá actualizar su historial luego de la próxima certificación.");
+            com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a34);
             cargarLista(null);
             return;
         }
@@ -178,6 +179,7 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                 actualizar.setEnabled(false);
                 mensaje.setVisibility(View.VISIBLE);
                 mensaje.setText("Actualizando su historial…");
+                com.autenticar.tuid.usuarios.Audio.play(HistoryActivity.this, R.raw.a35);
                 HistorialSync.actualizar(HistoryActivity.this, cuil, new HistorialSync.Resultado() {
                     @Override
                     public void onTerminado(final boolean ok, final String texto) {
@@ -186,6 +188,8 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                             public void run() {
                                 actualizar.setEnabled(true);
                                 mensaje.setText(texto);
+                                com.autenticar.tuid.usuarios.Audio.play(HistoryActivity.this,
+                                        !ok ? R.raw.a38 : HistorialSync.MSG_OK.equals(texto) ? R.raw.a36 : R.raw.a37);
                                 if (ok && cuil.equals(cuilSeleccionado)) cargarLista(cuil);
                             }
                         });

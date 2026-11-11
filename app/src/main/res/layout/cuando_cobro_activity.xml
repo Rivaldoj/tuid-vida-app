@@ -1,31 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Cuando cobro. Estilo "D": titulo Oswald con subrayado sobre turquesa y hoja blanca redondeada. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/amp_gray">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/oswald"
+        android:text="Cuándo cobro"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/subrayado_titulo" />
 
     <LinearLayout
-        android:id="@+id/cuando_cobro_lo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/hoja_blanca"
         android:orientation="vertical">
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-        <TextView
-            android:id="@+id/cuando_cobro_no_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Desafortunadamente no contamos con información"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:visibility="gone"
-            android:background="@color/white"/>
+            <LinearLayout
+                android:id="@+id/cuando_cobro_lo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="12dp">
 
-
-
+                <TextView
+                    android:id="@+id/cuando_cobro_no_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tarjeta_aviso"
+                    android:lineSpacingMultiplier="1.1"
+                    android:padding="16dp"
+                    android:text="Por el momento no contamos con información de sus cobros."
+                    android:textColor="@color/tu_tinta"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
-
-
-</ScrollView>
+</LinearLayout>

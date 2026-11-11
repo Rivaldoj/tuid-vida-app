@@ -18,6 +18,19 @@ public final class Cuadro {
     private Cuadro() {
     }
 
+    /** Audio guia segun el titulo del cuadro (0 = sin audio). */
+    private static int audioDe(String titulo) {
+        if (titulo == null) return 0;
+        switch (titulo) {
+            case "Usted no está registrado": return R.raw.a06;
+            case "Fe de Vida al día":
+            case "Usuario registrado": return R.raw.a07;
+            case "Registración incompleta": return R.raw.a08;
+            case "Sin conexión": return R.raw.a10;
+            default: return 0;
+        }
+    }
+
     /**
      * @param principal       texto del boton grande (siempre visible)
      * @param accionPrincipal se ejecuta al tocar el boton principal (puede ser null: solo cierra)
@@ -28,6 +41,13 @@ public final class Cuadro {
         View v = LayoutInflater.from(activity).inflate(R.layout.dialog_selector_usuario, null);
         ((TextView) v.findViewById(R.id.picker_titulo)).setText(titulo);
         ((TextView) v.findViewById(R.id.picker_mensaje)).setText(mensaje);
+        if ("Sin conexión".equals(titulo)) {
+            // icono rojo de "Sin conexion"
+            android.widget.ImageView icono = (android.widget.ImageView) v.findViewById(R.id.picker_icono);
+            icono.setImageResource(R.drawable.ic_sin_conexion);
+            icono.setVisibility(View.VISIBLE);
+        }
+        Audio.play(activity, audioDe(titulo));
         final AlertDialog d = new AlertDialog.Builder(activity, R.style.DialogoTuID).setView(v).setCancelable(false).create();
         d.setCanceledOnTouchOutside(false);
 

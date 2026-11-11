@@ -149,7 +149,7 @@ public class ScanActivity extends TuIdActivity {
         progressBar = findViewById(R.id.progressbar);
         progressBar.setIndeterminate(true);
 
-        playGuideSounds(new int[]{R.raw.enfocafrente, R.raw.iluminacion}, 0, null);
+        playGuideSounds(new int[]{R.raw.a29}, 0, null);
 
 
 
@@ -159,7 +159,7 @@ public class ScanActivity extends TuIdActivity {
         ((TextView) findViewById(R.id.scan_guide)).setText("Gire el DNI y muestre el dorso");
         ((TextView) findViewById(R.id.scan_titulo)).setText("Dorso del DNI");
         ((android.widget.ImageView) findViewById(R.id.scan_icono)).setImageResource(R.drawable.ic_scan_dorso);
-        playGuideSounds(new int[]{R.raw.giradni, R.raw.fondoclaro}, 0, null);
+        playGuideSounds(new int[]{R.raw.a30}, 0, null);
         try{
             GifDrawable gifDrawable = new GifDrawable(getResources(), R.drawable.dni_transparente);
             mVideo.setImageDrawable(gifDrawable);

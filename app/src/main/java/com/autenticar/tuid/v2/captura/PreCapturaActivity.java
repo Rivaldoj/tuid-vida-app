@@ -207,6 +207,8 @@ public class PreCapturaActivity extends AppCompatActivity {
                 });
     }
 
+    private boolean anteojosAvisado = false;
+
     private void mostrar(Hint hint) {
         if (hint == mostrado) return;
         mostrado = hint;
@@ -239,6 +241,15 @@ public class PreCapturaActivity extends AppCompatActivity {
         }
         titulo.setText(t);
         mensaje.setText(m);
+        int voz = hint == Hint.MULTIPLE_FACES ? R.raw.a14 : hint == Hint.NO_FACE ? R.raw.a15
+                : hint == Hint.ADJUST_POSITION ? R.raw.a16 : hint == Hint.TOO_DARK ? R.raw.a17
+                : hint == Hint.TOO_BRIGHT ? R.raw.a18 : R.raw.a19;
+        if (!anteojosAvisado) {
+            anteojosAvisado = true;   // la primera vez se anticipa el aviso fijo de anteojos
+            com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a13, voz);
+        } else {
+            com.autenticar.tuid.usuarios.Audio.play(this, voz);
+        }
         // listo: tinta oscura; si hay algo para corregir: rojo oscuro (la tarjeta es blanca)
         titulo.setTextColor(hint == Hint.OK ? ContextCompat.getColor(this, R.color.tu_tinta) : 0xFFB3201E);
         continuar.setEnabled(hint == Hint.OK);
@@ -246,6 +257,7 @@ public class PreCapturaActivity extends AppCompatActivity {
     }
 
     private void mostrarError() {
+        com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a20);
         titulo.setText("No pudimos usar la cámara");
         mensaje.setText("Cierre otras aplicaciones que estén usando la cámara y vuelva a intentarlo.");
         continuar.setEnabled(false);

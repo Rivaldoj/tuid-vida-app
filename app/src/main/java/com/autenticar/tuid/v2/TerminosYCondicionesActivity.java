@@ -46,6 +46,7 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
                 boolean politicas_accepted = ((CheckBox)findViewById(R.id.checkbox_politicas)).isChecked();
 
                 if(!terms_accepted || !politicas_accepted){
+                    playGuideSounds(new int[]{R.raw.a27}, 0, null);
                     Toast.makeText(activity, "Debes aceptar los términos y condiciones y las políticas de privacidad", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -53,7 +54,7 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
             }
         });
 
-        playGuideSounds(new int[]{ R.raw.scan, R.raw.terminosycondiciones}, 0, null);
+        playGuideSounds(new int[]{ R.raw.a28}, 0, null);
     }
 
     private void iniciarScan() {

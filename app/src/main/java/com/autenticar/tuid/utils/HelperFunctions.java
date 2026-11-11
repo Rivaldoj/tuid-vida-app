@@ -151,10 +151,15 @@ public class HelperFunctions {
             tituloCuadro = cuerpo.substring(0, salto).trim();
             cuerpo = cuerpo.substring(salto + 1).trim();
         }
+        // Mensajes de falta de conexion: titulo "Sin conexión" e icono propio
+        boolean sinConexion = cuerpo.toLowerCase().contains("no hay conexión de internet")
+                || cuerpo.toLowerCase().contains("verifique su conexión");
+        if (sinConexion) tituloCuadro = "Sin conexión";
         ((TextView) view.findViewById(R.id.dialog_titulo)).setText(tituloCuadro);
-        // Icono chico: rojo de alerta cuando es un problema con el documento; turquesa en los demas avisos
-        ((ImageView) view.findViewById(R.id.dialog_icono)).setImageResource(
-                tituloCuadro.toLowerCase().contains("documento") ? R.drawable.ic_alerta_documento : R.drawable.ic_atencion_chico);
+        // Icono chico: rojo de "sin conexion" o de alerta con el documento; turquesa en los demas avisos
+        int iconoCuadro = sinConexion ? R.drawable.ic_sin_conexion
+                : (tituloCuadro.toLowerCase().contains("documento") ? R.drawable.ic_alerta_documento : R.drawable.ic_atencion_chico);
+        ((ImageView) view.findViewById(R.id.dialog_icono)).setImageResource(iconoCuadro);
         ((TextView) view.findViewById(R.id.dialog_text)).setText(cuerpo);
         ImageView ok = (ImageView) view.findViewById(R.id.ok_action);
         if (onClickListener == null) {

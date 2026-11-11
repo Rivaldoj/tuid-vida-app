@@ -102,7 +102,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
             
         }
 //        playGuideSounds(new int[]{R.raw.emailtelefono, R.raw.iniciarvalidacion}, 0, null);
-        playGuideSounds(new int[]{isPhone?R.raw.movil:R.raw.correoelectronico}, 0, null);
+        playGuideSounds(isPhone ? new int[]{R.raw.a41} : new int[]{R.raw.a39, R.raw.a40}, 0, null);
         findViewById(R.id.btnSendValidation).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -263,11 +263,11 @@ public class ValidarTelefonoMail extends TuIdActivity{
         playGuideSounds(new int[]{R.raw.ingresacodigo}, 0, null);
 
         if (!isEmail) {
-            ((ImageView)findViewById(R.id.imgEmailSms)).setBackgroundResource(R.drawable.enviar_sms);
+            ((ImageView)findViewById(R.id.imgEmailSms)).setImageResource(R.drawable.enviar_sms);
             ((TextView)findViewById(R.id.textCodigoEnvio)).setText("Se ha enviado el CODIGO mediante un mensaje de texto al número " + dato);
             findViewById(R.id.textCodigoEnvioAviso).setVisibility(View.INVISIBLE);
         } else {
-            ((ImageView)findViewById(R.id.imgEmailSms)).setBackgroundResource(R.drawable.enviar_email);
+            ((ImageView)findViewById(R.id.imgEmailSms)).setImageResource(R.drawable.enviar_email);
             findViewById(R.id.textCodigoEnvioAviso).setVisibility(View.VISIBLE);
             ((TextView)findViewById(R.id.textCodigoEnvio)).setText("Se ha enviado el CODIGO mediante un EMAIL al correo " + dato);
         }

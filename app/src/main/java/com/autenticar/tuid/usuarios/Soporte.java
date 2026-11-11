@@ -92,6 +92,7 @@ public final class Soporte {
         ((TextView) v.findViewById(R.id.picker_titulo)).setText("Registración incompleta");
         ((TextView) v.findViewById(R.id.picker_mensaje)).setText(
                 "Su registración no fue completada o fue desaprobada. Escriba su nombre y apellido para que Soporte pueda identificarlo.");
+        Audio.play(activity, R.raw.a09);
         final EditText nombre = (EditText) v.findViewById(R.id.picker_cuil);   // se reutiliza el campo, pero como texto
         nombre.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         nombre.setFilters(new InputFilter[]{new InputFilter.LengthFilter(60)});

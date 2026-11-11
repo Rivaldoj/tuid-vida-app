@@ -36,11 +36,20 @@ public class ScanResultActivity extends TuIdActivity {
 
             ((TextView) findViewById(R.id.fullname)).setText(persona.nombre + " " + persona.apellido);
             ((TextView) findViewById(R.id.numerodni)).setText(persona.dni);
-            ((TextView) findViewById(R.id.sexo)).setText("Sexo: " + (persona.sexo));
+            ((TextView) findViewById(R.id.sexo)).setText(String.valueOf(persona.sexo));
 
             ((TextView) findViewById(R.id.fechaNacimiento)).setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(persona.nacimiento));
 
-            playGuideSounds(new int[]{R.raw.continuar}, 0, null);
+            playGuideSounds(new int[]{R.raw.a31}, 0, null);
+
+            // Si algun dato no coincide, la persona vuelve a escanear su DNI desde las instrucciones
+            findViewById(R.id.btnCorregirDatos).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(context, InstruccionesDniActivity.class));
+                    finish();
+                }
+            });
 
             findViewById(R.id.btnContinuarAGestos).setOnClickListener(new View.OnClickListener() {
                 @Override

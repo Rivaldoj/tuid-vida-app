@@ -53,7 +53,7 @@ public class CuandoCobroActivity extends TuIdActivity{
                 LoadingDialog.getInstance().hide();
                 LinearLayout lo = findViewById(R.id.cuando_cobro_lo);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(10,10,10,10);
+                lp.setMargins(0,0,0,(int) (14 * getResources().getDisplayMetrics().density));
                 try {
                     for (Pago p : response.body().getPagos()) {
                         View v = getLayoutInflater().inflate(R.layout.cobro_layout, null);

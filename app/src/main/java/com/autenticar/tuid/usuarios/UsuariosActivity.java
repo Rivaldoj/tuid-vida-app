@@ -72,6 +72,7 @@ public class UsuariosActivity extends AppCompatActivity {
         adapter.addAll(usuarios);
         adapter.notifyDataSetChanged();
         vacio.setVisibility(usuarios.isEmpty() ? View.VISIBLE : View.GONE);
+        if (usuarios.isEmpty()) Audio.play(this, R.raw.a32);
         lista.setVisibility(usuarios.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
@@ -87,6 +88,7 @@ public class UsuariosActivity extends AppCompatActivity {
     }
 
     private void confirmarQuitar(final LocalUser u) {
+        Audio.play(this, R.raw.a33);
         new AlertDialog.Builder(this)
                 .setTitle("Quitar usuario")
                 .setMessage("¿Desea quitar este usuario del dispositivo? Su registración y sus certificaciones permanecerán en el sistema.")

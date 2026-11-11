@@ -529,6 +529,7 @@ public class HomeActivity extends TuIdActivity {
     /** Persona ya elegida: controles de luz y rostro y, si salen bien, searchdni (la sesion de prueba de vida dura 3 minutos). */
     private void irAControlesPrevios(final String cuil) {
         // Primero se comprueba si esta registrado: si no lo esta, el aviso sale ANTES de abrir la camara
+        com.autenticar.tuid.usuarios.Audio.play(self, R.raw.a05);
         LoadingDialog.getInstance().show(self, "Aguarde un momento, comprobando su registro");
         ServiceGenerator.createV2Service(TuidServiceV2.class)
                 .checkRegistration(new com.autenticar.tuid.model.CheckRegistrationRequest(cuil))
@@ -651,6 +652,7 @@ public class HomeActivity extends TuIdActivity {
         request.version = String.valueOf(Build.VERSION.SDK_INT);
         request.appversion = BuildConfig.VERSION_NAME;
         try {
+            com.autenticar.tuid.usuarios.Audio.play(self, R.raw.a25);
             LoadingDialog.getInstance().show(self, "Aguarde un momento, procesando la información");
         } catch (Exception e) {
         }
@@ -820,6 +822,7 @@ public class HomeActivity extends TuIdActivity {
         Call<LoginResponse> callUser = USE_LIVENESS_V2
                 ? ServiceGenerator.createV2Service(TuidServiceV2.class).login(request)
                 : apiServiceUser.login(request);
+        com.autenticar.tuid.usuarios.Audio.play(this, R.raw.a24);
         showProgressDialog(getString(R.string.alert_validando_identidad));
         callUser.enqueue(new Callback<LoginResponse>() {
             @Override

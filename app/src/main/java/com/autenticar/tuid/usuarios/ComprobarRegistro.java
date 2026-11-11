@@ -102,6 +102,7 @@ public class ComprobarRegistro {
     }
 
     private void consultar(final String cuil) {
+        Audio.play(activity, R.raw.a05);
         LoadingDialog.getInstance().show(activity, "Aguarde un momento, comprobando su registro");
         ServiceGenerator.createV2Service(TuidServiceV2.class)
                 .checkRegistration(new CheckRegistrationRequest(cuil))

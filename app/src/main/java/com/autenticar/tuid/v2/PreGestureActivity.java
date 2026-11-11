@@ -134,6 +134,11 @@ public class PreGestureActivity extends TuIdActivity{
                             hideProgressDialog();
 //                            Log.e("ASD", response.code() + " : " + response.message() + " : "  + response.raw().toString() + ":" + response.body().Response);
                             RegisterResponse registerResponse = response.body();
+                            if (registerResponse == null) {
+                                // El servidor no respondio con los datos esperados (error, mantenimiento): se avisa en vez de cerrar la app
+                                notSuccessRegister("Se ha producido un error en la registración. Inténtelo nuevamente en unos minutos. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
+                                return;
+                            }
                             if (response.isSuccessful()) {
                                 if (registerResponse.IsOk()) {
                                     if (registerResponse.userID != null) {
