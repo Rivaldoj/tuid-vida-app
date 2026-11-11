@@ -51,7 +51,7 @@
                 <ImageView
                     android:id="@+id/img_prueba_vida_hm"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
+                    android:layout_height="130dp"
                     android:contentDescription="Prueba de vida"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_prueba_vida" />
@@ -60,7 +60,7 @@
                     android:id="@+id/textGestoVida"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="14dp"
                     android:gravity="center"
                     android:lineSpacingMultiplier="1.1"
                     android:text="Ahora vamos a capturar movimientos como prueba de vida.&#10;&#10;Coloca el dispositivo a la altura de los ojos.&#10;&#10;Tu rostro debe estar en el centro del óvalo.&#10;&#10;Sigue las instrucciones de pantalla."

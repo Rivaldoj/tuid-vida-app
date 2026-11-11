@@ -54,7 +54,7 @@
                     android:layout_height="180dp"
                     android:contentDescription="Identificación satisfactoria"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_validado" />
+                    android:src="@drawable/ic_reconocimiento" />
 
                 <TextView
                     android:id="@+id/text_confirmacion"

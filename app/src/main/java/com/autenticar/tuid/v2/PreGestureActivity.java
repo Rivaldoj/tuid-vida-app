@@ -106,7 +106,7 @@ public class PreGestureActivity extends TuIdActivity{
 
     private void mostrarIdentificacionSatisfactoria() {
         setContentView(R.layout.v2_fe_de_vida_satisfactoria);
-        playGuideSounds(new int[]{R.raw.continuar}, 0, null);
+        playGuideSounds(new int[]{R.raw.a19}, 0, null);
         findViewById(R.id.btnConfirmar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
