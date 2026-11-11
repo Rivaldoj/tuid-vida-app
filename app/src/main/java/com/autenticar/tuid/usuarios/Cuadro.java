@@ -23,8 +23,9 @@ public final class Cuadro {
         if (titulo == null) return 0;
         switch (titulo) {
             case "Usted no está registrado": return R.raw.a06;
-            case "Fe de Vida al día":
-            case "Usuario registrado": return R.raw.a07;
+            case "Fe de Vida al día": return R.raw.a07;
+            case "Usuario registrado":
+            case "Fe de Vida pendiente": return R.raw.a02_2;
             case "Registración incompleta": return R.raw.a08;
             case "Sin conexión": return R.raw.a10;
             default: return 0;
