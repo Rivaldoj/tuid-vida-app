@@ -16,7 +16,7 @@ public class InstruccionesDniActivity extends TuIdActivity {
     public void onCreate(Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.v2_instrucciones_dni);
-        playGuideSounds(new int[]{R.raw.a28}, 0, null);
+        playGuideSounds(new int[]{R.raw.a28, R.raw.a31_2}, 0, null);
 
         findViewById(R.id.btnContinuarScan).setOnClickListener(new View.OnClickListener() {
             @Override
