@@ -9,6 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -51,18 +56,27 @@ class LivenessActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme(colorScheme = colores(), typography = tipografia()) {
-                FaceLivenessDetector(
-                    sessionId = sessionId,
-                    region = region,
-                    onComplete = {
-                        setResult(RESULT_OK)
-                        finish()
-                    },
-                    onError = { error ->
-                        Log.e(TAG, "Liveness error: ${error.javaClass.simpleName} - $error")
-                        finishWithError(error.javaClass.simpleName)
-                    }
-                )
+                // systemBarsPadding: deja libres la barra de estado y la de navegacion del telefono
+                // (sin esto el boton "Comenzar la prueba" queda tapado por los botones del sistema)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .systemBarsPadding()
+                ) {
+                    FaceLivenessDetector(
+                        sessionId = sessionId,
+                        region = region,
+                        onComplete = {
+                            setResult(RESULT_OK)
+                            finish()
+                        },
+                        onError = { error ->
+                            Log.e(TAG, "Liveness error: ${error.javaClass.simpleName} - $error")
+                            finishWithError(error.javaClass.simpleName)
+                        }
+                    )
+                }
             }
         }
     }
@@ -80,7 +94,10 @@ class LivenessActivity : ComponentActivity() {
         onSecondaryContainer = Color(0xFF1D2A2C),
         tertiary = Color(0xFF018899),
         error = Color(0xFFE63936),
-        onError = Color.White
+        onError = Color.White,
+        // el aviso de fotosensibilidad usa estos dos colores: fondo amarillo claro y letra oscura
+        errorContainer = Color(0xFFFFF4B8),
+        onErrorContainer = Color(0xFF1D2A2C)
     )
 
     /** Titulos con Oswald (la letra de TuID); el resto conserva la tipografia base. */
