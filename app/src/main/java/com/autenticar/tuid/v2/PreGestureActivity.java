@@ -45,6 +45,10 @@ import static com.autenticar.tuid.utils.HelperFunctions.sound;
 public class PreGestureActivity extends TuIdActivity{
 
     private static final int PRE_GESTURE_ACTIVITY = 9;
+    private static final int REQUEST_LIVENESS_REGISTRO = 7010;
+    /** Registro con AWS Face Liveness (POST /vida/v2/signup); false = flujo anterior de los 3 pestaneos. */
+    private static final boolean USAR_LIVENESS_AWS = true;
+    private String livenessSessionId;
     private static final int CHANCE_ACTIVITY = 701;
     String token = "";
 
@@ -59,10 +63,14 @@ public class PreGestureActivity extends TuIdActivity{
         findViewById(R.id.btnCaptureGestures).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getFirebaseToken();
+                if (USAR_LIVENESS_AWS) {
+                    iniciarLivenessAws();
+                    return;
+                }
                 Intent i = new Intent(context, FeDeVidaActivity.class);
                 i.putExtra(GESTURE_TO_DETECT, FeDeVidaActivity.DETECTAR_PESTANEO_CLOSED_EYES);
                 startActivityForResult(i, PRE_GESTURE_ACTIVITY);
-                getFirebaseToken();
             }
         });
     }
@@ -70,16 +78,17 @@ public class PreGestureActivity extends TuIdActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LIVENESS_REGISTRO) {
+            if (resultCode == RESULT_OK) {
+                mostrarIdentificacionSatisfactoria();
+            } else {
+                HelperFunctions.ShowAlert(this, "No se pudo completar la prueba de vida. Inténtelo nuevamente en un lugar con buena luz y buena conexión a Internet.");
+            }
+            return;
+        }
         if(requestCode == PRE_GESTURE_ACTIVITY){
             if(resultCode == RESULT_OK){
-                setContentView(R.layout.v2_fe_de_vida_satisfactoria);
-                playGuideSounds(new int[]{R.raw.continuar}, 0, null);
-                findViewById(R.id.btnConfirmar).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        registrar();
-                    }
-                });
+                mostrarIdentificacionSatisfactoria();
             }
 
         }
@@ -94,6 +103,139 @@ public class PreGestureActivity extends TuIdActivity{
     }
 
 
+
+    private void mostrarIdentificacionSatisfactoria() {
+        setContentView(R.layout.v2_fe_de_vida_satisfactoria);
+        playGuideSounds(new int[]{R.raw.continuar}, 0, null);
+        findViewById(R.id.btnConfirmar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (USAR_LIVENESS_AWS) registrarConLiveness();
+                else registrar();
+            }
+        });
+    }
+
+    /** Crea la sesion de Face Liveness en el servidor y abre la prueba de vida de AWS. */
+    private void iniciarLivenessAws() {
+        showProgressDialog("Aguarde un momento, preparando la prueba de vida");
+        ServiceGenerator.createV2Service(com.autenticar.tuid.services.TuidServiceV2.class).session()
+                .enqueue(new Callback<com.autenticar.tuid.model.LivenessSessionResponse>() {
+                    @Override
+                    public void onResponse(Call<com.autenticar.tuid.model.LivenessSessionResponse> call,
+                                           Response<com.autenticar.tuid.model.LivenessSessionResponse> response) {
+                        hideProgressDialog();
+                        com.autenticar.tuid.model.LivenessSessionResponse r = response.body();
+                        if (!response.isSuccessful() || r == null || r.sessionId == null || r.sessionId.isEmpty()) {
+                            HelperFunctions.ShowAlertWithContact(PreGestureActivity.this,
+                                    "No pudimos iniciar la prueba de vida. Inténtelo nuevamente en unos minutos.", 1, "0");
+                            return;
+                        }
+                        livenessSessionId = r.sessionId;
+                        startActivityForResult(com.autenticar.tuid.v2.aws.LivenessActivity.Companion.intent(
+                                PreGestureActivity.this, livenessSessionId, getString(R.string.aws_liveness_region)),
+                                REQUEST_LIVENESS_REGISTRO);
+                    }
+
+                    @Override
+                    public void onFailure(Call<com.autenticar.tuid.model.LivenessSessionResponse> call, Throwable t) {
+                        hideProgressDialog();
+                        HelperFunctions.ShowAlertWithContact(PreGestureActivity.this,
+                                getString(R.string.no_hay_conexion_a_internet), 1, "0");
+                    }
+                });
+    }
+
+    private static String fecha(java.util.Date d) {
+        return d == null ? null : new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(d);
+    }
+
+    /** Envia el DNI escaneado y la sesion de Face Liveness al servidor (POST /vida/v2/signup). */
+    private void registrarConLiveness() {
+        findViewById(R.id.btnConfirmar).setEnabled(false);
+        try {
+            Persona persona = ((MainApp) getApplication()).GetPersonaToRegister();
+            persona.dniFront = Scanner.frontResult;
+            persona.dniBack = Scanner.backResult;
+            persona.SetFaceDetected(Scanner.faceResult);
+
+            final com.autenticar.tuid.model.SignupRequest request = new com.autenticar.tuid.model.SignupRequest();
+            com.autenticar.tuid.model.SignupRequest.Documento doc = new com.autenticar.tuid.model.SignupRequest.Documento();
+            doc.number = Scanner.dni;
+            doc.name = Scanner.nombre;
+            doc.lastname = Scanner.apellido;
+            doc.gender = Scanner.sexo == null ? null : Scanner.sexo.toUpperCase();
+            doc.birth = fecha(Scanner.fechaNacimiento);
+            doc.expires = fecha(Scanner.expiry);
+            doc.tramit = Scanner.tramite;
+            doc.front = HelperFunctions.encodeTobase64(Scanner.frontResult);
+            doc.back = HelperFunctions.encodeTobase64(Scanner.backResult);
+            doc.photo = HelperFunctions.encodeTobase64(persona.bitmapFace);
+            request.idDocument = doc;
+            request.sessionId = livenessSessionId;
+            request.idDevice = token;
+            request.appversion = BuildConfig.VERSION_NAME;
+            request.os = "Android " + Build.VERSION.RELEASE + " (" + Build.MANUFACTURER + " " + Build.MODEL + ")";
+            request.version = String.valueOf(Build.VERSION.SDK_INT);
+            try {
+                com.autenticar.tuid.utils.GPSLocation gps = new com.autenticar.tuid.utils.GPSLocation(this, getApplicationContext());
+                request.latitud = String.valueOf(gps.getLatitud());
+                request.longitud = String.valueOf(gps.getLongitud());
+            } catch (Exception e) {
+                request.latitud = "0.0";
+                request.longitud = "0.0";
+            }
+
+            showProgressDialog("Aguarde un momento, procesando el registro");
+            ServiceGenerator.createV2Service(com.autenticar.tuid.services.TuidServiceV2.class).signup(request)
+                    .enqueue(new Callback<RegisterResponse>() {
+                        @Override
+                        public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                            hideProgressDialog();
+                            procesarRespuestaRegistro(response.body(), request.idDocument.number, request.idDocument.gender, request.idDocument.name);
+                        }
+
+                        @Override
+                        public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                            hideProgressDialog();
+                            notSuccessRegister("Se ha producido un error en la registración. Verifique que su conexión a internet sea estable y pruebe nuevamente. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
+                        }
+                    });
+        } catch (Exception ex) {
+            Log.e("EX", String.valueOf(ex.getMessage()), ex);
+            notSuccessRegister("Se ha producido un error en la registración. Verifique que su conexión a internet sea estable y pruebe nuevamente. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
+        }
+    }
+
+    /** Aprobado: sigue con correo y celular. Revancha: pregunta de conocimiento. Error: aviso. */
+    private void procesarRespuestaRegistro(RegisterResponse r, String dni, String sexo, String nombre) {
+        if (r == null) {
+            notSuccessRegister("Se ha producido un error en la registración. Inténtelo nuevamente en unos minutos. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
+            return;
+        }
+        if (r.IsOk() && r.userID != null) {
+            ((MainApp) getApplication()).SetNewUserSession(r.userID, dni, sexo, nombre);
+            try {
+                JSONObject data = new JSONObject();
+                data.put("chance", false);
+                new AmplitudeManager().log(activity, "Registration Success", data);
+            } catch (Exception ignored) {
+            }
+            validarTelefonoMail();
+        } else if (r.IsChance() && r.userID != null && r.Questions != null) {
+            ((MainApp) getApplication()).SetNewUserSession(r.userID, dni, sexo, nombre);
+            question = r.Questions;
+            Intent i = new Intent(context, ChanceActivity.class);
+            i.putExtra("question", question.question);
+            i.putExtra("a0", question.chance0);
+            i.putExtra("a1", question.chance1);
+            i.putExtra("a2", question.chance2);
+            i.putExtra("a3", question.chance3);
+            startActivityForResult(i, CHANCE_ACTIVITY);
+        } else {
+            notSuccessRegister(r.Message != null ? r.Message : "Se ha producido un error con los datos suministrados", "0");
+        }
+    }
 
     private void registrar() {
         final RegisterRequest request = new RegisterRequest();

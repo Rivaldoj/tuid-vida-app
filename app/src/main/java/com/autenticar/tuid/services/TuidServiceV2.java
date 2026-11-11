@@ -27,4 +27,11 @@ public interface TuidServiceV2 {
 
     @POST("login")
     Call<LoginResponse> login(@Body LoginRequest request);
+
+    /** Registro: la sesion de Face Liveness se crea aca y luego se envia en signup. */
+    @retrofit2.http.GET("session")
+    Call<com.autenticar.tuid.model.LivenessSessionResponse> session();
+
+    @POST("signup")
+    Call<com.autenticar.tuid.model.RegisterResponse> signup(@Body com.autenticar.tuid.model.SignupRequest request);
 }
