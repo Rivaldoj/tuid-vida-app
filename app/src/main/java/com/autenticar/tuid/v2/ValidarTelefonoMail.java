@@ -330,6 +330,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
                     ConfirmationResponse validationResponse = response.body();
                     if (response.isSuccessful()) {
                         if (validationResponse.IsOk()) {
+                            guardarUsuarioRegistrado();
                             AlertDialog ad = HelperFunctions.CreateAlertWithLoginAndPhoneOptions(activity, getString(R.string.app_name), getString(R.string.registro_satisfactorio), !isPhone);
                             ad.setCancelable(false);
                             ad.show();
@@ -357,6 +358,28 @@ public class ValidarTelefonoMail extends TuIdActivity{
                     HelperFunctions.ShowAlert(activity, "Requiere una conexión internet estable");
                 }
             });
+        }
+    }
+
+    /**
+     * Registro completo: la persona queda en "Usuarios" de este telefono. Solo si se conoce su CUIL (lo escribio al
+     * empezar) y es coherente con el DNI escaneado (el CUIL contiene el numero de documento).
+     */
+    private void guardarUsuarioRegistrado() {
+        try {
+            String cuil = com.autenticar.tuid.utils.CuilValidator.normalizar(com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro);
+            String dni = com.autenticar.tuid.v2.utils.Scanner.dni == null ? "" : com.autenticar.tuid.v2.utils.Scanner.dni.replaceAll("\D", "");
+            if (!com.autenticar.tuid.utils.CuilValidator.esValido(cuil) || dni.isEmpty()) return;
+            String dni8 = ("00000000" + dni);
+            dni8 = dni8.substring(dni8.length() - 8);
+            if (!cuil.substring(2, 10).equals(dni8)) return;   // CUIL de otra persona: no se guarda
+            String apellido = com.autenticar.tuid.v2.utils.Scanner.apellido == null ? "" : com.autenticar.tuid.v2.utils.Scanner.apellido.trim();
+            String nombre = com.autenticar.tuid.v2.utils.Scanner.nombre == null ? "" : com.autenticar.tuid.v2.utils.Scanner.nombre.trim();
+            String completo = (apellido + ", " + nombre).trim();
+            com.autenticar.tuid.usuarios.LocalUserStore.get(this).addOrUpdate(cuil, completo.equals(",") ? "" : completo);
+            com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro = null;
+        } catch (Exception e) {
+            Log.e("USUARIOS", "No se pudo guardar el usuario registrado", e);
         }
     }
 

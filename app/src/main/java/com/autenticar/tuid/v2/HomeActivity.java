@@ -547,6 +547,7 @@ public class HomeActivity extends TuIdActivity {
                         } else if (com.autenticar.tuid.model.CheckRegistrationResponse.NOT_ADHERED.equals(r.registration)) {
                             avisarEntidadNoAdherida(r.Message);
                         } else if (com.autenticar.tuid.model.CheckRegistrationResponse.NOT_REGISTERED.equals(r.registration)) {
+                            com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro = cuil;
                             ofrecerRegistro();
                         } else if (com.autenticar.tuid.model.CheckRegistrationResponse.UP_TO_DATE.equals(r.registration)) {
                             // Al dia: no hace falta Fe de Vida. Se informa la proxima fecha y se vuelve al menu principal, sin abrir la camara
@@ -672,6 +673,7 @@ public class HomeActivity extends TuIdActivity {
                 } else if ("NOT_ADHERED".equals(r.registration)) {
                     avisarEntidadNoAdherida(r.Message);
                 } else if (r.IsOk() || noRegistrado(r)) {
+                    com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro = cuil;
                     ofrecerRegistro();
                 } else {
                     HelperFunctions.ShowAlertWithContact(self, r.Message, 0, "DONTFINISHACTIVITY");

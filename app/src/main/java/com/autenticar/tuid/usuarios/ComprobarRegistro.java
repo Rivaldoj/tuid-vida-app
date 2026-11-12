@@ -90,6 +90,7 @@ public class ComprobarRegistro {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                cuilEnRegistro = null;   // no sabe su CUIL: no se puede guardar en el telefono al terminar
                 destino.onContinuarRegistro();
             }
         });
@@ -131,9 +132,13 @@ public class ComprobarRegistro {
                 });
     }
 
+    /** CUIL con el que la persona empieza su registro (si lo escribio); al terminar el registro se guarda en el telefono. */
+    public static String cuilEnRegistro;
+
     private void resultado(final String cuil, CheckRegistrationResponse r) {
         String estado = r.registration == null ? "" : r.registration;
         if (CheckRegistrationResponse.NOT_REGISTERED.equals(estado)) {
+            cuilEnRegistro = cuil;
             destino.onContinuarRegistro();
         } else if (CheckRegistrationResponse.PENDING.equals(estado)) {
             aviso("Fe de Vida pendiente",
