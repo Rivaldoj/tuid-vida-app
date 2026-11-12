@@ -368,7 +368,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
     private void guardarUsuarioRegistrado() {
         try {
             String cuil = com.autenticar.tuid.utils.CuilValidator.normalizar(com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro);
-            String dni = com.autenticar.tuid.v2.utils.Scanner.dni == null ? "" : com.autenticar.tuid.v2.utils.Scanner.dni.replaceAll("\D", "");
+            String dni = com.autenticar.tuid.v2.utils.Scanner.dni == null ? "" : com.autenticar.tuid.v2.utils.Scanner.dni.replaceAll("[^0-9]", "");
             if (!com.autenticar.tuid.utils.CuilValidator.esValido(cuil) || dni.isEmpty()) return;
             String dni8 = ("00000000" + dni);
             dni8 = dni8.substring(dni8.length() - 8);
