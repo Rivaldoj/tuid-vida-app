@@ -874,7 +874,11 @@ public class HomeActivity extends TuIdActivity {
                         sql.insertCUIL(cuil);
                         sql.recortarHistorial(cuil.getNum_cuil(), SQLHelper.MAX_HISTORIAL_POR_USUARIO);
                         // La persona se guarda en este telefono solo despues de una Fe de Vida confirmada por el servidor
-                        com.autenticar.tuid.usuarios.LocalUserStore.get(self).addOrUpdate(loginResponse.Cuil, loginResponse.Name);
+                        try {
+                            com.autenticar.tuid.usuarios.LocalUserStore.get(self).addOrUpdate(loginResponse.Cuil, loginResponse.Name);
+                        } catch (Exception e) {
+                            Log.e("USUARIOS", "No se pudo guardar el usuario en el telefono", e);   // la Fe de Vida ya esta hecha: no se corta
+                        }
                         startActivity(intent);
                     } else {
                         HelperFunctions.ShowAlert(self, response.body().Message);

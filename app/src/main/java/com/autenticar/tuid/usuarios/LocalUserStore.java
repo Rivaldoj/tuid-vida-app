@@ -46,7 +46,13 @@ public class LocalUserStore {
         try {
             String json = crypto.decrypt(enc);
             List<LocalUser> l = GSON.fromJson(json, new TypeToken<List<LocalUser>>() {}.getType());
-            return l == null ? new ArrayList<LocalUser>() : l;
+            if (l == null) return new ArrayList<>();
+            // descarta entradas danadas o de una version anterior (sin CUIL): no deben romper la app
+            List<LocalUser> validos = new ArrayList<>();
+            for (LocalUser u : l) {
+                if (u != null && u.cuil != null) validos.add(u);
+            }
+            return validos;
         } catch (Exception e) {
             return new ArrayList<>();
         }
