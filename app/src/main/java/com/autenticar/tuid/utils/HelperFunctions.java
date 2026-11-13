@@ -156,6 +156,50 @@ public class HelperFunctions {
         return alert;
     }
 
+    /** Aviso en formato Mensaje: icono, titulo y mensaje centrados y un boton "Aceptar". */
+    public static void ShowMensaje(final Activity context, int iconoRes, String tituloTexto, String mensajeTexto) {
+        View view = context.getLayoutInflater().inflate(R.layout.dialog_selector_usuario, null);
+        ImageView icono = (ImageView) view.findViewById(R.id.picker_icono);
+        icono.setImageResource(iconoRes);
+        icono.setVisibility(View.VISIBLE);
+        ((android.widget.LinearLayout.LayoutParams) icono.getLayoutParams()).gravity = android.view.Gravity.CENTER_HORIZONTAL;
+        TextView titulo = (TextView) view.findViewById(R.id.picker_titulo);
+        titulo.setText(tituloTexto);
+        titulo.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+        TextView mensaje = (TextView) view.findViewById(R.id.picker_mensaje);
+        mensaje.setText(mensajeTexto);
+        mensaje.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+        mensaje.setVisibility(mensajeTexto == null || mensajeTexto.isEmpty() ? View.GONE : View.VISIBLE);
+        final AlertDialog alert = new AlertDialog.Builder(context, R.style.DialogoTuID).setView(view).create();
+        Button principal = (Button) view.findViewById(R.id.picker_principal);
+        principal.setText("Aceptar");
+        principal.setTextColor(android.graphics.Color.WHITE);
+        principal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+            }
+        });
+        view.findViewById(R.id.picker_secundario).setVisibility(View.GONE);
+        view.findViewById(R.id.picker_cancelar).setVisibility(View.GONE);
+        if (!context.isFinishing()) alert.show();
+    }
+
+    /** Aviso de "mensaje enviado" del formulario de Contacto (icono del correo). */
+    public static void ShowMensajeEnviado(final Activity context) {
+        ShowMensaje(context, R.drawable.ic_email_validado, "Mensaje enviado", "Su mensaje se ha enviado correctamente");
+    }
+
+    /** Errores del formulario de Contacto: el del telefono va en formato Mensaje con su icono rojo; los demas, como siempre. */
+    public static void ShowErrorContacto(final Activity context, String mensaje) {
+        String m = mensaje == null ? "" : mensaje;
+        if (m.toLowerCase().contains("validar el número de teléfono") || m.toLowerCase().contains("validar el numero de telefono")) {
+            ShowMensaje(context, R.drawable.ic_alerta_error_telefono, "Teléfono inválido", m);
+        } else {
+            ShowAlert(context, m);
+        }
+    }
+
     public static AlertDialog CreateAlertWithContact(final Activity context, String title, String message, View.OnClickListener onClickListener, int type, String response_code){
         boolean finishActivityAfter = !response_code.equalsIgnoreCase("DONTFINISHACTIVITY");
         final AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.DialogoTuID);
@@ -446,7 +490,7 @@ public class HelperFunctions {
                                 request.version = Build.VERSION.RELEASE;
                                 if (request.cuil.trim().equals("")) {
                                     text_content_info_cuil_text.requestFocus();
-                                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                                     //Toast.makeText(context,R.string.contact_validar_dni , Toast.LENGTH_LONG).show();
                                 }
                                 else if (request.cuil.length()!=11) {
@@ -455,23 +499,23 @@ public class HelperFunctions {
                                     //Toast.makeText(context,R.string.contact_validar_dni , Toast.LENGTH_LONG).show();
                                 } else if (request.nombre.trim().equals("")) {
                                     text_content_info_name_text.requestFocus();
-                                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                                     //Toast.makeText(context,R.string.contact_validar_dni , Toast.LENGTH_LONG).show();
                                 } else if (request.telefono.trim().equals("")) {
                                     text_content_info_phone_text.requestFocus();
-                                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                                     //Toast.makeText(context,R.string.contact_validar_dni , Toast.LENGTH_LONG).show();
                                 } else if (request.asunto.trim().equals("")) {
                                     text_content_info_asunto_text.requestFocus();
-                                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_asunto)).show();
+                                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_asunto));
                                     //Toast.makeText(context,R.string.contact_validar_asunto , Toast.LENGTH_LONG).show();
                                 } else if (request.email.length() < 3) {
                                     text_content_info_email_text.requestFocus();
-                                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_email)).show();
+                                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_email));
                                     //Toast.makeText(context,R.string.contact_validar_email , Toast.LENGTH_LONG).show();
                                 } else if (request.mensaje.trim().equals("")) {
                                     text_content_info_msn_text.requestFocus();
-                                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_mensaje)).show();
+                                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_mensaje));
                                     //Toast.makeText(context,R.string.contact_validar_mensaje, Toast.LENGTH_LONG).show();
                                 } else {
                                     send_contact(request, dialog, activity, context);
@@ -582,13 +626,19 @@ public class HelperFunctions {
                 hideProgressDialog();
                 if (response.isSuccessful()) {
                     if (response.body().IsOk()) {
-                        HelperFunctions.ShowAlert(activity, "Su mensaje se ha enviado correctamente");
+                        HelperFunctions.ShowMensajeEnviado(activity);
                     } else {
                         HelperFunctions.ShowAlert(activity, response.body().Message);
                     }
                     dialog.dismiss();
                 } else {
-                    HelperFunctions.ShowAlert(activity, response.message());
+                    String errorMessage = response.message();
+                    try {
+                        errorMessage = new org.json.JSONObject(response.errorBody().string()).getString("message");
+                    } catch (Exception e) {
+                        // se muestra el mensaje HTTP
+                    }
+                    HelperFunctions.ShowErrorContacto(activity, errorMessage);
                 }
             }
 

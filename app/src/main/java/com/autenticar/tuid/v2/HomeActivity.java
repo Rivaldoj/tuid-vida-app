@@ -440,7 +440,7 @@ public class HomeActivity extends TuIdActivity {
 
                 if (request.dni.trim().equals("")) {
                     text_content_info_cuil_text.requestFocus();
-                    CreateAlert(self, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(self, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                     return;
                 }
                 try {
@@ -970,7 +970,7 @@ public class HomeActivity extends TuIdActivity {
                 String sexo = rdb_genero.getCheckedRadioButtonId()==R.id.rdb_masculino?"M":"F";
                 if (dni.trim().equals("")) {
                     text_content_info_cuil_text.requestFocus();
-                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                     return;
                 }
                 Intent i = new Intent(context, CuandoCobroActivity.class);
@@ -1020,7 +1020,7 @@ public class HomeActivity extends TuIdActivity {
                 String sexo = rdb_genero.getCheckedRadioButtonId()==R.id.rdb_masculino?"M":"F";
                 if (dni.trim().equals("")) {
                     text_content_info_cuil_text.requestFocus();
-                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                     return;
                 }
                 Intent i = new Intent(context, CertificadoActivity.class);

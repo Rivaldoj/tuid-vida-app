@@ -169,7 +169,7 @@ public class SoporteDialog extends Dialog {
                 request.version = Build.VERSION.RELEASE;
                 if (request.cuil.trim().equals("")) {
                     text_content_info_cuil_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                 }
                 else if (request.cuil.length()!=11) {
                     text_content_info_cuil_text.requestFocus();
@@ -177,32 +177,32 @@ public class SoporteDialog extends Dialog {
                     
                 } else if (request.nombre.trim().equals("")) {
                     text_content_info_name_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                     
                 } else if (request.phone.phone.trim().equals("")) {
                     text_content_info_phone_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                     
                 } else if (request.phone.country.trim().equals("")) {
                     text_content_info_phone_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
 
                 } else if (request.phone.area.trim().equals("")) {
                     text_content_info_phone_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
 
                 }
                 else if (request.asunto.trim().equals("")) {
                     text_content_info_asunto_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_asunto)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_asunto));
                     //Toast.makeText(context,R.string.contact_validar_asunto , Toast.LENGTH_LONG).show();
                 } else if (request.email.length() < 3 || !isValidEmail(request.email)) {
                     text_content_info_email_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_email)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_email));
                     //Toast.makeText(context,R.string.contact_validar_email , Toast.LENGTH_LONG).show();
                 } else if (request.mensaje.trim().equals("")) {
                     text_content_info_msn_text.requestFocus();
-                    createAlert(activity, "Alerta", activity.getString(R.string.contact_validar_mensaje)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_mensaje));
                     //Toast.makeText(context,R.string.contact_validar_mensaje, Toast.LENGTH_LONG).show();
                 } else {
                     send_contact(request);
@@ -267,7 +267,7 @@ public class SoporteDialog extends Dialog {
                 HelperFunctions.hideProgressDialog();
                 if (response.isSuccessful()) {
                     if (response.body().IsOk()) {
-                        HelperFunctions.ShowAlert(activity, "Su mensaje se ha enviado correctamente");
+                        HelperFunctions.ShowMensajeEnviado(activity);
                     } else {
                         HelperFunctions.ShowAlert(activity, response.body().Message);
                     }
@@ -289,7 +289,7 @@ public class SoporteDialog extends Dialog {
 
                     }
 
-                    HelperFunctions.ShowAlert(activity, errorMessage);
+                    HelperFunctions.ShowErrorContacto(activity, errorMessage);
                 }
             }
 

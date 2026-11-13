@@ -373,7 +373,7 @@ public abstract class TuIdActivity extends AppCompatActivity implements Navigati
                 String sexo = rdb_genero.getCheckedRadioButtonId()==R.id.rdb_masculino?"M":"F";
                 if (dni.trim().equals("")) {
                     text_content_info_cuil_text.requestFocus();
-                    CreateAlert(activity, "Alerta", activity.getString(R.string.contact_validar_dni)).show();
+                    HelperFunctions.ShowMensaje(activity, R.drawable.ic_alerta_roja, "Campo requerido", activity.getString(R.string.contact_validar_dni));
                     return;
                 }
                 Intent i = new Intent(context, CertificadoActivity.class);
