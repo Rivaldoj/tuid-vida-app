@@ -61,6 +61,36 @@ public class EmrtdReader {
         public int fotoAlto;
         public byte[] foto; // sin tratar (JPEG o JPEG 2000)
         public PassiveAuth.Info autenticidad;
+        public String mrz;            // lineas de la MRZ separadas por \n
+        public String tramite;        // numero de tramite (digitos de los datos opcionales de la MRZ), si hay
+        public boolean dg11;          // el chip tiene datos personales adicionales
+        public boolean dg12;          // el chip tiene datos del documento
+        public String cuil;           // DG11 (numero personal), si esta
+        public String fechaEmision;   // DG12, si esta
+    }
+
+    /** El numero de tramite viene en los datos opcionales de la MRZ (9 digitos en el DNI nuevo, 11 en el anterior). */
+    static String tramiteDeOpcionales(String opt1, String opt2) {
+        String a = opt1 == null ? "" : opt1.replace("<", "").trim();
+        String b = opt2 == null ? "" : opt2.replace("<", "").trim();
+        if (a.matches("\\d{9,11}")) return a;
+        if (b.matches("\\d{9,11}")) return b;
+        String d = (a + b).replaceAll("\\D", "");
+        return d.isEmpty() ? null : d;
+    }
+
+    /** La MRZ del chip viene corrida en una sola cadena: TD1 = 3 lineas de 30, TD2 = 2 de 36, TD3 = 2 de 44. */
+    static String lineasMrz(String corrida) {
+        if (corrida == null) return null;
+        String s = corrida.replace("\n", "").replace("\r", "");
+        int largo = s.length() == 90 ? 30 : s.length() == 72 ? 36 : s.length() == 88 ? 44 : 0;
+        if (largo == 0) return s;
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < s.length(); i += largo) {
+            if (i > 0) b.append('\n');
+            b.append(s, i, i + largo);
+        }
+        return b.toString();
     }
 
     /**
@@ -170,6 +200,8 @@ public class EmrtdReader {
         r.fechaNacimiento = mrz.getDateOfBirth();
         r.sexo = String.valueOf(mrz.getGender());
         r.fechaVencimiento = mrz.getDateOfExpiry();
+        r.mrz = lineasMrz(mrz.toString());
+        r.tramite = tramiteDeOpcionales(mrz.getOptionalData1(), mrz.getOptionalData2());
 
         // DG2: foto del rostro (no se decodifica: suele ser JPEG 2000)
         etapa = "leer DG2 (foto)";
@@ -191,6 +223,24 @@ public class EmrtdReader {
             }
         } catch (Exception e) {
             r.fotoMime = "no se pudo leer DG2: " + e.getClass().getSimpleName();
+        }
+        // DG11 / DG12 (datos adicionales): pueden no estar en el chip. Solo se informa si estan y el CUIL / fecha de emision.
+        try {
+            byte[] raw11 = leerTodo(service.getInputStream(PassportService.EF_DG11, PassportService.DEFAULT_MAX_BLOCKSIZE));
+            r.dg11 = true;
+            org.jmrtd.lds.icao.DG11File dg11 = new org.jmrtd.lds.icao.DG11File(new java.io.ByteArrayInputStream(raw11));
+            String p = dg11.getPersonalNumber();
+            r.cuil = p == null ? null : p.replace("<", "").trim();
+        } catch (Exception e) {
+            r.dg11 = false;
+        }
+        try {
+            byte[] raw12 = leerTodo(service.getInputStream(PassportService.EF_DG12, PassportService.DEFAULT_MAX_BLOCKSIZE));
+            r.dg12 = true;
+            org.jmrtd.lds.icao.DG12File dg12 = new org.jmrtd.lds.icao.DG12File(new java.io.ByteArrayInputStream(raw12));
+            r.fechaEmision = dg12.getDateOfIssue();
+        } catch (Exception e) {
+            r.dg12 = false;
         }
         etapa = "autenticidad (SOD)";
         try {

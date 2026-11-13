@@ -29,6 +29,18 @@ public class SignupRequest {
         public String back;
         @SerializedName("photo")
         public String photo;
+        /** true si el documento se leyo por NFC (type = L); null en el resto, para no enviarlo */
+        @SerializedName("nfc")
+        public Boolean nfc;
+        /** CAN de 6 digitos, solo si nfc = true y se entro por CAN */
+        @SerializedName("nfcCode")
+        public String nfcCode;
+        /** Nacionalidad tal como la devuelve el chip (3 letras, por ejemplo ARG); el servidor la guarda en usuario.pais */
+        @SerializedName("pais")
+        public String pais;
+        /** Lineas de la MRZ separadas por salto de linea, solo si se entro por camara */
+        @SerializedName("mrz")
+        public String mrz;
     }
 
     @SerializedName("sessionId")

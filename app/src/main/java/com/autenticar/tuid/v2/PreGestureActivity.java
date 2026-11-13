@@ -153,6 +153,10 @@ public class PreGestureActivity extends TuIdActivity{
     /** Envia el DNI escaneado y la sesion de Face Liveness al servidor (POST /vida/v2/signup). */
     private void registrarConLiveness() {
         findViewById(R.id.btnConfirmar).setEnabled(false);
+        if (RegistroNfcDatos.activo) {
+            registrarConChip();
+            return;
+        }
         try {
             Persona persona = ((MainApp) getApplication()).GetPersonaToRegister();
             persona.dniFront = Scanner.frontResult;
@@ -205,6 +209,76 @@ public class PreGestureActivity extends TuIdActivity{
             Log.e("EX", String.valueOf(ex.getMessage()), ex);
             notSuccessRegister("Se ha producido un error en la registración. Verifique que su conexión a internet sea estable y pruebe nuevamente. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
         }
+    }
+
+    /**
+     * DNI nuevo leido por NFC: los datos y la foto salen del chip (no hay fotos del frente ni del dorso).
+     * La foto del chip va como foto del DNI (la que compara el servidor) y en el lugar del frente; el servidor
+     * exige tambien el dorso, que se completa con la misma imagen.
+     */
+    private void registrarConChip() {
+        try {
+            final com.autenticar.tuid.model.SignupRequest request = new com.autenticar.tuid.model.SignupRequest();
+            com.autenticar.tuid.model.SignupRequest.Documento doc = new com.autenticar.tuid.model.SignupRequest.Documento();
+            doc.type = "L";
+            doc.nfc = Boolean.TRUE;
+            doc.number = RegistroNfcDatos.numero;
+            doc.name = RegistroNfcDatos.nombre;
+            doc.lastname = RegistroNfcDatos.apellido;
+            doc.gender = RegistroNfcDatos.sexo;
+            doc.birth = RegistroNfcDatos.nacimiento;
+            doc.expires = RegistroNfcDatos.vencimiento;
+            doc.tramit = RegistroNfcDatos.tramite;
+            doc.pais = RegistroNfcDatos.pais;
+            doc.photo = RegistroNfcDatos.fotoBase64;
+            doc.front = RegistroNfcDatos.fotoBase64;
+            doc.back = RegistroNfcDatos.fotoBase64;
+            if (RegistroNfcDatos.can != null && !RegistroNfcDatos.can.isEmpty()) doc.nfcCode = RegistroNfcDatos.can;
+            if (RegistroNfcDatos.mrz != null && !RegistroNfcDatos.mrz.isEmpty()) doc.mrz = RegistroNfcDatos.mrz;
+            // Al terminar el registro se compara el CUIL escrito con el DNI y se guarda a la persona en Usuarios:
+            // esa comparacion lee estos datos, que en el flujo del chip salen del chip (y no de un escaneo anterior).
+            com.autenticar.tuid.v2.utils.Scanner.dni = RegistroNfcDatos.numero;
+            com.autenticar.tuid.v2.utils.Scanner.nombre = RegistroNfcDatos.nombre;
+            com.autenticar.tuid.v2.utils.Scanner.apellido = RegistroNfcDatos.apellido;
+            request.idDocument = doc;
+            request.sessionId = livenessSessionId;
+            request.idDevice = token;
+            request.appversion = BuildConfig.VERSION_NAME;
+            request.os = "Android " + Build.VERSION.RELEASE + " (" + Build.MANUFACTURER + " " + Build.MODEL + ")";
+            request.version = String.valueOf(Build.VERSION.SDK_INT);
+            try {
+                com.autenticar.tuid.utils.GPSLocation gps = new com.autenticar.tuid.utils.GPSLocation(this, getApplicationContext());
+                request.latitud = String.valueOf(gps.getLatitud());
+                request.longitud = String.valueOf(gps.getLongitud());
+            } catch (Exception e) {
+                request.latitud = "0.0";
+                request.longitud = "0.0";
+            }
+            showProgressDialog("Aguarde un momento, procesando el registro");
+            ServiceGenerator.createV2Service(com.autenticar.tuid.services.TuidServiceV2.class).signup(request)
+                    .enqueue(new Callback<RegisterResponse>() {
+                        @Override
+                        public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                            hideProgressDialog();
+                            procesarRespuestaRegistro(response.body(), request.idDocument.number, request.idDocument.gender, request.idDocument.name);
+                        }
+
+                        @Override
+                        public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                            hideProgressDialog();
+                            notSuccessRegister("Se ha producido un error en la registración. Verifique que su conexión a internet sea estable y pruebe nuevamente. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
+                        }
+                    });
+        } catch (Exception ex) {
+            Log.e("EX", String.valueOf(ex.getMessage()));
+            notSuccessRegister("Se ha producido un error en la registración. Verifique que su conexión a internet sea estable y pruebe nuevamente. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RegistroNfcDatos.borrar();   // los datos del chip no quedan en memoria despues del registro
     }
 
     /** Aprobado: sigue con correo y celular. Revancha: pregunta de conocimiento. Error: aviso. */

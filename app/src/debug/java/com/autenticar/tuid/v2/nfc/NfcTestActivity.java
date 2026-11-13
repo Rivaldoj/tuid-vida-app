@@ -205,6 +205,9 @@ public class NfcTestActivity extends Activity implements NfcAdapter.ReaderCallba
                     s.append("Nacimiento: ").append(r.fechaNacimiento).append('\n');
                     s.append("Sexo: ").append(r.sexo).append('\n');
                     s.append("Vencimiento: ").append(r.fechaVencimiento).append('\n');
+                    s.append("Trámite (datos opcionales MRZ): ").append(r.tramite == null ? "no viene" : r.tramite).append('\n');
+                    s.append("DG11 (datos personales): ").append(r.dg11 ? "presente, CUIL " + (r.cuil == null || r.cuil.isEmpty() ? "no viene" : r.cuil) : "ausente").append('\n');
+                    s.append("DG12 (datos del documento): ").append(r.dg12 ? "presente, emisión " + (r.fechaEmision == null ? "no viene" : r.fechaEmision) : "ausente").append('\n');
                     s.append("Foto: ").append(r.fotoMime).append(' ').append(r.fotoAncho).append('x')
                             .append(r.fotoAlto).append(", ").append(r.fotoBytes).append(" bytes\n");
                     if (r.autenticidad != null) {

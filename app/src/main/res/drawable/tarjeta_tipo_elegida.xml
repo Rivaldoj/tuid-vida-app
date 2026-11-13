@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tarjeta de tipo de DNI elegida: fondo turquesa claro y borde de marca -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#E6F6F8" />
+    <stroke android:width="2dp" android:color="#01acc2" />
+    <corners android:radius="20dp" />
+</shape>

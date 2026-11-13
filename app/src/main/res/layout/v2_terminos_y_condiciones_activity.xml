@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/terminos_titulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -54,7 +55,8 @@
                 <ImageView
                     android:id="@+id/img_muestra_frente"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
                     android:contentDescription="Privacidad"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_privacidad" />
@@ -79,6 +81,133 @@
                     android:text="@string/explicacion_registro_scan_paso1"
                     android:textColor="@color/tu_tinta"
                     android:textSize="19sp" />
+
+                <!-- Tipo de DNI (solo se muestra cuando la lectura por NFC esta disponible: version de desarrollo) -->
+                <LinearLayout
+                    android:id="@+id/bloque_tipo_dni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Seleccione su tipo de DNI"
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/card_dni_barras"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/tarjeta_tipo_elegida"
+                        android:gravity="center_vertical"
+                        android:minHeight="84dp"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_tipo_dni_barras" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Antiguo DNI con códigos de barras"
+                                android:textColor="@color/tu_tinta"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tarjeta con código de barras atrás"
+                                android:textColor="@color/tu_tinta"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tilde_dni_barras"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/card_dni_nfc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/tarjeta_aviso"
+                        android:gravity="center_vertical"
+                        android:minHeight="84dp"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_tipo_dni_nfc" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nuevo DNI con NFC"
+                                android:textColor="@color/tu_tinta"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tiene chip y código QR atrás"
+                                android:textColor="@color/tu_tinta"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tilde_dni_nfc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:text="Acepte los términos y condiciones"
+                        android:textColor="@color/tu_tinta"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/layout_terminos"
@@ -112,6 +241,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/leer_terminos"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:background="@drawable/chip_claro"
@@ -157,6 +287,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/leer_politicas"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:background="@drawable/chip_claro"

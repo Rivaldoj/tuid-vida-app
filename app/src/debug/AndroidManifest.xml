@@ -22,6 +22,16 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name="com.autenticar.tuid.v2.nfc.ClavesNfcActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.autenticar.tuid.v2.nfc.VerificacionNfcActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.autenticar.tuid.v2.aws.LivenessTestActivity"
             android:label="Liveness Test"
             android:exported="true"

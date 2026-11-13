@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.autenticar.tuid.AmplitudeManager.AmplitudeManager;
+import com.autenticar.tuid.BuildConfig;
 import com.autenticar.tuid.MainApp;
 import com.autenticar.tuid.R;
 import com.autenticar.tuid.utils.HelperFunctions;
@@ -33,6 +34,20 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
         });
 
         findViewById(R.id.checkbox_politicas_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HelperFunctions.showDialog(R.string.nav_titulo_politicas, R.string.nav_content_politicas, 1, view.getContext(), activity);
+            }
+        });
+
+        // Los botones LEER abren el mismo texto que la frase de cada casilla
+        findViewById(R.id.leer_terminos).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HelperFunctions.showDialog(R.string.nav_titulo_termino_condiciones, R.string.nav_content_termino_condiciones, 1, view.getContext(), activity);
+            }
+        });
+        findViewById(R.id.leer_politicas).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 HelperFunctions.showDialog(R.string.nav_titulo_politicas, R.string.nav_content_politicas, 1, view.getContext(), activity);
@@ -68,12 +83,51 @@ public class TerminosYCondicionesActivity extends TuIdActivity {
             }
         });
 
-        playGuideSounds(new int[]{R.raw.a27}, 0, null);
+        // Tipo de DNI: solo en la version de desarrollo (las librerias del chip no estan en la de tiendas)
+        if (BuildConfig.DEBUG) {
+            ((android.widget.TextView) findViewById(R.id.terminos_titulo)).setText("Tipo DNI");
+            findViewById(R.id.bloque_tipo_dni).setVisibility(View.VISIBLE);
+            findViewById(R.id.card_dni_barras).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    elegirTipo(false);
+                }
+            });
+            findViewById(R.id.card_dni_nfc).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    elegirTipo(true);
+                }
+            });
+            playGuideSounds(new int[]{R.raw.a27_1, R.raw.a27}, 0, null);
+        } else {
+            playGuideSounds(new int[]{R.raw.a27}, 0, null);
+        }
+    }
+
+    private boolean tipoNfc = false;
+
+    private void elegirTipo(boolean nfc) {
+        tipoNfc = nfc;
+        findViewById(R.id.card_dni_barras).setBackgroundResource(nfc ? R.drawable.tarjeta_aviso : R.drawable.tarjeta_tipo_elegida);
+        findViewById(R.id.card_dni_nfc).setBackgroundResource(nfc ? R.drawable.tarjeta_tipo_elegida : R.drawable.tarjeta_aviso);
+        findViewById(R.id.tilde_dni_barras).setVisibility(nfc ? View.INVISIBLE : View.VISIBLE);
+        findViewById(R.id.tilde_dni_nfc).setVisibility(nfc ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void iniciarScan() {
+        RegistroNfcDatos.borrar();   // un registro nuevo nunca arrastra datos de un chip anterior
         ((MainApp) getApplication()).InitPersonaToRegister();
         new AmplitudeManager().log(this, "Registration Process Started", null);
+        if (BuildConfig.DEBUG && tipoNfc) {
+            // Nuevo DNI con chip: claves de acceso (MRZ / CAN). La pantalla existe solo en la version de desarrollo.
+            try {
+                startActivity(new Intent(this, Class.forName("com.autenticar.tuid.v2.nfc.ClavesNfcActivity")));
+            } catch (ClassNotFoundException e) {
+                Toast.makeText(activity, "La lectura por NFC no está disponible en esta versión", Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
         // Primero las instrucciones (luz, codigo nitido, flash); su boton "Continuar" abre la camara
         startActivity(new Intent(getBaseContext(), InstruccionesDniActivity.class));
 //        startActivity(new Intent(getBaseContext(), DNIDetector.class));
