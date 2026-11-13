@@ -43,6 +43,9 @@ public class SignupRequest {
         public String mrz;
     }
 
+    /** CUIL que escribio la persona al empezar (11 digitos, sin guiones); el servidor lo compara con el padron. Puede ser null. */
+    @SerializedName("cuil")
+    public String cuil;
     @SerializedName("sessionId")
     public String sessionId;
 

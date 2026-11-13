@@ -176,6 +176,7 @@ public class PreGestureActivity extends TuIdActivity{
             doc.back = HelperFunctions.encodeTobase64(Scanner.backResult);
             doc.photo = HelperFunctions.encodeTobase64(persona.bitmapFace);
             request.idDocument = doc;
+            request.cuil = cuilEscrito();
             request.sessionId = livenessSessionId;
             request.idDevice = token;
             request.appversion = BuildConfig.VERSION_NAME;
@@ -241,6 +242,7 @@ public class PreGestureActivity extends TuIdActivity{
             com.autenticar.tuid.v2.utils.Scanner.nombre = RegistroNfcDatos.nombre;
             com.autenticar.tuid.v2.utils.Scanner.apellido = RegistroNfcDatos.apellido;
             request.idDocument = doc;
+            request.cuil = cuilEscrito();
             request.sessionId = livenessSessionId;
             request.idDevice = token;
             request.appversion = BuildConfig.VERSION_NAME;
@@ -273,6 +275,12 @@ public class PreGestureActivity extends TuIdActivity{
             Log.e("EX", String.valueOf(ex.getMessage()));
             notSuccessRegister("Se ha producido un error en la registración. Verifique que su conexión a internet sea estable y pruebe nuevamente. Si el problema persiste, contacte a soporte utilizando el formulario de contacto.", "0");
         }
+    }
+
+    /** CUIL que la persona escribio al empezar el registro (solo si es valido); null si eligio "No se mi CUIL". */
+    private static String cuilEscrito() {
+        String c = com.autenticar.tuid.utils.CuilValidator.normalizar(com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro);
+        return com.autenticar.tuid.utils.CuilValidator.esValido(c) ? c : null;
     }
 
     @Override
