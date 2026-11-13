@@ -69,22 +69,15 @@ public class SoporteDialog extends Dialog {
 
 
     static{
-        asuntos.add(new ContactSubject("Solicito Ayuda modo de uso", "100"));
-        asuntos.add(new ContactSubject("Confirmar Registración o Fe de Vida", "101"));
-        asuntos.add(new ContactSubject("Quiero saber si mi Fe de Vida está Vigente", "102"));
-        asuntos.add(new ContactSubject("Tengo dificultades con el Escaneo", "103"));
-        asuntos.add(new ContactSubject("Envió de Código de validación", "104"));
-//        asuntos.add(new ContactSubject("Solicito Certificado de Fe de Vida", "105"));
-        asuntos.add(new ContactSubject("Cuando debo Renovar mi Fe de Vida", "106"));
+        asuntos.add(new ContactSubject("Solicito ayuda modo de uso", "100"));
+        asuntos.add(new ContactSubject("Tengo dificultades con el escaneo", "103"));
         asuntos.add(new ContactSubject("Me indica que debo otorgar permisos", "107"));
         asuntos.add(new ContactSubject("No puedo realizar Fe de Vida", "108"));
-        asuntos.add(new ContactSubject("No me acreditacion beneficio previsional", "109"));
-        asuntos.add(new ContactSubject("Cambio de Dispositivo", "110"));
-        asuntos.add(new ContactSubject("Contactar soporte", ""));
-        
-    } 
-    
-    
+        asuntos.add(new ContactSubject("Cambio de dispositivo", "110"));
+        asuntos.add(new ContactSubject("Envío de código de validación", "104"));
+    }
+
+
     public SoporteDialog(@NonNull Context _context,Activity _activity, int _titulo) {
         super(_context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -220,85 +213,33 @@ public class SoporteDialog extends Dialog {
 
     void initAsuntoLayout(){
         LinearLayout lo = findViewById(R.id.dialog_contact_subject_select);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(10,10,10,10);
+        float d = context.getResources().getDisplayMetrics().density;
         for(final ContactSubject c: asuntos){
-            Button b = new Button(context);
-            b.setText(c.text);
-            b.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
-            b.setTextColor(context.getColor(R.color.colorPrimary));
-
-            b.setOnClickListener(new View.OnClickListener() {
+            TextView t = new TextView(context);
+            t.setText("\u2022  " + c.text);
+            t.setTextColor(context.getColor(R.color.colorPrimary));
+            t.setTextSize(19);
+            t.setPadding(0, (int) (12 * d), 0, (int) (12 * d));
+            t.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     goToContactForm(c);
                 }
             });
-            lo.addView(b,lp);
-
+            lo.addView(t, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
-
-        ScrollView scrollView =  findViewById(R.id.dialog_contact_scroll_view);
-        Animation fade_in = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+        findViewById(R.id.contact_estado).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onScrollChanged() {
-                try {
-                    int childHeight = ((LinearLayout) findViewById(R.id.dialog_contact_subject_select)).getHeight();
-                    boolean isScrollableDown = scrollView.getScrollY() < childHeight - scrollView.getHeight();
-                    boolean isScrollableUp = scrollView.getScrollY() > 0;
-                    if (isScrollableDown) {
-                        findViewById(R.id.dialog_contact_go_down).setVisibility(View.VISIBLE);
-                        findViewById(R.id.dialog_contact_go_down).startAnimation(fade_in);
-                    } else {
-                        findViewById(R.id.dialog_contact_go_down).clearAnimation();
-                        findViewById(R.id.dialog_contact_go_down).setVisibility(View.INVISIBLE);
-                    }
-                    if (isScrollableUp) {
-                        findViewById(R.id.dialog_contact_go_up).setVisibility(View.VISIBLE);
-                        findViewById(R.id.dialog_contact_go_up).startAnimation(fade_in);
-                    } else {
-                        findViewById(R.id.dialog_contact_go_up).clearAnimation();
-                        findViewById(R.id.dialog_contact_go_up).setVisibility(View.INVISIBLE);
-                    }
-                }
-                catch (Exception e){
-
-                }
-
+            public void onClick(View v) {
+                goToContactForm(new ContactSubject("Quiero saber si mi Fe de Vida está vigente", "102"));
             }
         });
-
-        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        findViewById(R.id.contact_soporte).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onGlobalLayout() {
-                try {
-                    scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    int childHeight = ((LinearLayout) findViewById(R.id.dialog_contact_subject_select)).getHeight();
-                    boolean isScrollableDown = scrollView.getScrollY() < childHeight - scrollView.getHeight();
-                    boolean isScrollableUp = scrollView.getScrollY() > 0;
-                    if (isScrollableDown) {
-                        findViewById(R.id.dialog_contact_go_down).setVisibility(View.VISIBLE);
-                        findViewById(R.id.dialog_contact_go_down).startAnimation(fade_in);
-                    } else {
-                        findViewById(R.id.dialog_contact_go_down).clearAnimation();
-                        findViewById(R.id.dialog_contact_go_down).setVisibility(View.INVISIBLE);
-                    }
-                    if (isScrollableUp) {
-                        findViewById(R.id.dialog_contact_go_up).setVisibility(View.VISIBLE);
-                        findViewById(R.id.dialog_contact_go_up).startAnimation(fade_in);
-                    } else {
-                        findViewById(R.id.dialog_contact_go_up).clearAnimation();
-                        findViewById(R.id.dialog_contact_go_up).setVisibility(View.INVISIBLE);
-                    }
-                }
-                catch (Exception e){
-
-                }
+            public void onClick(View v) {
+                com.autenticar.tuid.usuarios.Soporte.abrirWhatsApp(activity, com.autenticar.tuid.usuarios.Soporte.mensaje("", "", "Contacto desde la app"));
             }
         });
-
-
     }
 
     void send_contact(ContactRequest2 request) {

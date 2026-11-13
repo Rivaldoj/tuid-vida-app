@@ -97,32 +97,33 @@ public class HelperFunctions {
     /** Aviso de registracion satisfactoria (estilo de Mensajes): botones grandes para dar la Fe de Vida, validar el telefono o finalizar. */
     public static AlertDialog CreateAlertWithLoginAndPhoneOptions(final Activity context, String title, String message, boolean showPhone) {
         View view = context.getLayoutInflater().inflate(R.layout.dialog_selector_usuario, null);
-        ((TextView) view.findViewById(R.id.picker_titulo)).setText("Registración satisfactoria");
-        ((TextView) view.findViewById(R.id.picker_mensaje)).setText(message);
         ImageView icono = (ImageView) view.findViewById(R.id.picker_icono);
-        icono.setImageResource(R.drawable.ic_reconocimiento);
+        if (showPhone) {
+            // Correo validado: sin texto de registro completo, con el icono del correo
+            ((TextView) view.findViewById(R.id.picker_titulo)).setText("Correo validado");
+            view.findViewById(R.id.picker_mensaje).setVisibility(View.GONE);
+            icono.setImageResource(R.drawable.ic_email_validado);
+        } else {
+            ((TextView) view.findViewById(R.id.picker_titulo)).setText("Registración satisfactoria");
+            ((TextView) view.findViewById(R.id.picker_mensaje)).setText(message);
+            icono.setImageResource(R.drawable.ic_reconocimiento);
+            // Todo centrado: icono, titulo y mensaje
+            ((android.widget.LinearLayout.LayoutParams) icono.getLayoutParams()).gravity = android.view.Gravity.CENTER_HORIZONTAL;
+            ((TextView) view.findViewById(R.id.picker_titulo)).setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+            view.findViewById(R.id.picker_mensaje).setVisibility(View.GONE);
+        }
         icono.setVisibility(View.VISIBLE);
         final AlertDialog alert = new AlertDialog.Builder(context, R.style.DialogoTuID).setView(view).create();
 
         Button principal = (Button) view.findViewById(R.id.picker_principal);
-        principal.setText("Ir a dar Fe de Vida");
-        principal.setTextColor(android.graphics.Color.WHITE);
-        principal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HomeActivity.irAFeDeVidaOnResume = true;
-                alert.dismiss();
-                context.finish();
-            }
-        });
-
         Button secundario = (Button) view.findViewById(R.id.picker_secundario);
+        Button finalizar = (Button) view.findViewById(R.id.picker_cancelar);
+        secundario.setVisibility(View.GONE);
+        principal.setTextColor(android.graphics.Color.WHITE);
         if (showPhone) {
-            secundario.setText("Validar teléfono");
-            secundario.setBackgroundResource(R.drawable.boton_pildora_borde);
-            secundario.setTextColor(context.getResources().getColor(R.color.tu_tinta));
-            secundario.setVisibility(View.VISIBLE);
-            secundario.setOnClickListener(new View.OnClickListener() {
+            // Tras validar el correo: validar el celular o finalizar
+            principal.setText("Validar teléfono");
+            principal.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(context, ValidarTelefonoMail.class);
@@ -131,17 +132,27 @@ public class HelperFunctions {
                     context.finish();
                 }
             });
+            finalizar.setText("Finalizar");
+            finalizar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alert.dismiss();
+                    context.finish();
+                }
+            });
+        } else {
+            // Tras validar el celular: solo ir a dar la Fe de Vida
+            principal.setText("Ir a dar Fe de Vida");
+            principal.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HomeActivity.irAFeDeVidaOnResume = true;
+                    alert.dismiss();
+                    context.finish();
+                }
+            });
+            finalizar.setVisibility(View.GONE);
         }
-
-        Button finalizar = (Button) view.findViewById(R.id.picker_cancelar);
-        finalizar.setText("Finalizar");
-        finalizar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alert.dismiss();
-                context.finish();
-            }
-        });
         return alert;
     }
 

@@ -86,11 +86,14 @@ public class ValidarTelefonoMail extends TuIdActivity{
     public void onCreate(Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.v2_validar_telefono_mail_activity);
+        ((TextView) findViewById(R.id.v2_validar_titulo)).setText("Registrar correo electrónico");
 
         try {
             if (getIntent().getExtras().containsKey("isPhone") && getIntent().getExtras().getBoolean("isPhone", false)) {
                 isPhone = true;
-                ((TextView) findViewById(R.id.v2_validar_telefono_mail_text)).setText("Para completar tu registro debes indicar un teléfono celular. Recibirás un código de verificación.");
+                ((TextView) findViewById(R.id.v2_validar_titulo)).setText("Registrar celular");
+                ((TextView) findViewById(R.id.v2_validar_telefono_mail_text)).setText("Para completar tu registro debes indicar un teléfono celular. Recibirás un código de verificación por SMS.");
+                ((TextView) findViewById(R.id.v2_validar_aviso_codigo)).setText("Le enviaremos un código para comprobar que es correcto.");
                 findViewById(R.id.v2_validar_telefono_mail_telefono_telefono_container).setVisibility(View.VISIBLE);
                 findViewById(R.id.v2_validar_telefono_mail_telefono_mail_container).setVisibility(View.GONE);
                 ((RadioButton) findViewById(R.id.optSendSMS)).setChecked(true);
@@ -102,7 +105,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
             
         }
 //        playGuideSounds(new int[]{R.raw.emailtelefono, R.raw.iniciarvalidacion}, 0, null);
-        playGuideSounds(isPhone ? new int[]{R.raw.a41} : new int[]{R.raw.a39, R.raw.a40}, 0, null);
+        playGuideSounds(isPhone ? new int[]{R.raw.a41, R.raw.enviarcodigo} : new int[]{R.raw.a39, R.raw.a40}, 0, null);
         findViewById(R.id.btnSendValidation).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -285,7 +288,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length()==4){
-                    playGuideSounds(new int[]{R.raw.enviarcodigo}, 0, null);
+                    playGuideSounds(new int[]{R.raw.a40_4}, 0, null);
                 }
             }
         });
@@ -377,6 +380,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
             String nombre = com.autenticar.tuid.v2.utils.Scanner.nombre == null ? "" : com.autenticar.tuid.v2.utils.Scanner.nombre.trim();
             String completo = (apellido + ", " + nombre).trim();
             com.autenticar.tuid.usuarios.LocalUserStore.get(this).addOrUpdate(cuil, completo.equals(",") ? "" : completo);
+            HomeActivity.cuilRecienRegistrado = cuil;
             com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro = null;
         } catch (Exception e) {
             Log.e("USUARIOS", "No se pudo guardar el usuario registrado", e);

@@ -523,6 +523,8 @@ public class HomeActivity extends TuIdActivity {
     // Identificacion por CUIL (BuildConfig.USE_CUIL_API)
     // ------------------------------------------------------------------
 
+    /** CUIL de quien acaba de completar el registro: "Ir a dar Fe de Vida" salta el selector de usuarios. */
+    public static String cuilRecienRegistrado;
     private String cuilPrecargado;   // viene del aviso "ya registrado": se salta el selector
     private String cuilPendiente;    // persona elegida; se consulta al servidor despues de los controles de camara
 
@@ -592,6 +594,10 @@ public class HomeActivity extends TuIdActivity {
             searchDniForAuthentication();
             return;
         }
+        if (cuilPrecargado == null && cuilRecienRegistrado != null) {
+            cuilPrecargado = cuilRecienRegistrado;
+        }
+        cuilRecienRegistrado = null;
         if (cuilPrecargado != null) {
             String c = cuilPrecargado;
             cuilPrecargado = null;

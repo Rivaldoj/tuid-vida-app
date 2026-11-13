@@ -13,7 +13,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/oswald"
-        android:text="Código"
+        android:text="Ingresar código"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
         android:textSize="30sp" />
@@ -129,7 +129,7 @@
             android:background="@drawable/boton_pildora"
             android:fontFamily="@font/oswald"
             android:letterSpacing="0.05"
-            android:text="Verificar"
+            android:text="Presiona Verificar"
             android:textAllCaps="true"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />

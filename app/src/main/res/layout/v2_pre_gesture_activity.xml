@@ -105,6 +105,8 @@
                     android:id="@+id/textGestoVida"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
                     android:layout_marginTop="12dp"
                     android:lineSpacingMultiplier="1.1"
                     android:text="Ahora vamos a capturar movimientos como prueba de vida.&#10;Coloca el dispositivo a la altura de los ojos.&#10;Tu rostro debe estar en el centro del óvalo.&#10;Sigue las instrucciones."
