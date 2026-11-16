@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Menu lateral (estetica del diseno "Menu lateral"): encabezado turquesa (colorPrimary, #01acc2) con SOLO el circulo blanco con el logo,
+  subtitulos "Util" e "Informacion legal", separadores y "Salir" abajo en rojo.
+  Cada fila es una opcion: TuIdActivity.abrirOpcionLateral(id).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <!-- Encabezado: fondo turquesa y el circulo blanco con el logo, centrado. Sin texto: junto al logo seria redundante. -->
+    <FrameLayout
+        android:id="@+id/nav_encabezado"
+        android:layout_width="match_parent"
+        android:layout_height="136dp"
+        android:background="@color/colorPrimary">
+
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circulo_blanco"
+            android:elevation="4dp">
+
+            <ImageView
+                android:id="@+id/nav_logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="TuID Vida"
+                android:padding="14dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_tuid_vida" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="14dp"
+            android:paddingTop="6dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="10dp">
+
+            <!-- Util -->
+            <TextView
+                style="@style/NavSubtitulo"
+                android:text="Útil" />
+
+            <View style="@style/NavSubrayado" />
+
+            <LinearLayout
+                android:id="@+id/nav_contacto"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_menu_ayuda" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Contacto" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_historial"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_menu_certificado" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Historial" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_certificado"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_menu_descargar_certificado" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Solicitar Certificado" />
+            </LinearLayout>
+
+            <View style="@style/NavSeparador" />
+
+            <!-- Informacion legal -->
+            <TextView
+                style="@style/NavSubtitulo"
+                android:text="Información legal" />
+
+            <View style="@style/NavSubrayado" />
+
+            <LinearLayout
+                android:id="@+id/nav_terminos_condiciones"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_menu_informacion" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Términos y Condiciones" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_politicas"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_privacidad" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Políticas de Privacidad" />
+            </LinearLayout>
+
+            <View style="@style/NavSeparador" />
+
+            <!-- Empresa -->
+            <LinearLayout
+                android:id="@+id/nav_empresa"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_menu_empresa" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Empresa" />
+            </LinearLayout>
+
+            <!--
+              Entidades adheridas: por ahora oculta. Para volver a mostrarla, quitar este comentario
+              (la opcion ya esta conectada en TuIdActivity.abrirOpcionLateral con el id nav_entidades_adheridas).
+            <LinearLayout
+                android:id="@+id/nav_entidades_adheridas"
+                style="@style/NavFila">
+
+                <ImageView
+                    style="@style/NavFilaIcono"
+                    android:src="@drawable/ic_menu_empresa" />
+
+                <TextView
+                    style="@style/NavFilaTexto"
+                    android:text="Entidades adheridas" />
+            </LinearLayout>
+            -->
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Salir: siempre abajo, en rojo. El contenedor nav_pie recibe el relleno de la barra de navegacion del telefono (TuIdActivity.ajustarMenuLateralABarras). -->
+    <LinearLayout
+        android:id="@+id/nav_pie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingBottom="12dp">
+
+        <View style="@style/NavSeparador" />
+
+        <LinearLayout
+            android:id="@+id/nav_salir"
+            style="@style/NavFila">
+
+            <ImageView
+                style="@style/NavFilaIcono"
+                android:src="@drawable/ic_menu_salir" />
+
+            <TextView
+                style="@style/NavFilaTexto"
+                android:text="Salir"
+                android:textColor="#b3201e" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

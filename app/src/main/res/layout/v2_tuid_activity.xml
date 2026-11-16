@@ -37,16 +37,17 @@
 
 
 
+        <!-- Menu lateral con filas propias (nav_drawer_content): encabezado rojo con el logo, Util, Informacion legal, Empresa y Salir -->
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main_"
-            app:menu="@menu/activity_main_menu_drawer">
+            android:background="@android:color/white"
+            android:fitsSystemWindows="false"
+            app:insetForeground="@android:color/transparent">
 
-            <include layout="@layout/nav_footer"></include>
+            <include layout="@layout/nav_drawer_content"></include>
         </com.google.android.material.navigation.NavigationView>
 
 

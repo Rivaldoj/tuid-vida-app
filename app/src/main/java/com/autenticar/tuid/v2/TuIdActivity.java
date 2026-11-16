@@ -132,18 +132,29 @@ public abstract class TuIdActivity extends AppCompatActivity implements Navigati
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 //getActionBar().setTitle(mDrawerTitle);
+                if (ajusteMenuLateral != null) ajusteMenuLateral.run();   // recalcula el relleno por las barras del telefono
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        View hView = navigationView.getHeaderView(0);
-        TextView nav_username = (TextView) hView.findViewById(R.id.nav_username);
-        TextView nav_bien = (TextView) hView.findViewById(R.id.nav_bien);
-        ImageView nav_ico_username = (ImageView) hView.findViewById(R.id.nav_ico_username);
-        nav_username.setText(getIntent().getStringExtra(""));
-        nav_bien.setTextSize(16);
+        ajustarMenuLateralABarras(navigationView);
+        // Menu lateral con filas propias (layout nav_drawer_content): cada fila abre su opcion.
+        // La opcion Entidades adheridas esta oculta por ahora (ver el comentario en el layout).
+        int[] filasMenu = { R.id.nav_contacto, R.id.nav_historial, R.id.nav_certificado,
+                R.id.nav_terminos_condiciones, R.id.nav_politicas, R.id.nav_empresa };
+        for (int fila : filasMenu) {
+            View v = findViewById(fila);
+            if (v != null) {
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        abrirOpcionLateral(view.getId());
+                    }
+                });
+            }
+        }
         findViewById(R.id.nav_salir).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,9 +254,59 @@ public abstract class TuIdActivity extends AppCompatActivity implements Navigati
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /** Ajuste del menu lateral a las barras del telefono; se vuelve a correr al abrirlo (ver ajustarMenuLateralABarras). */
+    private Runnable ajusteMenuLateral;
+
+    /**
+     * Segun la version de Android y el modo de pantalla, el menu lateral puede quedar debajo de la barra de estado o de la de
+     * navegacion del telefono (los botones o la barra de gestos tapaban "Salir"). Se mide cuanto se superpone y se agrega ese
+     * relleno al encabezado (arriba) y al pie con "Salir" (abajo). Si no hay superposicion no cambia nada.
+     */
+    private void ajustarMenuLateralABarras(final View menu) {
+        final View encabezado = menu.findViewById(R.id.nav_encabezado);
+        final View pie = menu.findViewById(R.id.nav_pie);
+        if (encabezado == null || pie == null) return;
+        final int alturaEncabezado = encabezado.getLayoutParams().height;
+        final int rellenoPie = pie.getPaddingBottom();
+        final int[] aplicado = { -1, -1 };
+        ajusteMenuLateral = new Runnable() {
+            @Override
+            public void run() {
+                androidx.core.view.WindowInsetsCompat insets = androidx.core.view.ViewCompat.getRootWindowInsets(menu);
+                if (insets == null) return;
+                androidx.core.graphics.Insets barras = insets.getInsets(
+                        androidx.core.view.WindowInsetsCompat.Type.systemBars() | androidx.core.view.WindowInsetsCompat.Type.displayCutout());
+                int[] pos = new int[2];
+                menu.getLocationInWindow(pos);
+                int altoVentana = menu.getRootView().getHeight();
+                int arriba = Math.max(0, barras.top - pos[1]);
+                int abajo = Math.max(0, (pos[1] + menu.getHeight()) - (altoVentana - barras.bottom));
+                if (arriba == aplicado[0] && abajo == aplicado[1]) return;
+                aplicado[0] = arriba;
+                aplicado[1] = abajo;
+                android.view.ViewGroup.LayoutParams lp = encabezado.getLayoutParams();
+                lp.height = alturaEncabezado + arriba;
+                encabezado.setLayoutParams(lp);
+                encabezado.setPadding(0, arriba, 0, 0);
+                pie.setPadding(pie.getPaddingLeft(), pie.getPaddingTop(), pie.getPaddingRight(), rellenoPie + abajo);
+            }
+        };
+        menu.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or, int ob) {
+                ajusteMenuLateral.run();
+            }
+        });
+        menu.post(ajusteMenuLateral);
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        int id = menuItem.getItemId();
+        return abrirOpcionLateral(menuItem.getItemId());
+    }
+
+    /** Abre la opcion elegida en el menu lateral y cierra el menu. */
+    protected boolean abrirOpcionLateral(int id) {
         if (id == R.id.nav_terminos_condiciones) {
             new AmplitudeManager().log(this, "Going to Terms", null);
             HelperFunctions.showDialog(R.string.nav_titulo_termino_condiciones, R.string.nav_content_termino_condiciones, 1, this, activity);
