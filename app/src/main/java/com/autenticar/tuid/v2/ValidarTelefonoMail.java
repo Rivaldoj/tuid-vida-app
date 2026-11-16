@@ -380,6 +380,7 @@ public class ValidarTelefonoMail extends TuIdActivity{
             String nombre = com.autenticar.tuid.v2.utils.Scanner.nombre == null ? "" : com.autenticar.tuid.v2.utils.Scanner.nombre.trim();
             String completo = (apellido + ", " + nombre).trim();
             com.autenticar.tuid.usuarios.LocalUserStore.get(this).addOrUpdate(cuil, completo.equals(",") ? "" : completo);
+            com.autenticar.tuid.usuarios.DeviceTokenSync.recordarVigente(this);   // el registro envio el token de este telefono
             HomeActivity.cuilRecienRegistrado = cuil;
             com.autenticar.tuid.usuarios.ComprobarRegistro.cuilEnRegistro = null;
         } catch (Exception e) {

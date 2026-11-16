@@ -95,6 +95,8 @@ public class HomeActivity extends TuIdActivity {
     public void onResume(){
         super.onResume();
         actualizarAvisos();
+        // Si Firebase renovo el token del telefono, se le avisa al servidor (silencioso; nunca interrumpe)
+        com.autenticar.tuid.usuarios.DeviceTokenSync.sincronizar(this);
         if (permisosFeDeVida != null) permisosFeDeVida.onResume();
         if(irAFeDeVidaOnResume){
             irAFeDeVidaOnResume = false;
@@ -884,6 +886,8 @@ public class HomeActivity extends TuIdActivity {
                         // La persona se guarda en este telefono solo despues de una Fe de Vida confirmada por el servidor
                         try {
                             com.autenticar.tuid.usuarios.LocalUserStore.get(self).addOrUpdate(loginResponse.Cuil, loginResponse.Name);
+                            // El servidor acaba de guardar el token de este telefono: es el que conoce
+                            com.autenticar.tuid.usuarios.DeviceTokenSync.recordarVigente(self);
                         } catch (Exception e) {
                             Log.e("USUARIOS", "No se pudo guardar el usuario en el telefono", e);   // la Fe de Vida ya esta hecha: no se corta
                         }

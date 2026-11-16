@@ -25,6 +25,10 @@ public interface TuidServiceV2 {
     @POST("history")
     Call<HistoryResponse> history(@Body HistoryRequest request);
 
+    /** Aviso de token de notificaciones renovado por Firebase (el servidor lo acepta solo con el token anterior como prueba). */
+    @POST("refreshdevice")
+    Call<com.autenticar.tuid.model.ResponseBase> refreshDevice(@Body com.autenticar.tuid.model.DeviceRefreshRequest request);
+
     @POST("login")
     Call<LoginResponse> login(@Body LoginRequest request);
 

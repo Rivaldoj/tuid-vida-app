@@ -154,7 +154,12 @@ public class MyFirebaseMessagingService extends  FirebaseMessagingService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
+        // Avisa al servidor del token nuevo mostrando el anterior como prueba (si no, las notificaciones dejan de llegar hasta la proxima Fe de Vida)
+        try {
+            com.autenticar.tuid.usuarios.DeviceTokenSync.sincronizarConToken(getApplicationContext(), token);
+        } catch (Exception e) {
+            Log.e(TAG, "No se pudo avisar el token nuevo", e);
+        }
     }
 
     /**

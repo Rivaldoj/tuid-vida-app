@@ -77,7 +77,7 @@ public class HistorialSync {
         }
     }
 
-    private static void pedir(final Activity activity, final String cuil, String idDevice, final Resultado cb) {
+    private static void pedir(final Activity activity, final String cuil, final String idDevice, final Resultado cb) {
         ServiceGenerator.createV2Service(TuidServiceV2.class)
                 .history(new HistoryRequest(cuil, idDevice))
                 .enqueue(new Callback<HistoryResponse>() {
@@ -92,6 +92,8 @@ public class HistorialSync {
                             cb.onTerminado(false, r.Message != null ? r.Message : MSG_SIN_CONEXION);
                             return;
                         }
+                        // El servidor acepto este token: es el que tiene guardado para esta persona
+                        DeviceTokenSync.recordarEnviado(activity, idDevice);
                         if (r.certificaciones == null || r.certificaciones.isEmpty()) {
                             cb.onTerminado(true, MSG_VACIO);   // no se toca el historial local
                             return;
